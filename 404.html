@@ -4,12 +4,9 @@
     <meta charset="utf-8">
     <title>Single Page Apps for GitHub Pages</title>
     <script type="text/javascript">
-        // Get the pathname (e.g., /digimart/signup)
-        const pathname = window.location.pathname;
-        // Extract route by removing /digimart/ prefix (case-insensitive)
-        const route = pathname.replace(/^\/digimart\/?/i, '') || '';
-        // Redirect to clean URL (e.g., /digimart/signup)
-        window.location.replace(`/digimart/${route}`);
+        let val = window.location.pathname.split("digimart/");
+        val.shift();
+        window.location.replace(`/digimart/${val.join()}`);
     </script>
 </head>
 <body>
