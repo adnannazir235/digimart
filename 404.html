@@ -4,9 +4,8 @@
     <meta charset="utf-8">
     <title>Single Page Apps for GitHub Pages</title>
     <script type="text/javascript">
-        let val = window.location.pathname.split("digimart/");
-        val.shift();
-        window.location.replace(`/digimart/${val.join()}`);
+        // Redirect to /digimart/, preserving the original path for BrowserRouter
+        window.location.replace('/digimart/');
     </script>
 </head>
 <body>
