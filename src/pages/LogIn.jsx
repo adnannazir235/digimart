@@ -1,24 +1,20 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import LoadingButton from "../components/LoadingButton";
 import { authAPI } from "../services/api";
+import LogInForm from "../components/LogInForm";
+import { useAuth } from "../contexts/authContext";
+import { toastOptions } from "../../config/styles";
 
 export default function LogIn() {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth(); // Destructure login from the context
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 15000,
-    pauseOnHover: true,
-    draggable: true,
-    // theme: "dark",
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,26 +23,20 @@ export default function LogIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     try {
       const res = await authAPI.login(formData);
-      const successMessage =
-        res.data.message ||
-        res.data.status ||
-        "Registration successful! Check your email.";
-      setTimeout(() => {
-        console.log("Navigating to /check-email");
-        navigate("/check-email", {
-          state: {
-            email: formData.email,
-            toast: { successMessage, toastOptions },
-          },
-        });
-      }, 5000); // Match toast delay
+
+      // Update the global state via the context
+      login(res.data.accessToken);
+
+      const successMessage = res.data.message || "Login successful!";
+      navigate(
+        `/?status=success&message=${encodeURIComponent(successMessage)}`
+      );
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Registration failed",
+        error.response?.data?.message || "Login failed. Try again later.",
         toastOptions
       );
     } finally {
@@ -65,61 +55,12 @@ export default function LogIn() {
             <p className="text-gray-500 text-center mb-8">
               Sign in to access your account.
             </p>
-            <form
-              onSubmit={handleSubmit}
-              className="col-12 col-md-6 col-lg-5 m-auto"
-            >
-              <div className="row mb-3">
-                <div className="col">
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    className="form-control"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    className="form-control"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col">
-                  <LoadingButton
-                    loading={loading}
-                    type="submit"
-                    className="btn btn-primary w-100"
-                  >
-                    Sign In
-                  </LoadingButton>
-                </div>
-              </div>
-              <div className="row mt-3">
-                <div className="col text-center">
-                  Need an account? <NavLink to="/signup">Sign up</NavLink>
-                </div>
-              </div>
-            </form>
+            <LogInForm
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              loading={loading}
+            />
           </div>
         </div>
       </div>

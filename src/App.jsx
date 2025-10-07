@@ -9,26 +9,21 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
+import { toastOptions } from "../config/styles";
+import { AuthProvider } from "./contexts/authContext.jsx";
+import { PublicOnlyRoute } from "./routes/PublicOnlyRoute.jsx";
+import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
 
-function App() {
-  // useSearchParams returns an array: [currentSearchParams, setSearchParamsFunction]
+// This component will contain the application's content and can use the AuthContext
+function AppContent() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const toastOptions = {
-      position: "bottom-right",
-      autoClose: 15000,
-      pauseOnHover: true,
-      draggable: true,
-      // theme: "dark",
-    };
-
-    // 1. Read the parameters from the URL
+    // Toast notification logic based on URL search parameters
     const status = searchParams.get("status");
     const message = searchParams.get("message");
 
     if (status && message) {
-      // 2. Display the appropriate toast based on the status
       switch (status) {
         case "success":
           toast.success(message, toastOptions);
@@ -43,24 +38,32 @@ function App() {
           toast.info(message, toastOptions);
           break;
       }
-
-      // 3. IMPORTANT: Clear the query parameters from the URL.
-      // This prevents the toast from reappearing if the user refreshes or navigates.
-      // We pass an empty object to set the query string back to empty.
       setSearchParams({});
     }
-  }, [searchParams, setSearchParams]); // Effect re-runs when URL parameters change
+  }, [searchParams, setSearchParams]);
+
   return (
     <>
       <Header />
       <main style={{ height: "82dvh" }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/check-email" element={<CheckEmail />} />
-          <Route path="/login" element={<LogIn />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
+
+          <Route element={<PublicOnlyRoute />}>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/login" element={<LogIn />} />
+          </Route>
+
+          <Route element={<RoleBasedRoute roles={["seller"]} />}>
+            {/* Seller routes */}
+          </Route>
+
+          <Route element={<RoleBasedRoute roles={["buyer"]} />}>
+            {/* Buyer routes */}
+          </Route>
         </Routes>
       </main>
       <Footer />
@@ -69,4 +72,11 @@ function App() {
   );
 }
 
-export default App;
+// Top-level component to provide the AuthContext
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

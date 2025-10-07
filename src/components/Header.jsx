@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../contexts/authContext.jsx";
+import LazyAvatar from "./LazyAvatar.jsx";
 
 export default function Header() {
+  const { user, logout } = useAuth();
+
   return (
     <header>
       <nav
@@ -37,29 +41,32 @@ export default function Header() {
                 </NavLink>
               </li>
 
-              <li className="nav-item">
-                <NavLink
-                  className={({ isActive }) =>
-                    `nav-link ${isActive ? "active" : ""}`
-                  }
-                  aria-current="page"
-                  to="/signup"
-                >
-                  SignUp
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  className={({ isActive }) =>
-                    `nav-link ${isActive ? "active" : ""}`
-                  }
-                  aria-current="page"
-                  to="/login"
-                >
-                  Login
-                </NavLink>
-              </li>
+              {!user && (
+                <>
+                  <li className="nav-item">
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                      aria-current="page"
+                      to="/signup"
+                    >
+                      SignUp
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                      aria-current="page"
+                      to="/login"
+                    >
+                      Login
+                    </NavLink>
+                  </li>
+                </>
+              )}
 
               <li className="nav-item">
                 <NavLink
@@ -85,6 +92,40 @@ export default function Header() {
                 </NavLink>
               </li>
             </ul>
+
+            {user && (
+              <div className="dropdown ms-2">
+                <button
+                  className="border-0 bg-transparent"
+                  style={{ verticalAlign: "middle" }}
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <LazyAvatar name={user.username} src={user.avatar} />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end border-0 shadow bg-body rounded">
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Settings
+                    </a>
+                  </li>
+                  <li>
+                    <button
+                      className="dropdown-item text-danger"
+                      onClick={logout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </nav>

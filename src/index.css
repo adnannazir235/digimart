@@ -24,7 +24,7 @@ dialog {
   user-select: none;
 }
 
-img:not(.card-img-top),
+img,
 svg,
 /* button, */
 input,
