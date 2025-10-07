@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/authContext.jsx";
 import LazyAvatar from "./LazyAvatar.jsx";
+import digiMartLogo from "../assets/logo/DigiMart.png";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -13,7 +14,19 @@ export default function Header() {
       >
         <div className="container-fluid">
           <NavLink className="navbar-brand" to="/">
-            DigiMart
+            <img
+              src={digiMartLogo}
+              alt="Logo"
+              width="40"
+              height="37"
+              className="d-inline-block align-text-top"
+            />
+            <span
+              className="ms-2"
+              style={{ verticalAlign: "-webkit-baseline-middle" }}
+            >
+              DigiMart
+            </span>
           </NavLink>
           <button
             className="navbar-toggler"

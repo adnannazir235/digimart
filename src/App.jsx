@@ -13,9 +13,9 @@ import { toastOptions } from "../config/styles";
 import { AuthProvider } from "./contexts/authContext.jsx";
 import { PublicOnlyRoute } from "./routes/PublicOnlyRoute.jsx";
 import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
-// This component will contain the application's content and can use the AuthContext
-function AppContent() {
+export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -44,39 +44,31 @@ function AppContent() {
 
   return (
     <>
-      <Header />
-      <main style={{ height: "82dvh" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
+      <AuthProvider>
+        <Header />
+        <main style={{ height: "82dvh" }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
 
-          <Route element={<PublicOnlyRoute />}>
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/check-email" element={<CheckEmail />} />
-            <Route path="/login" element={<LogIn />} />
-          </Route>
+            <Route element={<PublicOnlyRoute />}>
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/check-email" element={<CheckEmail />} />
+              <Route path="/login" element={<LogIn />} />
+            </Route>
+            <Route element={<RoleBasedRoute roles={["seller"]} />}></Route>
+            <Route element={<RoleBasedRoute roles={["buyer"]} />}></Route>
 
-          <Route element={<RoleBasedRoute roles={["seller"]} />}>
-            {/* Seller routes */}
-          </Route>
-
-          <Route element={<RoleBasedRoute roles={["buyer"]} />}>
-            {/* Buyer routes */}
-          </Route>
-        </Routes>
-      </main>
-      <Footer />
-      <ToastContainer />
+            <Route
+              path="*"
+              element={<NotFound height="100%" minHeight="100%" />}
+            />
+          </Routes>
+        </main>
+        <Footer />
+        <ToastContainer />
+      </AuthProvider>
     </>
-  );
-}
-
-// Top-level component to provide the AuthContext
-export default function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
   );
 }
