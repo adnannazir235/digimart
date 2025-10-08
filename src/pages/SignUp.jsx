@@ -65,12 +65,15 @@ export default function SignUp() {
   };
 
   return (
-    <section className="container-fluid py-5 h-100">
-      <div className="container h-100">
+    <section className="container-fluid py-5">
+      <div className="container">
         {user ? (
           <LoadingSpinner />
         ) : (
-          <div className="row justify-content-center h-100">
+          <div
+            className="row justify-content-center"
+            style={{ minHeight: "69dvh" }}
+          >
             <div className="col">
               <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
                 Create Account!

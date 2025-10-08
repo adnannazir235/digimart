@@ -117,6 +117,7 @@ export default function Header() {
                 >
                   <LazyAvatar name={user.username} src={user.avatar} />
                 </button>
+
                 <ul className="dropdown-menu dropdown-menu-end border-0 shadow bg-body rounded">
                   <li>
                     <a className="dropdown-item" href="#">
@@ -124,9 +125,9 @@ export default function Header() {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
+                    <NavLink className="dropdown-item" to="/settings">
                       Settings
-                    </a>
+                    </NavLink>
                   </li>
                   <li>
                     <button

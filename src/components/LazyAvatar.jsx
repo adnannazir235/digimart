@@ -38,7 +38,7 @@ const LazyAvatar = ({ name, src }) => {
       {showPlaceholder && (
         <span
           className="avatar-initials fw-bold"
-          style={{ padding: "4px 10px" }}
+          style={{ padding: "1px 7px" }}
         >
           {initials}
         </span>

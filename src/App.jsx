@@ -5,6 +5,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
+import Settings from "./pages/Settings";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { toast, ToastContainer } from "react-toastify";
@@ -46,7 +47,7 @@ export default function App() {
     <>
       <AuthProvider>
         <Header />
-        <main style={{ height: "82dvh" }}>
+        <main style={{ minHeight: "82dvh" }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/contact" element={<Contact />} />
@@ -57,6 +58,11 @@ export default function App() {
               <Route path="/check-email" element={<CheckEmail />} />
               <Route path="/login" element={<LogIn />} />
             </Route>
+
+            <Route element={<RoleBasedRoute roles={["seller", "buyer"]} />}>
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+
             <Route element={<RoleBasedRoute roles={["seller"]} />}></Route>
             <Route element={<RoleBasedRoute roles={["buyer"]} />}></Route>
 
