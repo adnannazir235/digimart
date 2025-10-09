@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/authContext.jsx";
-import LazyAvatar from "./LazyAvatar.jsx";
+import LazyAvatar from "../components/LazyAvatar.jsx";
 import digiMartLogo from "../assets/logo/DigiMart.png";
 
 export default function Header() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, Navigate } from "react-router-dom"; // Add Navigate import
+import { useLocation, Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import LoadingButton from "../components/LoadingButton";
 import { authAPI } from "../services/api";
