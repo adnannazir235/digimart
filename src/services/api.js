@@ -5,12 +5,19 @@ const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
 // Enable withCredentials for HTTP-only cookies (likely used by /auth/refresh-token)
 api.defaults.withCredentials = true;
 
-// Request Interceptor (unchanged)
+// Request Interceptor
 api.interceptors.request.use(
     (config) => {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken && accessToken !== null && accessToken !== "null") {
-            config.headers.Authorization = `Bearer ${JSON.parse(accessToken)}`;
+            try {
+                const parsedToken = JSON.parse(accessToken);
+                if (parsedToken) {
+                    config.headers.Authorization = `Bearer ${parsedToken}`;
+                }
+            } catch (e) {
+                console.error('Failed to parse accessToken:', e);
+            }
         }
         return config;
     },
@@ -37,7 +44,7 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (originalRequest.url.includes('/auth/login')) {
+        if (originalRequest.url.includes('/auth/login') || originalRequest.url.includes('/auth/reset-password')) {
             return Promise.reject(error);
         }
 
@@ -73,7 +80,7 @@ api.interceptors.response.use(
             // Update localStorage
             localStorage.setItem('accessToken', JSON.stringify(newAccessToken));
 
-            // Optional: Dispatch storage event to notify other components
+            // Dispatch storage event to notify other components
             window.dispatchEvent(new StorageEvent('storage', {
                 key: 'accessToken',
                 newValue: JSON.stringify(newAccessToken),
@@ -81,7 +88,6 @@ api.interceptors.response.use(
 
             // Update headers
             api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-
             processQueue(null, newAccessToken);
 
             // Retry original request
@@ -90,6 +96,7 @@ api.interceptors.response.use(
         } catch (refreshError) {
             processQueue(refreshError, null);
             localStorage.removeItem('accessToken');
+            window.location.href = '/login'; // Redirect to login
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
@@ -105,4 +112,6 @@ export const authAPI = {
     logout: () => api.post('/auth/logout'),
     refreshToken: () => api.post('/auth/refresh-token'),
     changePassword: (data) => api.post('/auth/change-password', data),
+    initiateForgotPassword: (data) => api.post('/auth/forgot-password', data),
+    resetPassword: (data, token) => api.post('/auth/reset-password', data, { headers: { Authorization: `Bearer ${token}` } }),
 };

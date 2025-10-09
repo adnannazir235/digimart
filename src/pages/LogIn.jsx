@@ -9,7 +9,7 @@ import { toastOptions } from "../../config/styles";
 export default function LogIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Destructure login from the context
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",

@@ -15,6 +15,8 @@ import { AuthProvider } from "./contexts/authContext.jsx";
 import { PublicOnlyRoute } from "./routes/PublicOnlyRoute.jsx";
 import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,18 +27,19 @@ export default function App() {
     const message = searchParams.get("message");
 
     if (status && message) {
+      const decodedMessage = decodeURIComponent(message);
       switch (status) {
         case "success":
-          toast.success(message, toastOptions);
+          toast.success(decodedMessage, toastOptions);
           break;
         case "error":
-          toast.error(message, toastOptions);
+          toast.error(decodedMessage, toastOptions);
           break;
         case "info":
-          toast.info(message, toastOptions);
+          toast.info(decodedMessage, toastOptions);
           break;
         default:
-          toast.info(message, toastOptions);
+          toast.info(decodedMessage, toastOptions);
           break;
       }
       setSearchParams({});
@@ -57,15 +60,16 @@ export default function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/check-email" element={<CheckEmail />} />
               <Route path="/login" element={<LogIn />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
 
             <Route element={<RoleBasedRoute roles={["seller", "buyer"]} />}>
               <Route path="/settings" element={<Settings />} />
             </Route>
 
-            <Route element={<RoleBasedRoute roles={["seller"]} />}></Route>
-            <Route element={<RoleBasedRoute roles={["buyer"]} />}></Route>
-
+            {/* <Route element={<RoleBasedRoute roles={["seller"]} />}></Route> */}
+            {/* <Route element={<RoleBasedRoute roles={["buyer"]} />}></Route> */}
             <Route
               path="*"
               element={<NotFound height="100%" minHeight="100%" />}

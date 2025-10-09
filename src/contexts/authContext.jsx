@@ -36,7 +36,11 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data.data.user);
     } catch (error) {
       const message = error.response?.data?.message;
-      if (message === "Account doesn't exist") {
+      if (error.response?.status === 401) {
+        setAccessToken(null);
+        navigate("/login");
+        toast.error("Session expired. Please log in again.", toastOptions);
+      } else if (message === "Account doesn't exist") {
         toast.error(message, toastOptions);
         navigate("/signup");
       } else {
@@ -46,7 +50,6 @@ export const AuthProvider = ({ children }) => {
         navigate("/login");
       }
     } finally {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       setLoading(false);
       isFetching.current = false; // Reset fetch flag
     }

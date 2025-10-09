@@ -45,6 +45,11 @@ export default function LogInForm({
       </div>
       <div className="row mb-3">
         <div className="col">
+          <NavLink to="/forgot-password">Forgot Password?</NavLink>
+        </div>
+      </div>
+      <div className="row mb-3">
+        <div className="col">
           <LoadingButton
             loading={loading}
             type="submit"
@@ -56,7 +61,7 @@ export default function LogInForm({
       </div>
       <div className="row mt-3">
         <div className="col text-center">
-          Need an account? <NavLink to="/signup">Sign up</NavLink>
+          Don't have an Account? <NavLink to="/signup">Sign up</NavLink>
         </div>
       </div>
     </form>
