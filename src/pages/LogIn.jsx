@@ -8,13 +8,44 @@ import { toastOptions } from "../../config/styles";
 
 export default function LogIn() {
   const [loading, setLoading] = useState(false);
+  const [resendEmailInfo, setResendEmailInfo] = useState({});
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const sendVerificationEmail = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await authAPI.resendVerificationEmail({
+        email: formData.email,
+      });
+      const successMessage =
+        res.data.message ||
+        res.data.status ||
+        "Verification email resent! Check your inbox.";
+
+      console.log("Navigating to /check-email");
+
+      navigate("/check-email", {
+        state: {
+          email: formData.email,
+          toast: { successMessage },
+        },
+      });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to resend email. Please try again.",
+        toastOptions
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +55,7 @@ export default function LogIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await authAPI.login(formData);
 
@@ -35,6 +67,14 @@ export default function LogIn() {
         `/?status=success&message=${encodeURIComponent(successMessage)}`
       );
     } catch (error) {
+      console.error(error);
+
+      if (error.response?.data?.requiresVerification) {
+        setResendEmailInfo((prevObj) => {
+          return { ...prevObj, requiresVerification: true };
+        });
+      }
+
       toast.error(
         error.response?.data?.message || "Login failed. Try again later.",
         toastOptions
@@ -55,14 +95,18 @@ export default function LogIn() {
             <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
               Welcome Back!
             </h1>
+
             <p className="text-gray-500 text-center mb-8">
               Sign in to access your account.
             </p>
+
             <LogInForm
               formData={formData}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
               loading={loading}
+              resendEmailInfo={resendEmailInfo}
+              sendVerificationEmail={sendVerificationEmail}
             />
           </div>
         </div>

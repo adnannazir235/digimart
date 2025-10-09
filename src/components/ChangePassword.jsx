@@ -29,16 +29,19 @@ const ChangePassword = () => {
       toast.error("Please fill all fields", toastOptions);
       return;
     }
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters", toastOptions);
+
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters", toastOptions);
       return;
     }
+
     if (newPassword !== confirmNewPassword) {
       toast.error("New passwords do not match", toastOptions);
       return;
     }
 
     setLoading(true);
+
     try {
       const res = await authAPI.changePassword({
         oldPassword,
@@ -48,11 +51,13 @@ const ChangePassword = () => {
 
       if (res.data.success) {
         toast.success("Password changed successfully!", toastOptions);
+
         setFormData({
           oldPassword: "",
           newPassword: "",
           confirmNewPassword: "",
         });
+
         setUser(null);
         setAccessToken(null);
         navigate("/login");

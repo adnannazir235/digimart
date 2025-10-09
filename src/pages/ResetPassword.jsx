@@ -22,21 +22,24 @@ export default function ResetPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!token) {
       toast.error("Invalid or missing reset token.", toastOptions);
       return;
     }
+
     if (formData.newPassword !== formData.confirmPassword) {
       toast.error("Passwords do not match.", toastOptions);
       return;
     }
+
     setLoading(true);
+
     try {
       const res = await authAPI.resetPassword(formData, token);
       const successMessage =
         res.data.message ||
         "Password reset successfully. Please log in with your new password.";
-      toast.success(successMessage, toastOptions);
       navigate(
         `/login?status=success&message=${encodeURIComponent(successMessage)}`
       );

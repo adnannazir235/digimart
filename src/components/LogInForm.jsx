@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LoadingButton from "../components/LoadingButton";
 
 export default function LogInForm({
@@ -6,6 +6,8 @@ export default function LogInForm({
   handleChange,
   handleSubmit,
   loading,
+  resendEmailInfo,
+  sendVerificationEmail,
 }) {
   return (
     <form onSubmit={handleSubmit} className="col-12 col-md-6 col-lg-5 m-auto">
@@ -26,6 +28,18 @@ export default function LogInForm({
           />
         </div>
       </div>
+      {resendEmailInfo.requiresVerification && (
+        <div className="row mb-2">
+          <div className="col">
+            <button
+              className="btn btn-link btn-sm"
+              onClick={sendVerificationEmail}
+            >
+              Send Verification Email ▶
+            </button>
+          </div>
+        </div>
+      )}
       <div className="row mb-3">
         <div className="col">
           <label htmlFor="password" className="form-label">
@@ -45,7 +59,7 @@ export default function LogInForm({
       </div>
       <div className="row mb-3">
         <div className="col">
-          <NavLink to="/forgot-password">Forgot Password?</NavLink>
+          <Link to="/forgot-password">Forgot Password?</Link>
         </div>
       </div>
       <div className="row mb-3">
@@ -61,7 +75,7 @@ export default function LogInForm({
       </div>
       <div className="row mt-3">
         <div className="col text-center">
-          Don't have an Account? <NavLink to="/signup">Sign up</NavLink>
+          Don't have an Account? <Link to="/signup">Sign up</Link>
         </div>
       </div>
     </form>

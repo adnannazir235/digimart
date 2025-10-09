@@ -9,23 +9,14 @@ import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 export default function SignUp() {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   navigate("/check-email", {
-  //     state: {
-  //       email: "hello",
-  //       toast: { successMessage: "Worked", toastOptions },
-  //     },
-  //   });
-  // });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,13 +32,16 @@ export default function SignUp() {
     }
 
     setLoading(true);
+
     try {
       const res = await authAPI.register(formData);
       const successMessage =
         res.data.message ||
         res.data.status ||
         "Registration successful! Check your email.";
+
       console.log("Navigating to /check-email");
+
       navigate("/check-email", {
         state: {
           email: formData.email,
