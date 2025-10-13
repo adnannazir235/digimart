@@ -1,11 +1,14 @@
 import { NavLink } from "react-router-dom";
 import LoadingButton from "../components/LoadingButton";
+import GoogleLogo from "../assets/google/logo.png";
 
 export default function SignUpForm({
   formData,
   handleChange,
   handleSubmit,
+  handleGoogleAuth,
   loading,
+  googleLoading,
 }) {
   return (
     <form onSubmit={handleSubmit} className="col-12 col-md-6 col-lg-5 m-auto">
@@ -26,6 +29,7 @@ export default function SignUpForm({
           />
         </div>
       </div>
+
       <div className="row mb-3">
         <div className="col">
           <label htmlFor="email" className="form-label">
@@ -43,6 +47,7 @@ export default function SignUpForm({
           />
         </div>
       </div>
+
       <div className="row mb-3">
         <div className="col">
           <label htmlFor="password" className="form-label">
@@ -60,6 +65,7 @@ export default function SignUpForm({
           />
         </div>
       </div>
+
       <div className="row mb-3">
         <div className="col">
           <label htmlFor="confirmPassword" className="form-label">
@@ -77,7 +83,8 @@ export default function SignUpForm({
           />
         </div>
       </div>
-      <div className="row mb-3">
+
+      <div className="row">
         <div className="col">
           <LoadingButton
             loading={loading}
@@ -88,9 +95,33 @@ export default function SignUpForm({
           </LoadingButton>
         </div>
       </div>
+
+      <div className="row my-3">
+        <p className="text-center">OR</p>
+      </div>
+
+      <div className="row mb-3">
+        <div className="col">
+          <LoadingButton
+            loading={googleLoading}
+            type="button"
+            className="btn btn-light border w-100"
+            onClick={handleGoogleAuth}
+          >
+            Continue with Google
+            <img
+              src={GoogleLogo}
+              height="20"
+              className="ms-2"
+              alt="Google's Logo - PNG"
+            />
+          </LoadingButton>
+        </div>
+      </div>
+
       <div className="row mt-3">
         <div className="col text-center">
-          Already have an account? <NavLink to="/login">Sign in</NavLink>
+          Already have an account? <NavLink to="/login">Log In</NavLink>
         </div>
       </div>
     </form>

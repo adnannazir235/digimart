@@ -96,7 +96,12 @@ api.interceptors.response.use(
         } catch (refreshError) {
             processQueue(refreshError, null);
             localStorage.removeItem('accessToken');
-            window.location.href = '/login'; // Redirect to login
+
+            // Dispatch manual storage event to trigger handlers in same tab
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'accessToken',
+                newValue: null,
+            }));
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
@@ -114,4 +119,6 @@ export const authAPI = {
     changePassword: (data) => api.post('/auth/change-password', data),
     initiateForgotPassword: (data) => api.post('/auth/forgot-password', data),
     resetPassword: (data, token) => api.post('/auth/reset-password', data, { headers: { Authorization: `Bearer ${token}` } }),
+    googleAuth: () => { window.location.href = '/auth/google?redirectTo=settings' },
+    setPassword: (data) => api.post('/auth/set-password', data),
 };

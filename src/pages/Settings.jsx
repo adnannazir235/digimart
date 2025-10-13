@@ -1,6 +1,9 @@
-import ChangePassword from "../components/ChangePassword";
 import { useAuth } from "../contexts/authContext";
+import SetPassword from "../components/SetPassword";
+import DeleteAccount from "../components/DeleteAccount";
+import ChangePassword from "../components/ChangePassword";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import DisconnectGoogleAccount from "../components/DisconnectGoogleAccount";
 
 const Settings = () => {
   const { user } = useAuth();
@@ -16,6 +19,8 @@ const Settings = () => {
 
     if (element.id === "v-pills-pass-tab") {
       setCurrentTab("pass");
+    } else if (element.id === "v-pills-accntManage-tab") {
+      setCurrentTab("accntManage");
     } else {
       alert("Error setting current tab state: Can't determine the Tab ID!");
     }
@@ -52,6 +57,25 @@ const Settings = () => {
           >
             Password Management
           </button>
+
+          <button
+            className={
+              (currentTab === "accntManage" ? "nav-link active" : "nav-link") +
+              " w-100"
+            }
+            id="v-pills-accntManage-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#v-pills-accntManage"
+            type="button"
+            role="tab"
+            aria-controls="v-pills-accntManage"
+            aria-selected={currentTab === "accntManage" ? "true" : "false"}
+            onClick={(event) => {
+              handleTabs(event);
+            }}
+          >
+            Account Management
+          </button>
         </nav>
 
         <section
@@ -69,17 +93,42 @@ const Settings = () => {
             aria-labelledby="v-pills-pass-tab"
             tabIndex="0"
           >
-            {user.isPassSet && (
+            {user.isPassSet === true ? (
               <>
                 <h4 className="mb-5">Change Password</h4>
                 <ChangePassword />
               </>
-            )}
-            {!user.isPassSet && (
+            ) : (
               <>
                 <h4 className="mb-5">Set Password</h4>
+                <SetPassword />
               </>
             )}
+          </div>
+
+          <div
+            className={
+              currentTab === "accntManage"
+                ? "tab-pane fade show active"
+                : "tab-pane fade"
+            }
+            id="v-pills-accntManage"
+            role="tabpanel"
+            aria-labelledby="v-pills-accntManage-tab"
+            tabIndex="0"
+          >
+            <>
+              {user.isPassSet && user.isGoogleSet && (
+                <>
+                  <h4 className="mb-5">Disconnect Google Account</h4>
+                  <DisconnectGoogleAccount />
+                  <hr className="my-4" />
+                </>
+              )}
+
+              <h4 className="mb-5">Delete Account</h4>
+              <DeleteAccount />
+            </>
           </div>
         </section>
       </div>

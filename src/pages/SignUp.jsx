@@ -4,12 +4,10 @@ import { authAPI } from "../services/api";
 import { toast } from "react-toastify";
 import SignUpForm from "../components/SignUpForm";
 import { toastOptions } from "../../config/styles";
-import { useAuth } from "../contexts/authContext.jsx";
-import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 export default function SignUp() {
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -41,13 +39,16 @@ export default function SignUp() {
         "Registration successful! Check your email.";
 
       console.log("Navigating to /check-email");
-
-      navigate("/check-email", {
-        state: {
-          email: formData.email,
-          toast: { successMessage },
-        },
-      });
+      navigate(
+        `/check-email?status=success&message=${encodeURIComponent(
+          successMessage
+        )}`,
+        {
+          state: {
+            email: formData.email,
+          },
+        }
+      );
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Registration failed",
@@ -58,32 +59,38 @@ export default function SignUp() {
     }
   };
 
+  const handleGoogleAuthRedirect = () => {
+    setGoogleLoading(true);
+    console.log("SignUp.jsx: Initiating Google auth redirect");
+    authAPI.googleAuth();
+  };
+
   return (
     <section className="container-fluid py-5">
       <div className="container">
-        {user ? (
-          <LoadingSpinner />
-        ) : (
-          <div
-            className="row justify-content-center"
-            style={{ minHeight: "69dvh" }}
-          >
-            <div className="col">
-              <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
-                Create Account!
-              </h1>
-              <p className="text-gray-500 text-center mb-8">
-                Create your account on digimart.
-              </p>
-              <SignUpForm
-                formData={formData}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-                loading={loading}
-              />
-            </div>
+        <div
+          className="row justify-content-center"
+          style={{ minHeight: "69dvh" }}
+        >
+          <div className="col">
+            <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+              Create Account!
+            </h1>
+
+            <p className="text-gray-500 text-center mb-8">
+              Create your account on digimart.
+            </p>
+
+            <SignUpForm
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              handleGoogleAuth={handleGoogleAuthRedirect}
+              googleLoading={googleLoading}
+              loading={loading}
+            />
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

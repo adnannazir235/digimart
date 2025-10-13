@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/authContext.jsx";
 import LazyAvatar from "../components/LazyAvatar.jsx";
-import digiMartLogo from "../assets/logo/DigiMart.png";
+import digiMartLogo from "../assets/DigiMart/logo.png";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -64,7 +64,7 @@ export default function Header() {
                       aria-current="page"
                       to="/signup"
                     >
-                      SignUp
+                      Sign Up
                     </NavLink>
                   </li>
                   <li className="nav-item">
@@ -75,7 +75,7 @@ export default function Header() {
                       aria-current="page"
                       to="/login"
                     >
-                      Login
+                      Log In
                     </NavLink>
                   </li>
                 </>

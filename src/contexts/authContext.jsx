@@ -1,10 +1,8 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { authAPI } from "../services/api";
-import LoadingSpinner from "../components/LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { toastOptions } from "../../config/styles";
 
 const AuthContext = createContext(null);
 
@@ -12,8 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
   const [loading, setLoading] = useState(true);
-  const isFetching = useRef(false); // Add ref to track ongoing fetch
-
+  const [error, setError] = useState(null);
+  const isFetching = useRef(false);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -23,35 +21,31 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    // Skip if user already loaded
-    if (user) {
-      setLoading(false);
-      return;
-    }
-
-    isFetching.current = true; // Mark fetch as in progress
+    isFetching.current = true;
     setLoading(true);
     try {
       const res = await authAPI.getProfile();
       setUser(res.data.data.user);
+      setError(null);
     } catch (error) {
       const message = error.response?.data?.message;
       if (error.response?.status === 401) {
         setAccessToken(null);
-        navigate("/login");
-        toast.error("Session expired. Please log in again.", toastOptions);
+        setError("Session expired. Please log in again.");
+        // Toast handled by QueryHandler
       } else if (message === "Account doesn't exist") {
-        toast.error(message, toastOptions);
+        setError("Account doesn't exist.");
         navigate("/signup");
+        // Toast handled by QueryHandler
       } else {
         console.error("Failed to fetch user profile:", error);
-        toast.error(message || "Authentication error", toastOptions);
+        setError(message || "Authentication error");
         setAccessToken(null);
-        navigate("/login");
+        // Toast handled by QueryHandler
       }
     } finally {
       setLoading(false);
-      isFetching.current = false; // Reset fetch flag
+      isFetching.current = false;
     }
   };
 
@@ -59,30 +53,34 @@ export const AuthProvider = ({ children }) => {
     if (accessToken && !user && !isFetching.current) {
       fetchUser();
     } else {
-      setLoading(false); // Ensure loading is false if no fetch is needed
+      setLoading(false);
     }
-  }, [accessToken]); // Run when accessToken changes
+  }, [accessToken]);
 
-  // Storage event: Update token, but fetch user only if none exists
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "accessToken") {
         const newToken = event.newValue ? JSON.parse(event.newValue) : null;
+        console.log(
+          "Storage event triggered:> Setting accessToken in handleStorageChange:",
+          newToken
+        );
         setAccessToken(newToken);
-        if (newToken && !user && !isFetching.current) {
-          console.log("Storage event triggered fetchUser");
-          fetchUser(); // Fetch only if user not set
+
+        if (!newToken) {
+          console.log("Setting user to null in handleStorageChange");
+          setUser(null); // Clear user when token is removed
         }
       }
     };
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, [setAccessToken]); // Dependencies stable
+  }, [setAccessToken, user]);
 
   const login = async (newAccessToken) => {
     setAccessToken(newAccessToken);
-    await fetchUser(); // Fetch after login
+    await fetchUser();
   };
 
   const logout = async () => {
@@ -92,6 +90,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Failed to call logout API:", error);
+      setError("Failed to logout. Please try again.");
+      // Toast handled by QueryHandler
     } finally {
       setUser(null);
       setAccessToken(null);
@@ -107,6 +107,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
+    error,
+    setError,
   };
 
   return (
