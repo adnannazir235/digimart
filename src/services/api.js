@@ -121,4 +121,6 @@ export const authAPI = {
     resetPassword: (data, token) => api.post('/auth/reset-password', data, { headers: { Authorization: `Bearer ${token}` } }),
     googleAuth: () => { window.location.href = '/auth/google?redirectTo=settings' },
     setPassword: (data) => api.post('/auth/set-password', data),
+    deleteAccount: (data) => api.delete('/auth/delete-account', data),
+    disconnectGoogle: (data) => api.post('/auth/disconnect-google', data),
 };

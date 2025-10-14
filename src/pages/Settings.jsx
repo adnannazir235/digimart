@@ -120,13 +120,13 @@ const Settings = () => {
             <>
               {user.isPassSet && user.isGoogleSet && (
                 <>
-                  <h4 className="mb-5">Disconnect Google Account</h4>
+                  <h4 className="mb-4">Disconnect Google Account</h4>
                   <DisconnectGoogleAccount />
                   <hr className="my-4" />
                 </>
               )}
 
-              <h4 className="mb-5">Delete Account</h4>
+              <h4 className="mb-4">Delete Account</h4>
               <DeleteAccount />
             </>
           </div>
