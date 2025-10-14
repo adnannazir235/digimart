@@ -21,7 +21,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 // Centralized toast handling component
 function QueryHandler() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { setAccessToken, login } = useAuth();
+  const { login } = useAuth();
   const processedToasts = useRef(new Set());
 
   useEffect(() => {
@@ -50,7 +50,6 @@ function QueryHandler() {
 
     if (accessToken) {
       console.log("QueryHandler: Setting accessToken and triggering login");
-      setAccessToken(accessToken);
       login(accessToken);
       shouldClearParams = true;
     }
@@ -95,7 +94,7 @@ function QueryHandler() {
         setSearchParams({}, { replace: true });
       }
     };
-  }, [searchParams, setSearchParams, setAccessToken, login]);
+  }, [searchParams, setSearchParams, login]);
 
   return null;
 }
