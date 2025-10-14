@@ -22,16 +22,15 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 function QueryHandler() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { setAccessToken, login } = useAuth();
-  const processedToasts = useRef(new Set()); // Track processed toast events
+  const processedToasts = useRef(new Set());
 
   useEffect(() => {
-    // Toast notification logic based on URL search parameters
     const status = searchParams.get("status");
     const message = searchParams.get("message");
     const accessToken = searchParams.get("accessToken");
-    const toastId = searchParams.get("toastId") || `${status}-${message}`; // Unique identifier for toast
+    const toastId =
+      searchParams.get("toastId") || `${status}-${message}-${Date.now()}`; // Add timestamp for uniqueness
 
-    // Skip if no relevant query params or toast already processed
     if (!status && !message && !accessToken) {
       return;
     }
@@ -49,7 +48,6 @@ function QueryHandler() {
 
     let shouldClearParams = false;
 
-    // Process accessToken if present
     if (accessToken) {
       console.log("QueryHandler: Setting accessToken and triggering login");
       setAccessToken(accessToken);
@@ -57,7 +55,6 @@ function QueryHandler() {
       shouldClearParams = true;
     }
 
-    // Process toast if status and message are present
     if (status && message) {
       const decodedMessage = decodeURIComponent(message);
       console.log("QueryHandler: Displaying toast:", {
@@ -65,33 +62,39 @@ function QueryHandler() {
         decodedMessage,
       });
 
-      // Mark toast as processed
       processedToasts.current.add(toastId);
 
+      // Use minimal delay to ensure ToastContainer is ready
       setTimeout(() => {
         switch (status) {
           case "success":
-            toast.success(decodedMessage, toastOptions);
+            toast.success(decodedMessage, { ...toastOptions, toastId });
             break;
           case "error":
-            toast.error(decodedMessage, toastOptions);
+            toast.error(decodedMessage, { ...toastOptions, toastId });
             break;
           case "info":
-            toast.info(decodedMessage, toastOptions);
+            toast.info(decodedMessage, { ...toastOptions, toastId });
             break;
           default:
-            toast.info(decodedMessage, toastOptions);
+            toast.info(decodedMessage, { ...toastOptions, toastId });
             break;
         }
-      }, 2000);
+      }, 1000);
       shouldClearParams = true;
     }
 
-    // Clear query params to prevent reprocessing
     if (shouldClearParams) {
       console.log("QueryHandler: Clearing query params");
       setSearchParams({}, { replace: true });
     }
+
+    // Cleanup to ensure params are cleared on unmount
+    return () => {
+      if (shouldClearParams) {
+        setSearchParams({}, { replace: true });
+      }
+    };
   }, [searchParams, setSearchParams, setAccessToken, login]);
 
   return null;
