@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { authAPI } from "../services/api";
+import { authAPI, userAPI } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     isFetching.current = true;
     setLoading(true);
     try {
-      const res = await authAPI.getProfile();
+      const res = await userAPI.getProfile();
       setUser(res.data.data.user);
       setError(null);
     } catch (error) {
@@ -61,10 +61,6 @@ export const AuthProvider = ({ children }) => {
     const handleStorageChange = (event) => {
       if (event.key === "accessToken") {
         const newToken = event.newValue ? JSON.parse(event.newValue) : null;
-        console.log(
-          "Storage event triggered:> Setting accessToken in handleStorageChange:",
-          newToken
-        );
         setAccessToken(newToken);
 
         if (!newToken) {

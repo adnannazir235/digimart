@@ -113,7 +113,6 @@ export const authAPI = {
     register: (data) => api.post('/auth/register', data),
     resendVerificationEmail: (data) => api.post('/auth/resend-verify-email', data),
     login: (data) => api.post('/auth/login', data),
-    getProfile: () => api.get('/users/me'),
     logout: () => api.post('/auth/logout'),
     refreshToken: () => api.post('/auth/refresh-token'),
     changePassword: (data) => api.post('/auth/change-password', data),
@@ -123,4 +122,67 @@ export const authAPI = {
     setPassword: (data) => api.post('/auth/set-password', data),
     deleteAccount: (data) => api.delete('/auth/delete-account', data),
     disconnectGoogle: (data) => api.post('/auth/disconnect-google', data),
+    createShop: (data) => api.post('/users/create-shop', data),
+};
+
+// --- USER AND SHOP API ---
+export const userAPI = {
+    // GET /users/me (Already exists in your authAPI, but often better placed here)
+    getProfile: () => api.get('/users/me'),
+
+    // PUT /users/me (Authenticated profile update)
+    updateProfile: (data) => api.put('/users/me', data),
+
+    // POST /users/create-shop (Authenticated seller onboarding)
+    createShop: (data) => api.post('/users/create-shop', data),
+};
+
+// --- PRODUCT API ---
+export const productAPI = {
+    // POST /products (Authenticated, handles file upload via Multer)
+    // NOTE: For file uploads, ensure your component sends a FormData object.
+    create: (data) => api.post('/products', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+
+    // GET /products (Public, get all products)
+    getAll: (params = {}) => api.get('/products', { params }), // Allow optional query params for filtering/pagination
+
+    // GET /products/my (Authenticated, get products owned by the current seller)
+    getMy: (params = {}) => api.get('/products/my', { params }),
+
+    // GET /products/:id (Public or optionalAuth)
+    getSingle: (id) => api.get(`/products/${id}`),
+
+    // PUT /products/:id (Authenticated, handles file upload)
+    update: (id, data) => api.put(`/products/${id}`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+
+    // DELETE /products/:id (Authenticated)
+    delete: (id) => api.delete(`/products/${id}`),
+};
+
+// --- PAYMENT & ORDER API ---
+export const checkoutAPI = {
+    // POST /checkout (Authenticated, initiate Stripe Checkout session)
+    createCheckoutSession: (data) => api.post('/checkout', data),
+};
+
+export const paymentAPI = {
+    // GET /stripe/connect-url (Authenticated, initiate Stripe Connect OAuth)
+    getStripeConnectUrl: () => api.get('/stripe/connect-url'),
+
+    // NOTE: The /stripe/callback and /stripe/webhook routes are server-side only.
+};
+
+export const orderAPI = {
+    // GET /order/me (Unified endpoint for both roles)
+    getMyOrders: (params = {}) => api.get('/order/me', { params }),
+
+    // GET /order/:id/download (Authenticated, file download)
+    // IMPORTANT: Use `responseType: 'blob'` for file downloads.
+    downloadProduct: (orderId) => api.get(`/order/${orderId}/download`, {
+        responseType: 'blob'
+    }),
 };

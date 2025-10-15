@@ -17,6 +17,8 @@ import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import BuyerDashboard from "./pages/BuyerDashboard.jsx";
+import SellerDashboard from "./pages/SellerDashboard.jsx";
 
 // Centralized toast handling component
 function QueryHandler() {
@@ -119,16 +121,20 @@ export default function App() {
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
 
+            {/* Settings accessible to both buyer and seller */}
             <Route element={<RoleBasedRoute roles={["seller", "buyer"]} />}>
               <Route path="/settings" element={<Settings />} />
             </Route>
 
-            {/* <Route element={<RoleBasedRoute roles={["seller"]} />}></Route> */}
-            {/* <Route element={<RoleBasedRoute roles={["buyer"]} />}></Route> */}
-            <Route
-              path="*"
-              element={<NotFound height="100%" minHeight="100%" />}
-            />
+            <Route element={<RoleBasedRoute roles={["seller"]} />}>
+              <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            </Route>
+
+            <Route element={<RoleBasedRoute roles={["buyer"]} />}>
+              <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
+            </Route>
+
+            <Route path="*" element={<NotFound minHeight="82dvh" />} />
           </Routes>
         </main>
         <Footer />
