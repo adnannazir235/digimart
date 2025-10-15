@@ -120,15 +120,24 @@ export default function Header() {
 
                 <ul className="dropdown-menu dropdown-menu-end border-0 shadow bg-body rounded">
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Profile
-                    </a>
+                    <NavLink
+                      className="dropdown-item"
+                      to={
+                        user.role === "seller"
+                          ? "/seller/dashboard"
+                          : "/buyer/dashboard"
+                      }
+                    >
+                      Dashboard
+                    </NavLink>
                   </li>
+
                   <li>
                     <NavLink className="dropdown-item" to="/settings">
                       Settings
                     </NavLink>
                   </li>
+
                   <li>
                     <button
                       className="dropdown-item text-danger"

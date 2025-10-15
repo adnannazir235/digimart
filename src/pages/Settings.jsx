@@ -4,6 +4,7 @@ import DeleteAccount from "../components/DeleteAccount";
 import ChangePassword from "../components/ChangePassword";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import DisconnectGoogleAccount from "../components/DisconnectGoogleAccount";
+import ProfileForm from "../components/ProfileForm";
 
 const Settings = () => {
   const { user } = useAuth();
@@ -118,6 +119,10 @@ const Settings = () => {
             tabIndex="0"
           >
             <>
+              <h4 className="mb-4">Profile</h4>
+              <ProfileForm />
+              <hr className="my-4" />
+
               {user.isPassSet && user.isGoogleSet && (
                 <>
                   <h4 className="mb-4">Disconnect Google Account</h4>
