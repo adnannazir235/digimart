@@ -13,27 +13,26 @@ export default function ProfileForm() {
   const [formData, setFormData] = useState({
     name: "",
     username: "",
-    age: "", // ✅ String for input, converted to Number for API
-    avatar: "", // ✅ Editable URL field
+    age: 0,
+    avatar: "",
     bio: "",
   });
 
-  // ✅ Proper Number handling for age
   useEffect(() => {
     if (user) {
       const userData = {
         name: user.name || "",
         username: user.username || "",
-        age: user.age || "", // ✅ Keep as string for input display
-        avatar: user.avatar || "", // ✅ Avatar URL
+        age: parseInt(user.age) || 0,
+        avatar: user.avatar || "",
         bio: user.bio || "",
       };
+
       setOriginalData(userData);
       setFormData(userData);
     }
   }, [user]);
 
-  // ✅ Reset to original data on Cancel
   const handleCancel = () => {
     if (originalData) {
       setFormData(originalData);
@@ -41,16 +40,16 @@ export default function ProfileForm() {
     setIsEditing(false);
   };
 
-  // ✅ Handle age as Number for input
+  // ✅ FIXED: Proper number handling for age input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "age" ? value : value, // ✅ Age stays string for input
+      [name]: name === "age" ? (value === "" ? 0 : parseInt(value)) : value,
     }));
   };
 
-  // ✅ FIXED: ALWAYS JSON - ONLY changed fields, INCLUDING avatar
   const createDataToSend = () => {
     const changedFields = {};
 
@@ -63,8 +62,8 @@ export default function ProfileForm() {
     ) {
       changedFields.username = formData.username;
     }
-    if (formData.age !== originalData.age && formData.age !== "") {
-      changedFields.age = formData.age;
+    if (formData.age !== originalData.age && formData.age !== 0) {
+      changedFields.age = Number(formData.age); // ✅ Ensure number to backend
     }
     if (formData.avatar !== originalData.avatar && formData.avatar !== "") {
       changedFields.avatar = formData.avatar;
@@ -76,7 +75,6 @@ export default function ProfileForm() {
     return changedFields;
   };
 
-  // ✅ FIXED: Check if AT LEAST ONE field CHANGED (aligns with backend)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,7 +85,6 @@ export default function ProfileForm() {
 
     const dataToSend = createDataToSend();
 
-    // ✅ Check for changes: object keys
     if (Object.keys(dataToSend).length === 0) {
       toast.info("No changes detected. Nothing to update.", toastOptions);
       setIsEditing(false);
@@ -96,23 +93,24 @@ export default function ProfileForm() {
 
     setIsLoading(true);
     try {
-      const response = await userAPI.updateProfile(dataToSend); // ✅ ALWAYS JSON
+      const response = await userAPI.updateProfile(dataToSend);
 
-      // ✅ Proper Number handling from response
       const updatedUser = response.data.data.user;
       setUser(updatedUser);
+
       setOriginalData({
         name: updatedUser.name || "",
         username: updatedUser.username || "",
-        age: updatedUser.age || "", // ✅ String for display
-        avatar: updatedUser.avatar || "", // ✅ Update avatar URL
+        age: parseInt(updatedUser.age) || 0, // ✅ Ensure number
+        avatar: updatedUser.avatar || "",
         bio: updatedUser.bio || "",
       });
+
       setFormData({
         name: updatedUser.name || "",
         username: updatedUser.username || "",
-        age: updatedUser.age || "", // ✅ String for input
-        avatar: updatedUser.avatar || "", // ✅ Update avatar URL
+        age: parseInt(updatedUser.age) || 0, // ✅ Ensure number
+        avatar: updatedUser.avatar || "",
         bio: updatedUser.bio || "",
       });
 
@@ -135,7 +133,6 @@ export default function ProfileForm() {
     setIsEditing(!isEditing);
   };
 
-  // ✅ PERFECT AVATAR VALIDATION + FILE EXTENSION CHECK
   const getAvatarStatus = () => {
     const url = formData.avatar.trim();
 
@@ -144,7 +141,6 @@ export default function ProfileForm() {
     try {
       new URL(url);
 
-      // ✅ CHECK FILE EXTENSION
       const validExtensions = [".jpg", ".jpeg", ".png", ".webp", ".svg"];
       const urlLower = url.toLowerCase();
       const hasValidExtension = validExtensions.some((ext) =>
@@ -180,10 +176,6 @@ export default function ProfileForm() {
           />
           <h5 className="mb-1">{formData.name || "Your Name"}</h5>
           <p className="text-muted mb-0">@{formData.username || "username"}</p>
-
-          {formData.age && (
-            <p className="text-muted mb-0">{formData.age} years old</p>
-          )}
         </div>
       )}
 
@@ -235,7 +227,7 @@ export default function ProfileForm() {
             className="form-control"
             id="age"
             name="age"
-            value={formData.age || ""}
+            value={formData.age} // ✅ Always show the number value
             onChange={handleInputChange}
             disabled={!isEditing}
             min="18"
@@ -254,7 +246,7 @@ export default function ProfileForm() {
             id="avatar"
             name="avatar"
             value={formData.avatar}
-            onChange={handleInputChange} // ✅ Editable!
+            onChange={handleInputChange}
             disabled={!isEditing}
             maxLength="1100"
             placeholder="https://example.com/avatar.jpg"
