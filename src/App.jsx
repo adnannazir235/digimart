@@ -1,4 +1,4 @@
-import { Routes, Route, useSearchParams } from "react-router-dom";
+import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
 import CheckEmail from "./pages/CheckEmail";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
@@ -19,6 +19,9 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import BuyerDashboard from "./pages/BuyerDashboard.jsx";
 import SellerDashboard from "./pages/SellerDashboard.jsx";
+import CreateShop from "./pages/CreateShop.jsx";
+import ProductsTab from "./components/ProductsTab.jsx";
+import OrdersTab from "./components/OrdersTab.jsx";
 
 // Centralized toast handling component
 function QueryHandler() {
@@ -127,11 +130,18 @@ export default function App() {
             </Route>
 
             <Route element={<RoleBasedRoute roles={["seller"]} />}>
-              <Route path="/seller/dashboard" element={<SellerDashboard />} />
+              <Route path="/seller/dashboard" element={<SellerDashboard />}>
+                <Route index element={<Navigate to="products" replace />} />
+                <Route path="products" element={<ProductsTab />} />
+                <Route path="orders" element={<OrdersTab />} />
+              </Route>
             </Route>
-
             <Route element={<RoleBasedRoute roles={["buyer"]} />}>
-              <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
+              <Route path="/buyer/dashboard" element={<BuyerDashboard />}>
+                <Route index element={<Navigate to="orders" replace />} />
+                <Route path="orders" element={<OrdersTab />} />
+              </Route>
+              <Route path="/buyer/create-shop" element={<CreateShop />} />
             </Route>
 
             <Route path="*" element={<NotFound minHeight="82dvh" />} />

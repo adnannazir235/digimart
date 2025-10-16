@@ -16,8 +16,8 @@ export function useBuyerData() {
     if (!authLoading && user?.role === "buyer") {
       const fetchData = async () => {
         try {
-          const ordersRes = await orderAPI.getMyOrders(); // Changed from getBuyerOrders
-          setData({ orders: ordersRes.data });
+          const ordersRes = await orderAPI.getMyOrders();
+          setData({ orders: ordersRes.data.data || [] }); // Updated to use data.data
         } catch (err) {
           console.error("Failed to fetch buyer data:", err);
           setError(err.response?.data?.message || "Failed to load buyer data");

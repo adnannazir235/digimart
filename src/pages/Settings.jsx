@@ -5,6 +5,7 @@ import ChangePassword from "../components/ChangePassword";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import DisconnectGoogleAccount from "../components/DisconnectGoogleAccount";
 import ProfileForm from "../components/ProfileForm";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { user } = useAuth();
@@ -133,6 +134,19 @@ const Settings = () => {
 
               <h4 className="mb-4">Delete Account</h4>
               <DeleteAccount />
+              <hr className="my-4" />
+
+              {user.role === "buyer" && (
+                <>
+                  <h4 className="mb-4">Create Your Own Shop</h4>
+                  <p>
+                    If you want to create your own shop, and publish your own
+                    digital products, please do so by creating your own shop
+                    from <Link to="/buyer/create-shop">this (create shop)</Link>{" "}
+                    page.
+                  </p>
+                </>
+              )}
             </>
           </div>
         </section>

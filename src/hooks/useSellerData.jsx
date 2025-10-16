@@ -9,7 +9,6 @@ export function useSellerData() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setData(null);
     setLoading(true);
     setError(null);
 
@@ -18,12 +17,12 @@ export function useSellerData() {
         try {
           const [productsRes, ordersRes] = await Promise.all([
             productAPI.getMy(),
-            orderAPI.getMyOrders(), // Changed from getSellerOrders
+            orderAPI.getMyOrders(),
           ]);
 
           setData({
-            products: productsRes.data,
-            orders: ordersRes.data,
+            products: productsRes.data.data || [], // Fallback to empty array
+            orders: ordersRes.data.data || [], // Fallback to empty array
           });
         } catch (err) {
           console.error("Failed to fetch seller data:", err);
@@ -39,5 +38,5 @@ export function useSellerData() {
     }
   }, [user, authLoading]);
 
-  return { data, loading, error };
+  return { data, setData, loading, error };
 }
