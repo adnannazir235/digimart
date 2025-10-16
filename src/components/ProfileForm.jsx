@@ -40,7 +40,6 @@ export default function ProfileForm() {
     setIsEditing(false);
   };
 
-  // ✅ FIXED: Proper number handling for age input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -56,18 +55,22 @@ export default function ProfileForm() {
     if (formData.name !== originalData.name && formData.name !== "") {
       changedFields.name = formData.name;
     }
+
     if (
       formData.username !== originalData.username &&
       formData.username !== ""
     ) {
       changedFields.username = formData.username;
     }
+
     if (formData.age !== originalData.age && formData.age !== 0) {
-      changedFields.age = Number(formData.age); // ✅ Ensure number to backend
+      changedFields.age = Number(formData.age);
     }
+
     if (formData.avatar !== originalData.avatar && formData.avatar !== "") {
       changedFields.avatar = formData.avatar;
     }
+
     if (formData.bio !== originalData.bio && formData.bio !== "") {
       changedFields.bio = formData.bio;
     }
@@ -92,6 +95,7 @@ export default function ProfileForm() {
     }
 
     setIsLoading(true);
+
     try {
       const response = await userAPI.updateProfile(dataToSend);
 
@@ -101,7 +105,7 @@ export default function ProfileForm() {
       setOriginalData({
         name: updatedUser.name || "",
         username: updatedUser.username || "",
-        age: parseInt(updatedUser.age) || 0, // ✅ Ensure number
+        age: parseInt(updatedUser.age) || 0,
         avatar: updatedUser.avatar || "",
         bio: updatedUser.bio || "",
       });
@@ -109,7 +113,7 @@ export default function ProfileForm() {
       setFormData({
         name: updatedUser.name || "",
         username: updatedUser.username || "",
-        age: parseInt(updatedUser.age) || 0, // ✅ Ensure number
+        age: parseInt(updatedUser.age) || 0,
         avatar: updatedUser.avatar || "",
         bio: updatedUser.bio || "",
       });
@@ -140,21 +144,7 @@ export default function ProfileForm() {
 
     try {
       new URL(url);
-
-      const validExtensions = [".jpg", ".jpeg", ".png", ".webp", ".svg"];
-      const urlLower = url.toLowerCase();
-      const hasValidExtension = validExtensions.some((ext) =>
-        urlLower.includes(ext)
-      );
-
-      if (hasValidExtension) {
-        return { text: "✅ Valid image URL", className: "text-success" };
-      } else {
-        return {
-          text: "⚠️ URL missing image extension",
-          className: "text-warning",
-        };
-      }
+      return { text: "✅ Valid image URL", className: "text-success" };
     } catch {
       return { text: "❌ Invalid URL", className: "text-danger" };
     }
@@ -166,18 +156,16 @@ export default function ProfileForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mb-4">
-      {!isEditing && (
-        <div className="text-center mb-4 pb-3 border-bottom">
-          <img
-            src={user.avatar}
-            alt="Profile"
-            className="rounded-circle img-fluid mx-auto d-block mb-2"
-            style={{ width: "80px", height: "80px", objectFit: "cover" }}
-          />
-          <h5 className="mb-1">{formData.name || "Your Name"}</h5>
-          <p className="text-muted mb-0">@{formData.username || "username"}</p>
-        </div>
-      )}
+      <div className="text-center mb-4 pb-3 border-bottom">
+        <img
+          src={user.avatar}
+          alt="Profile"
+          className="rounded-circle img-fluid mx-auto d-block mb-2"
+          style={{ width: "80px", height: "80px", objectFit: "cover" }}
+        />
+        <h5 className="mb-1">{formData.name || "Your Name"}</h5>
+        <p className="text-muted mb-0">@{formData.username || "username"}</p>
+      </div>
 
       <div className="row g-3">
         <div className="col-12 col-md-6">
@@ -227,7 +215,7 @@ export default function ProfileForm() {
             className="form-control"
             id="age"
             name="age"
-            value={formData.age} // ✅ Always show the number value
+            value={formData.age}
             onChange={handleInputChange}
             disabled={!isEditing}
             min="18"
