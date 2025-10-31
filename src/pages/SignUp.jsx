@@ -58,7 +58,7 @@ export default function SignUp() {
   const handleGoogleAuthRedirect = () => {
     setGoogleLoading(true);
     console.log("SignUp.jsx: Initiating Google auth redirect");
-    authAPI.googleAuth();
+    authAPI.googleAuth("settings");
   };
 
   return (

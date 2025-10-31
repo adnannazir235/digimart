@@ -118,7 +118,14 @@ export const authAPI = {
     changePassword: (data) => api.post("/auth/change-password", data),
     initiateForgotPassword: (data) => api.post("/auth/forgot-password", data),
     resetPassword: (data, token) => api.post("/auth/reset-password", data, { headers: { Authorization: `Bearer ${token}` } }),
-    googleAuth: () => { window.location.href = "/auth/google?redirectTo=settings" },
+    googleAuth: (redirectTo = "") => {
+        const backendUrl = import.meta.env.VITE_API_BACKEND_URL;
+        const redirectPath = redirectTo ? `?redirectTo=${redirectTo}` : "";
+        const url = `${backendUrl}/auth/google${redirectPath}`;
+
+        // Full page redirect — NOT AJAX
+        window.location.href = url;
+    },
     setPassword: (data) => api.post("/auth/set-password", data),
     deleteAccount: (data) => api.delete("/auth/delete-account", data),
     disconnectGoogle: (data) => api.post("/auth/disconnect-google", data),

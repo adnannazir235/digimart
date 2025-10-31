@@ -74,7 +74,7 @@ export default function LogIn() {
   const handleGoogleAuthRedirect = () => {
     setGoogleLoading(true);
     console.log("LogIn.jsx: Initiating Google auth redirect");
-    authAPI.googleAuth();
+    authAPI.googleAuth("settings");
   };
 
   return (
