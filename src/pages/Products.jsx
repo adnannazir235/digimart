@@ -20,8 +20,6 @@ export default function Products() {
           (product) => product.isActive && !product.isDeleted
         );
         setProducts(activeProducts);
-      } catch (err) {
-        toast.error("Failed to load products.", toastOptions);
       } finally {
         setLoading(false);
       }
