@@ -16,5 +16,4 @@ export default defineConfig({
   },
   envPrefix: "FRONTEND_",
   plugins: [react()],
-  base: '/digimart',
 })
