@@ -87,6 +87,18 @@ export default function Header() {
                     `nav-link ${isActive ? "active" : ""}`
                   }
                   aria-current="page"
+                  to="/products"
+                >
+                  Products
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? "active" : ""}`
+                  }
+                  aria-current="page"
                   to="/privacy"
                 >
                   Privacy

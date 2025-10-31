@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
-import ConfirmPopup from "./ConfirmPopup";
+import ModalPopup from "./ModalPopup";
 import { authAPI } from "../services/api";
 import { useAuth } from "../contexts/authContext";
 
@@ -19,13 +19,21 @@ export default function DeleteAccount() {
       const response = await authAPI.deleteAccount();
       console.log(response.data);
 
-      setUser(null);
-      setAccessToken(null);
+      if (response.data.success) {
+        setUser(null);
+        setAccessToken(null);
 
-      toast.success(
-        response.data.message || "Account deleted successfully",
-        toastOptions
-      );
+        toast.success(
+          response.data.message || "Account deleted successfully",
+          toastOptions
+        );
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1300);
+      } else {
+        toast.error(response.data.message, toastOptions);
+      }
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to delete account",
@@ -33,12 +41,12 @@ export default function DeleteAccount() {
       );
     } finally {
       setLoading(false);
-      setIsPopupOpen(false); // Close popup after response, whether success or error
+      setIsPopupOpen(false);
     }
   };
 
   const handleCancel = () => {
-    setIsPopupOpen(false); // Close popup on cancel
+    setIsPopupOpen(false);
   };
 
   return (
@@ -50,17 +58,22 @@ export default function DeleteAccount() {
         Delete Account
       </button>
 
-      <ConfirmPopup
+      <ModalPopup
         title="Confirm Account Deletion"
-        message="Are you sure you want to delete your account? This action cannot be undone."
+        isOpen={isPopupOpen}
         confirmText="Yes, Delete"
         cancelText="No"
         countdownSeconds={3}
-        isOpen={isPopupOpen}
         onConfirm={handleDeleteAccount}
         onCancel={handleCancel}
         loading={loading}
-      />
+        isClosable={false}
+      >
+        <p>
+          Are you sure you want to delete your account? This action cannot be
+          undone.
+        </p>
+      </ModalPopup>
     </>
   );
 }

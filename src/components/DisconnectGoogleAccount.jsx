@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/authContext";
 import { authAPI } from "../services/api";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
-import ConfirmPopup from "./ConfirmPopup";
+import ModalPopup from "./ModalPopup";
 import GoogleLogo from "../assets/google/logo.png";
 
 export default function DisconnectGoogleAccount() {
@@ -21,6 +21,10 @@ export default function DisconnectGoogleAccount() {
 
       if (response.data.success) {
         toast.success(response.data.message, toastOptions);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1300);
       } else {
         toast.error(response.data.message, toastOptions);
       }
@@ -31,12 +35,12 @@ export default function DisconnectGoogleAccount() {
       );
     } finally {
       setLoading(false);
-      setIsPopupOpen(false); // Close popup after response
+      setIsPopupOpen(false);
     }
   };
 
   const handleCancel = () => {
-    setIsPopupOpen(false); // Close popup on cancel
+    setIsPopupOpen(false);
   };
 
   return (
@@ -49,21 +53,23 @@ export default function DisconnectGoogleAccount() {
         <img src={GoogleLogo} height="20" className="ms-2" alt="Google Logo" />
       </button>
 
-      <ConfirmPopup
+      <ModalPopup
         title="Confirm Google Account Disconnection"
-        message={`Are you sure you want to disconnect your Google account? ${
-          !user.isPassSet
-            ? "This action requires a password to be set for your account. Please ensure your password is set before proceeding."
-            : ""
-        }`}
+        isOpen={isPopupOpen}
         confirmText="Yes, Disconnect"
         cancelText="No"
         countdownSeconds={3}
-        isOpen={isPopupOpen}
         onConfirm={handleDisconnectGoogle}
         onCancel={handleCancel}
         loading={loading}
-      />
+        isClosable={false}
+      >
+        <p>
+          Are you sure you want to disconnect your Google account?{" "}
+          {!user.isPassSet &&
+            "This action requires a password to be set for your account. Please ensure your password is set before proceeding."}
+        </p>
+      </ModalPopup>
     </>
   );
 }

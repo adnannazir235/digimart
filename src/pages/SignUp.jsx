@@ -39,16 +39,12 @@ export default function SignUp() {
         "Registration successful! Check your email.";
 
       console.log("Navigating to /check-email");
-      navigate(
-        `/check-email?status=success&message=${encodeURIComponent(
-          successMessage
-        )}`,
-        {
-          state: {
-            email: formData.email,
-          },
-        }
-      );
+      navigate("/check-email", {
+        state: {
+          email: formData.email,
+          toast: { successMessage },
+        },
+      });
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Registration failed",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { userAPI } from "../services/api.js";
+import { shopAPI, userAPI } from "../services/api.js";
 import LoadingButton from "../components/LoadingButton.jsx";
 import { toastOptions } from "../../config/styles.js";
 import { useAuth } from "../contexts/authContext.jsx";
@@ -50,15 +50,11 @@ export default function CreateShop() {
     setIsLoading(true);
 
     try {
-      const response = await userAPI.createShop({
-        shopName: formData.shopName,
-        description: formData.description || "",
-        logo: formData.logo || "",
+      const response = await shopAPI.createShop({
+        shopName: formData.shopName.trim(),
+        description: formData.description.trim() || "",
+        logo: formData.logo.trim() || "",
       });
-
-      // Fetch updated user profile to ensure role is updated
-      const profileResponse = await userAPI.getProfile();
-      setUser(profileResponse.data.data.user);
 
       // Reset form
       setFormData({
@@ -67,12 +63,14 @@ export default function CreateShop() {
         logo: "",
       });
 
-      // Navigate to seller dashboard with success message
-      navigate("/seller/dashboard", {
-        state: {
-          successMessage: response.data.message || "Shop created successfully!",
-        },
-      });
+      toast.success(
+        response.data.message || "Shop created successfully!",
+        toastOptions
+      );
+
+      // Fetch updated user profile to ensure role is updated
+      const profileResponse = await userAPI.getProfile();
+      setUser(profileResponse.data.data.user);
     } catch (error) {
       const message = error.response?.data?.message || "Failed to create shop";
       toast.error(message, toastOptions);
@@ -109,7 +107,7 @@ export default function CreateShop() {
               <div className="row g-3">
                 <div className="col-12">
                   <label htmlFor="shopName" className="form-label">
-                    Shop Name
+                    Shop Name<span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"

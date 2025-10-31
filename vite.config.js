@@ -7,7 +7,7 @@ export default defineConfig({
     // port: 3000,
     open: true,
     proxy: {
-      '^/(auth|users|products|stripe|checkout|order)': {
+      '^/(auth|users|products|shops|stripe|checkout|order)': {
         target: 'http://localhost:4000', // Your Node.js backend
         changeOrigin: true,
         secure: false,

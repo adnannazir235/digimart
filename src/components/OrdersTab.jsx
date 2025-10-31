@@ -1,18 +1,66 @@
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
 import { orderAPI } from "../services/api";
-import { useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
+import { useAuth } from "../contexts/authContext";
 
 export default function OrdersTab({ isBuyer = false }) {
-  console.log("This is isBuyer:>", isBuyer);
-  const { orders } = useOutletContext();
+  const { user } = useAuth();
+  let { shop } = {};
+  if (user.isSeller) {
+    shop = useOutletContext();
+  }
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // === EARLY REDIRECT WITH SPINNER ===
+  useEffect(() => {
+    if (user && user.isSeller && !user.sellerOnboardingComplete) {
+      const timer = setTimeout(() => {
+        navigate("/seller/dashboard/shop", {
+          replace: true,
+          state: { from: location },
+        });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [user, navigate, location]);
+
+  // Show spinner immediately if not onboarded (for sellers)
+  if (user && user.isSeller && !user.sellerOnboardingComplete) {
+    return <LoadingSpinner />;
+  }
+
+  // === REST OF COMPONENT ===
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [downloadingOrderId, setDownloadingOrderId] = useState(null);
 
-  const handleDownload = async (orderId) => {
-    if (downloadingOrderId) return; // Prevent concurrent downloads
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await orderAPI.getMyOrders();
+        setOrders(res.data.data || []);
+      } catch (err) {
+        setError("Failed to load orders");
+        toast.error("Failed to load orders", toastOptions);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    // Skip fetch only for sellers if no shop or not onboarded
+    if (!isBuyer && (!shop || !user?.sellerOnboardingComplete)) return;
+
+    fetchOrders();
+  }, [isBuyer, shop, user?.sellerOnboardingComplete]);
+
+  const handleDownload = async (orderId) => {
+    if (downloadingOrderId) return;
     setDownloadingOrderId(orderId);
     try {
       const response = await orderAPI.downloadProduct(orderId);
@@ -29,7 +77,6 @@ export default function OrdersTab({ isBuyer = false }) {
       document.body.removeChild(a);
       toast.success("Files downloaded successfully!", toastOptions);
     } catch (err) {
-      console.error("Download failed:", err);
       const message = err.response?.data?.message || "Failed to download files";
       toast.error(message, toastOptions);
     } finally {
@@ -37,19 +84,19 @@ export default function OrdersTab({ isBuyer = false }) {
     }
   };
 
-  // Handle case where orders is undefined or null
-  if (!orders) {
-    console.log("This is orders in if:>", orders);
-    return <div>Loading orders...</div>;
-  }
+  if (loading)
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
     <div>
       <h3 className="mb-3">Orders ({orders.length})</h3>
       {orders.length === 0 ? (
-        <div className="alert alert-info" role="alert">
-          No orders found.
-        </div>
+        <div className="alert alert-info">No orders found.</div>
       ) : (
         <div className="card">
           <div className="card-body">

@@ -1,4 +1,10 @@
-import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useSearchParams,
+  useNavigate,
+} from "react-router-dom";
 import CheckEmail from "./pages/CheckEmail";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
@@ -22,32 +28,32 @@ import SellerDashboard from "./pages/SellerDashboard.jsx";
 import CreateShop from "./pages/CreateShop.jsx";
 import ProductsTab from "./components/ProductsTab.jsx";
 import OrdersTab from "./components/OrdersTab.jsx";
+import ShopTab from "./components/ShopTab.jsx";
+import Products from "./pages/Products.jsx";
 
 // Centralized toast handling component
 function QueryHandler() {
+  const { login, setUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { login } = useAuth();
+  const navigate = useNavigate();
   const processedToasts = useRef(new Set());
 
   useEffect(() => {
     const status = searchParams.get("status");
     const message = searchParams.get("message");
     const accessToken = searchParams.get("accessToken");
+    const stripeSuccess = searchParams.get("stripeSuccess");
     const toastId =
-      searchParams.get("toastId") || `${status}-${message}-${Date.now()}`; // Add timestamp for uniqueness
+      searchParams.get("toastId") || `${status}-${message}-${Date.now()}`;
 
-    if (!status && !message && !accessToken) {
-      return;
-    }
-
-    if (processedToasts.current.has(toastId)) {
-      return;
-    }
+    if (!status && !message && !accessToken && !stripeSuccess) return;
+    if (processedToasts.current.has(toastId)) return;
 
     console.log("QueryHandler: Processing query params:", {
       status,
       message,
       accessToken,
+      stripeSuccess,
       toastId,
     });
 
@@ -59,13 +65,26 @@ function QueryHandler() {
       shouldClearParams = true;
     }
 
+    if (stripeSuccess === "true") {
+      processedToasts.current.add(toastId);
+      setTimeout(async () => {
+        toast.success("Stripe account connected successfully!", {
+          ...toastOptions,
+          toastId,
+        });
+        try {
+          const res = await userAPI.getProfile();
+          setUser(res.data.data.user); // Update user state
+        } catch (err) {
+          console.error("Failed to update user profile:", err);
+        }
+        navigate("/seller/dashboard", { replace: true });
+      }, 1000);
+      shouldClearParams = true;
+    }
+
     if (status && message) {
       const decodedMessage = decodeURIComponent(message);
-      console.log("QueryHandler: Displaying toast:", {
-        status,
-        decodedMessage,
-      });
-
       processedToasts.current.add(toastId);
 
       // Use minimal delay to ensure ToastContainer is ready
@@ -99,9 +118,29 @@ function QueryHandler() {
         setSearchParams({}, { replace: true });
       }
     };
-  }, [searchParams, setSearchParams, login]);
+  }, [searchParams, setSearchParams, login, setUser]);
 
   return null;
+}
+
+function StripeCallback() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    const status = searchParams.get("status");
+    const message = searchParams.get("message");
+
+    if (error || (status === "false" && message)) {
+      toast.error(message || "Stripe connection failed", toastOptions);
+      navigate("/seller/dashboard", { replace: true });
+    } else {
+      navigate("/seller/dashboard?stripeSuccess=true", { replace: true });
+    }
+  }, [navigate, searchParams]);
+
+  return <LoadingSpinner />;
 }
 
 export default function App() {
@@ -113,6 +152,7 @@ export default function App() {
         <main style={{ minHeight: "82dvh" }}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
 
@@ -130,17 +170,23 @@ export default function App() {
             </Route>
 
             <Route element={<RoleBasedRoute roles={["seller"]} />}>
+              <Route path="/stripe/callback" element={<StripeCallback />} />
+
               <Route path="/seller/dashboard" element={<SellerDashboard />}>
                 <Route index element={<Navigate to="products" replace />} />
                 <Route path="products" element={<ProductsTab />} />
+                {/* <Route path="/edit-product/:productId" element={<EditProduct />} /> */}
                 <Route path="orders" element={<OrdersTab />} />
+                <Route path="shop" element={<ShopTab />} />
               </Route>
             </Route>
+
             <Route element={<RoleBasedRoute roles={["buyer"]} />}>
               <Route path="/buyer/dashboard" element={<BuyerDashboard />}>
                 <Route index element={<Navigate to="orders" replace />} />
-                <Route path="orders" element={<OrdersTab />} />
+                <Route path="orders" element={<OrdersTab isBuyer={true} />} />
               </Route>
+
               <Route path="/buyer/create-shop" element={<CreateShop />} />
             </Route>
 

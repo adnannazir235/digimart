@@ -122,19 +122,33 @@ export const authAPI = {
     setPassword: (data) => api.post('/auth/set-password', data),
     deleteAccount: (data) => api.delete('/auth/delete-account', data),
     disconnectGoogle: (data) => api.post('/auth/disconnect-google', data),
-    createShop: (data) => api.post('/users/create-shop', data),
 };
 
-// --- USER AND SHOP API ---
+// --- USER API ---
 export const userAPI = {
-    // GET /users/me (Already exists in your authAPI, but often better placed here)
+    // GET /users/me
     getProfile: () => api.get('/users/me'),
 
     // PUT /users/me (Authenticated profile update)
     updateProfile: (data) => api.put('/users/me', data),
+};
 
-    // POST /users/create-shop (Authenticated seller onboarding)
-    createShop: (data) => api.post('/users/create-shop', data),
+// --- SHOP API ---
+export const shopAPI = {
+    // POST /shops/create-shop (Authenticated seller onboarding)
+    createShop: (data) => api.post('/shops/create-shop', data),
+
+    // GET /shops/update-shop (Authenticated shop update)
+    getShops: (data) => api.get('/shops', data),
+
+    // GET /shops/my (Authenticated get seller's shop)
+    getMyShop: () => api.get('/shops/my'),
+
+    // PUT /shops/update-shop (Authenticated shop update)
+    updateShop: (data) => api.put('/shops/update-shop', data),
+
+    // PUT /shops/update-shop (Authenticated shop delete)
+    deleteShop: (id) => api.delete(`/shops/${id}`),
 };
 
 // --- PRODUCT API ---

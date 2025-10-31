@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/authContext";
-import { productAPI, orderAPI } from "../services/api";
+import { shopAPI } from "../services/api";
 
 export function useSellerData() {
   const { user, loading: authLoading } = useAuth();
-  const [data, setData] = useState(null);
+  const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -13,30 +13,29 @@ export function useSellerData() {
     setError(null);
 
     if (!authLoading && user?.role === "seller") {
-      const fetchData = async () => {
+      const fetchShop = async () => {
         try {
-          const [productsRes, ordersRes] = await Promise.all([
-            productAPI.getMy(),
-            orderAPI.getMyOrders(),
-          ]);
-
-          setData({
-            products: productsRes.data.data || [], // Fallback to empty array
-            orders: ordersRes.data.data || [], // Fallback to empty array
+          const shopRes = await shopAPI.getMyShop().catch((err) => {
+            if (err.response?.status === 404) {
+              return { data: { data: { shop: null } } };
+            }
+            throw err;
           });
+
+          setShop(shopRes.data.data.shop || null);
         } catch (err) {
-          console.error("Failed to fetch seller data:", err);
-          setError(err.response?.data?.message || "Failed to load seller data");
+          console.error("Failed to fetch shop:", err);
+          setError(err.response?.data?.message || "Failed to load shop");
         } finally {
           setLoading(false);
         }
       };
 
-      fetchData();
-    } else if (!authLoading && user?.role !== "seller") {
+      fetchShop();
+    } else if (!authLoading) {
       setLoading(false);
     }
   }, [user, authLoading]);
 
-  return { data, setData, loading, error };
+  return { shop, setShop, loading, error };
 }
