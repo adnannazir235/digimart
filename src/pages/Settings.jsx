@@ -134,10 +134,10 @@ const Settings = () => {
 
               <h4 className="mb-4">Delete Account</h4>
               <DeleteAccount />
-              <hr className="my-4" />
 
               {user.role === "buyer" && (
                 <>
+                  <hr className="my-4" />
                   <h4 className="mb-4">Create Your Own Shop</h4>
                   <p>
                     If you want to create your own shop, and publish your own

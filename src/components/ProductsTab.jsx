@@ -9,20 +9,21 @@ import LoadingSpinner from "./LoadingSpinner";
 import GridLogo from "../assets/ui/grid.png";
 import RowLogo from "../assets/ui/row.png";
 import ModalPopup from "./ModalPopup";
-import CreateProductForm from "./CreateProductForm";
-import StripeConnectModal from "./StripeConnectModal"; // Import new modal
+import CreateProductPopup from "./CreateProductPopup";
+import StripeConnectModal from "./StripeConnectModal";
 
 export default function ProductsTab() {
   const { shop } = useOutletContext();
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingProductId, setDeletingProductId] = useState(null);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
-  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false); // State for Stripe modal
+  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
   const [displayStyle, setDisplayStyle] = useState("row");
   const [productToDelete, setProductToDelete] = useState(null);
 
@@ -62,22 +63,12 @@ export default function ProductsTab() {
   };
 
   const handleCreateProduct = async (formData) => {
-    try {
-      await productAPI.create(formData);
-      toast.success("Product created successfully!", toastOptions);
-      const res = await productAPI.getMy();
-      setProducts(res.data.data || []);
-      setIsCreatePopupOpen(false);
-    } catch (err) {
-      throw err;
-    }
+    await productAPI.create(formData);
+    const res = await productAPI.getMy();
+    setProducts(res.data.data || []);
   };
 
   const handleCancelCreate = () => setIsCreatePopupOpen(false);
-  const handleCancelDelete = () => {
-    setIsDeletePopupOpen(false);
-    setProductToDelete(null);
-  };
 
   // Handle Add Product button click
   const handleAddProductClick = () => {
@@ -176,7 +167,10 @@ export default function ProductsTab() {
         cancelText="No"
         countdownSeconds={3}
         onConfirm={() => handleDeleteProduct(productToDelete)}
-        onCancel={handleCancelDelete}
+        onCancel={() => {
+          setIsDeletePopupOpen(false);
+          setProductToDelete(null);
+        }}
         loading={deletingProductId === productToDelete}
         isClosable={true}
       >
@@ -186,17 +180,11 @@ export default function ProductsTab() {
         </p>
       </ModalPopup>
 
-      <ModalPopup
-        title="Create New Product"
+      <CreateProductPopup
         isOpen={isCreatePopupOpen}
         onCancel={handleCancelCreate}
-        isClosable={true}
-      >
-        <CreateProductForm
-          onSubmit={handleCreateProduct}
-          onCancel={handleCancelCreate}
-        />
-      </ModalPopup>
+        onSuccess={handleCreateProduct}
+      />
 
       <StripeConnectModal
         isOpen={isStripeModalOpen}
