@@ -11,12 +11,11 @@ import RowLogo from "../assets/ui/row.png";
 import ModalPopup from "./ModalPopup";
 import CreateProductPopup from "./CreateProductPopup";
 import StripeConnectModal from "./StripeConnectModal";
+import EditProduct from "../pages/EditProduct";
 
 export default function ProductsTab() {
   const { shop } = useOutletContext();
   const { user } = useAuth();
-  const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,6 +25,10 @@ export default function ProductsTab() {
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
   const [displayStyle, setDisplayStyle] = useState("row");
   const [productToDelete, setProductToDelete] = useState(null);
+  const [tabState, setTabState] = useState({
+    current: "Products",
+    product: null,
+  });
 
   // Fetch products only if onboarded and shop exists
   useEffect(() => {
@@ -82,7 +85,7 @@ export default function ProductsTab() {
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="alert alert-danger">{error}</div>;
 
-  return (
+  const ProductsTabView = () => (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-5">
         <h3>Products ({products.length})</h3>
@@ -148,7 +151,12 @@ export default function ProductsTab() {
               <Product
                 product={product}
                 displayStyle={displayStyle}
-                onEdit={() => navigate(`/edit-product/${product._id}`)}
+                onEdit={() =>
+                  setTabState({
+                    current: "Edit",
+                    product: product,
+                  })
+                }
                 onDelete={() => {
                   setProductToDelete(product._id);
                   setIsDeletePopupOpen(true);
@@ -191,5 +199,18 @@ export default function ProductsTab() {
         onCancel={() => setIsStripeModalOpen(false)}
       />
     </div>
+  );
+
+  return (
+    <>
+      {tabState.current === "Products" ? (
+        <ProductsTabView />
+      ) : tabState.current === "Edit" ? (
+        <EditProduct
+          product={tabState.product}
+          onBack={() => setTabState({ current: "Products", productId: null })}
+        />
+      ) : null}
+    </>
   );
 }

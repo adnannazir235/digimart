@@ -167,10 +167,10 @@ export const productAPI = {
     }),
 
     // GET /products (Public, get all products)
-    getAll: (params = {}) => api.get("/products", { params }), // Allow optional query params for filtering/pagination
+    getAll: () => api.get("/products"),
 
     // GET /products/my (Authenticated, get products owned by the current seller)
-    getMy: (params = {}) => api.get("/products/my", { params }),
+    getMy: () => api.get("/products/my"),
 
     // GET /products/:id (Public or optionalAuth)
     getSingle: (id) => api.get(`/products/${id}`),

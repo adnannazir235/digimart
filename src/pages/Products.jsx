@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import { toastOptions } from "../../config/styles";
 import { productAPI } from "../services/api";
 import Product from "../components/Product";
 import LoadingSpinner from "../components/LoadingSpinner";

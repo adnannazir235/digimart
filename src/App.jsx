@@ -30,6 +30,7 @@ import ProductsTab from "./components/ProductsTab.jsx";
 import OrdersTab from "./components/OrdersTab.jsx";
 import ShopTab from "./components/ShopTab.jsx";
 import Products from "./pages/Products.jsx";
+import EditProduct from "./pages/EditProduct.jsx";
 
 // Centralized toast handling component
 function QueryHandler() {
@@ -175,7 +176,6 @@ export default function App() {
               <Route path="/seller/dashboard" element={<SellerDashboard />}>
                 <Route index element={<Navigate to="products" replace />} />
                 <Route path="products" element={<ProductsTab />} />
-                {/* <Route path="/edit-product/:productId" element={<EditProduct />} /> */}
                 <Route path="orders" element={<OrdersTab />} />
                 <Route path="shop" element={<ShopTab />} />
               </Route>
