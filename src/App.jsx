@@ -46,19 +46,11 @@ const GAInitializer = () => {
 
       if (GA_MEASUREMENT_ID) {
         ReactGA.initialize(GA_MEASUREMENT_ID);
-        console.log(
-          "Google Analytics Initialized: Running in Production Mode on",
-          window.location.hostname
-        );
       } else {
         console.warn(
           "Google Analytics skipped: VITE_API_GA_MEASUREMENT_ID is missing in production environment."
         );
       }
-    } else {
-      console.log(
-        "Google Analytics Skipped: Running in Development Mode (localhost)."
-      );
     }
   }, []);
   return null;
