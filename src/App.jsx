@@ -30,7 +30,50 @@ import ProductsTab from "./components/ProductsTab.jsx";
 import OrdersTab from "./components/OrdersTab.jsx";
 import ShopTab from "./components/ShopTab.jsx";
 import Products from "./pages/Products.jsx";
-import EditProduct from "./pages/EditProduct.jsx";
+import ReactGA from "react-ga4";
+import useAnalyticsTracker from "./hooks/useAnalyticsTracker.jsx";
+
+const GAInitializer = () => {
+  useEffect(() => {
+    // Determine if we are running in a production environment (not localhost)
+    const isProduction =
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1";
+
+    if (isProduction) {
+      // Use the helper function to safely retrieve the environment variable
+      const GA_MEASUREMENT_ID = import.meta.env.VITE_API_GA_MEASUREMENT_ID;
+
+      if (GA_MEASUREMENT_ID) {
+        ReactGA.initialize(GA_MEASUREMENT_ID);
+        console.log(
+          "Google Analytics Initialized: Running in Production Mode on",
+          window.location.hostname
+        );
+      } else {
+        console.warn(
+          "Google Analytics skipped: VITE_API_GA_MEASUREMENT_ID is missing in production environment."
+        );
+      }
+    } else {
+      console.log(
+        "Google Analytics Skipped: Running in Development Mode (localhost)."
+      );
+    }
+  }, []);
+  return null;
+};
+
+const RouteChangeTracker = () => {
+  // Only call the hook if GA was initialized (i.e., if we are in production)
+  const isProduction =
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1";
+  if (isProduction) {
+    useAnalyticsTracker();
+  }
+  return null; // This component doesn't render anything
+};
 
 // Centralized toast handling component
 function QueryHandler() {
@@ -147,6 +190,8 @@ function StripeCallback() {
 export default function App() {
   return (
     <>
+      <GAInitializer />
+      <RouteChangeTracker />
       <AuthProvider>
         <QueryHandler />
         <Header />

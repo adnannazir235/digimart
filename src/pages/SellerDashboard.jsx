@@ -42,21 +42,6 @@ export default function SellerDashboard() {
     }
   }, [loading, user, shop, location.pathname, navigate]);
 
-  // Debugging logs (only log when relevant)
-  useEffect(() => {
-    const normalizedPath = location.pathname.replace(/\/+$/, "").toLowerCase();
-    const isRoot = normalizedPath === "/seller/dashboard";
-    if (isRoot || isRedirecting) {
-      console.log("SellerDashboard State:", {
-        loading,
-        user: !!user,
-        shop: !!shop,
-        pathname: location.pathname,
-        isRedirecting,
-      });
-    }
-  }, [loading, user, shop, location.pathname, isRedirecting]);
-
   // Render checks
   if (loading) return <LoadingSpinner />;
   if (error)
