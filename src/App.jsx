@@ -30,6 +30,7 @@ import ProductsTab from "./components/ProductsTab.jsx";
 import OrdersTab from "./components/OrdersTab.jsx";
 import ShopTab from "./components/ShopTab.jsx";
 import Products from "./pages/Products.jsx";
+import Product from "./pages/Product.jsx";
 import ReactGA from "react-ga4";
 import useAnalyticsTracker from "./hooks/useAnalyticsTracker.jsx";
 
@@ -193,6 +194,7 @@ export default function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/products/:id" element={<Product />} />
 
             <Route element={<PublicOnlyRoute />}>
               <Route path="/signup" element={<SignUp />} />

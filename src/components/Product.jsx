@@ -1,12 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Product({
   product,
   displayStyle = "card",
   onEdit,
   onDelete,
   isDeleting,
+  addBuyButton = false,   // Controls Buy button visibility
 }) {
+  const navigate = useNavigate();
+
   // Destructure relevant product properties
   const {
+    _id, // <-- Get ID here
     title,
     description,
     price,
@@ -17,9 +23,18 @@ export default function Product({
     cloudinarySecureUrl,
   } = product;
 
+  // Fallback ID
+  const productId = _id || product.id;
+
   // Use cloudinarySecureUrl if available, else fallback to fileUrl
   const imageUrl =
     cloudinarySecureUrl || fileUrl || "https://via.placeholder.com/200";
+
+  const handleBuyClick = () => {
+    if (productId) {
+      navigate(`/products/${productId}`);
+    }
+  };
 
   // Card style component
   const CardView = () => (
@@ -65,25 +80,38 @@ export default function Product({
             <span>Downloads: {stats.totalDownloads}</span>
             <span>Rating: {stats.ratingAvg.toFixed(1)}</span>
           </div>
-          {onEdit && onDelete && (
-            <div className="d-flex gap-2">
+
+          {/* BUTTONS */}
+          <div className="d-flex gap-2">
+            {addBuyButton && productId && (
               <button
-                className="btn btn-outline-primary btn-sm px-3 w-50"
-                onClick={onEdit}
+                className="btn btn-primary btn-sm px-3 flex-fill"
+                onClick={handleBuyClick}
                 style={{ fontSize: "0.85rem" }}
               >
-                Edit
+                Buy
               </button>
-              <button
-                className="btn btn-outline-danger btn-sm px-3 w-50"
-                onClick={onDelete}
-                disabled={isDeleting}
-                style={{ fontSize: "0.85rem" }}
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          )}
+            )}
+            {onEdit && onDelete && (
+              <>
+                <button
+                  className="btn btn-outline-primary btn-sm px-3 flex-fill"
+                  onClick={onEdit}
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-outline-danger btn-sm px-3 flex-fill"
+                  onClick={onDelete}
+                  disabled={isDeleting}
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -128,25 +156,38 @@ export default function Product({
         <div>Sales: {stats.totalSales}</div>
         <div>Downloads: {stats.totalDownloads}</div>
         <div>Rating: {stats.ratingAvg.toFixed(1)}</div>
-        {onEdit && onDelete && (
-          <div className="d-flex gap-2 mt-2">
+
+        {/* BUTTONS */}
+        <div className="d-flex gap-2 mt-2">
+          {addBuyButton && productId && (
             <button
-              className="btn btn-outline-primary btn-sm px-3 w-50"
-              onClick={onEdit}
+              className="btn btn-primary btn-sm px-3 flex-fill"
+              onClick={handleBuyClick}
               style={{ fontSize: "0.85rem" }}
             >
-              Edit
+              Buy
             </button>
-            <button
-              className="btn btn-outline-danger btn-sm px-3 w-50"
-              onClick={onDelete}
-              disabled={isDeleting}
-              style={{ fontSize: "0.85rem" }}
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-          </div>
-        )}
+          )}
+          {onEdit && onDelete && (
+            <>
+              <button
+                className="btn btn-outline-primary btn-sm px-3 flex-fill"
+                onClick={onEdit}
+                style={{ fontSize: "0.85rem" }}
+              >
+                Edit
+              </button>
+              <button
+                className="btn btn-outline-danger btn-sm px-3 flex-fill"
+                onClick={onDelete}
+                disabled={isDeleting}
+                style={{ fontSize: "0.85rem" }}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

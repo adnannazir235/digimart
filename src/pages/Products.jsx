@@ -40,7 +40,7 @@ export default function Products() {
         <div className="row row-cols-1 row-cols-md-3 g-4">
           {products.map((product) => (
             <div key={product._id} className="col">
-              <Product product={product} displayStyle="card" />
+              <Product product={product} displayStyle="card" addBuyButton={true} />
             </div>
           ))}
         </div>
