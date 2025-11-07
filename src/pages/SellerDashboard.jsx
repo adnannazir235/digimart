@@ -12,7 +12,7 @@ import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import StripeConnectModal from "../components/StripeConnectModal.jsx";
 
 export default function SellerDashboard() {
-  const { shop, setShop, loading, error } = useSellerData();
+  const { shop, setShop, sales, loading, error } = useSellerData();
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -95,12 +95,12 @@ export default function SellerDashboard() {
             </NavLink>
             {user.isSeller && user.sellerOnboardingComplete && (
               <NavLink
-                to="orders"
+                to="orders-and-sales"
                 className={({ isActive }) =>
                   `nav-link w-100 ${isActive ? "active" : ""}`
                 }
               >
-                Orders
+                Orders & Sales
               </NavLink>
             )}
             <NavLink
@@ -114,7 +114,7 @@ export default function SellerDashboard() {
           </nav>
 
           <section className="col-md-10 p-4 border border-1">
-            <Outlet context={{ shop, setShop }} />
+            <Outlet context={{ shop, setShop, sales }} />
           </section>
         </div>
       </div>

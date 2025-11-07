@@ -213,7 +213,7 @@ export default function App() {
               <Route path="/seller/dashboard" element={<SellerDashboard />}>
                 <Route index element={<Navigate to="products" replace />} />
                 <Route path="products" element={<ProductsTab />} />
-                <Route path="orders" element={<OrdersTab />} />
+                <Route path="orders-and-sales" element={<OrdersTab />} />
                 <Route path="shop" element={<ShopTab />} />
               </Route>
             </Route>

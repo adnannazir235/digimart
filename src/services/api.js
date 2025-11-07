@@ -159,7 +159,7 @@ export const shopAPI = {
 
     // GET /shops/sales → Orders **received on seller's products**
     // Only accessible to sellers
-    getMySales: () => api.get("/shops/sales"),
+    getMySales: () => api.get("/shops/get-sales"),
 };
 
 // --- PRODUCT API ---
@@ -204,7 +204,7 @@ export const paymentAPI = {
 export const orderAPI = {
     // GET /order/me → Orders **placed by the user** (buyer perspective)
     // Works for both buyer and seller (as buyer)
-    getMyOrders: (params = {}) => api.get("/order/me", { params }),
+    getMyOrders: (params = {}) => api.get("/order/my", { params }),
 
     // GET /order/:id/download (Authenticated — download purchased file)
     // Must use `responseType: "blob"` for binary file response
