@@ -145,17 +145,21 @@ export const shopAPI = {
     // POST /shops/create-shop (Authenticated seller onboarding)
     createShop: (data) => api.post("/shops/create-shop", data),
 
-    // GET /shops/update-shop (Authenticated shop update)
+    // GET /shops (Public or filtered shop list)
     getShops: (data) => api.get("/shops", data),
 
-    // GET /shops/my (Authenticated get seller's shop)
+    // GET /shops/my (Authenticated — get seller's own shop)
     getMyShop: () => api.get("/shops/my"),
 
     // PUT /shops/update-shop (Authenticated shop update)
     updateShop: (data) => api.put("/shops/update-shop", data),
 
-    // PUT /shops/update-shop (Authenticated shop delete)
+    // DELETE /shops/:id (Authenticated — soft delete shop)
     deleteShop: (id) => api.delete(`/shops/${id}`),
+
+    // GET /shops/sales → Orders **received on seller's products**
+    // Only accessible to sellers
+    getMySales: () => api.get("/shops/sales"),
 };
 
 // --- PRODUCT API ---
@@ -198,12 +202,14 @@ export const paymentAPI = {
 };
 
 export const orderAPI = {
-    // GET /order/me (Unified endpoint for both roles)
+    // GET /order/me → Orders **placed by the user** (buyer perspective)
+    // Works for both buyer and seller (as buyer)
     getMyOrders: (params = {}) => api.get("/order/me", { params }),
 
-    // GET /order/:id/download (Authenticated, file download)
-    // IMPORTANT: Use `responseType: "blob"` for file downloads.
-    downloadProduct: (orderId) => api.get(`/order/${orderId}/download`, {
-        responseType: "blob"
-    }),
+    // GET /order/:id/download (Authenticated — download purchased file)
+    // Must use `responseType: "blob"` for binary file response
+    downloadProduct: (orderId) =>
+        api.get(`/order/${orderId}/download`, {
+            responseType: "blob",
+        }),
 };

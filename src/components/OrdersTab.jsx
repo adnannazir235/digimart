@@ -8,10 +8,7 @@ import { useAuth } from "../contexts/authContext";
 
 export default function OrdersTab({ isBuyer = false }) {
   const { user } = useAuth();
-  let { shop } = {};
-  if (user.isSeller) {
-    shop = useOutletContext();
-  }
+  let { shop } = user.isSeller === true ? useOutletContext() : {};
   const navigate = useNavigate();
   const location = useLocation();
 
