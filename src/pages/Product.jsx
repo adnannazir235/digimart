@@ -87,7 +87,7 @@ export default function Product() {
 
           <div className="mb-3">
             <span className="h3 text-primary me-2">
-              ${product.price}
+              {product.price}
             </span>
             <span className="text-muted">{product.currencyCode || "USD"}</span>
           </div>
