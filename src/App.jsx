@@ -31,6 +31,7 @@ import OrdersTab from "./components/OrdersTab.jsx";
 import ShopTab from "./components/ShopTab.jsx";
 import Products from "./pages/Products.jsx";
 import Product from "./pages/Product.jsx";
+import Cart from "./pages/Cart.jsx";
 import ReactGA from "react-ga4";
 import useAnalyticsTracker from "./hooks/useAnalyticsTracker.jsx";
 
@@ -207,6 +208,7 @@ export default function App() {
             {/* Settings accessible to both buyer and seller */}
             <Route element={<RoleBasedRoute roles={["seller", "buyer"]} />}>
               <Route path="/settings" element={<Settings />} />
+              <Route path="/cart" element={<Cart />} />
             </Route>
 
             <Route element={<RoleBasedRoute roles={["seller"]} />}>

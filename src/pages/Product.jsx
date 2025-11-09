@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productAPI } from "../services/api";
 import { useAuth } from "../contexts/authContext.jsx";
+import { useLocalStorage } from "../hooks/useLocalStorage.jsx";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Product() {
@@ -12,24 +13,8 @@ export default function Product() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getCart = () => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  };
-
-  const [cart, setCartState] = useState(getCart());
+  const [cart, setCart] = useLocalStorage("cart", []);
   const isInCart = user && cart.includes(id);
-
-  const setCart = (newCart) => {
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    setCartState(newCart);
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key: "cart",
-        newValue: JSON.stringify(newCart),
-      })
-    );
-  };
 
   const toggleCart = () => {
     if (!user) return;
@@ -37,14 +22,10 @@ export default function Product() {
     setCart(newCart);
   };
 
-  const goToCart = () => {
-    navigate("/cart");
-  };
+  const goToCart = () => navigate("/cart");
+  const goToLogin = () => navigate("/login");
 
-  const goToLogin = () => {
-    navigate("/login");
-  };
-
+  // fetch product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -69,11 +50,12 @@ export default function Product() {
 
   return (
     <>
-      {user && product.isSeller ? (
+      {user && product.isSeller && (
         <div className="alert alert-info" role="alert">
           <strong>You're viewing this product as a buyer would.</strong>
         </div>
-      ) : user ? null : null}
+      )}
+
       <div className="container py-5">
         <div className="row g-5">
           <div className="col-lg-6">
@@ -109,6 +91,7 @@ export default function Product() {
             </div>
 
             <p className="lead text-muted mb-4">{product.description}</p>
+
             <div className="d-flex gap-2">
               {user ? (
                 <>

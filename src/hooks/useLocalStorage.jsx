@@ -8,6 +8,8 @@ export function useLocalStorage(key, initialValue) {
 
   useEffect(() => {
     localStorage.setItem(key, JSON.stringify(value));
+    // Dispatch event so ALL components know
+    window.dispatchEvent(new CustomEvent("cart-updated", { detail: value }));
   }, [key, value]);
 
   return [value, setValue];

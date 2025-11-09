@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext.jsx";
 import { useEffect, useState } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage.jsx";
 import LazyAvatar from "../components/LazyAvatar.jsx";
 import digiMartLogo from "../assets/DigiMart/logo.png";
 import CartIcon from "../assets/ui/cart.png";
@@ -8,24 +9,27 @@ import CartIcon from "../assets/ui/cart.png";
 export default function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [cartCount, setCartCount] = useState(0);
-
-  const updateCartCount = () => {
-    const saved = localStorage.getItem("cart");
-    const items = saved ? JSON.parse(saved) : [];
-    setCartCount(Array.isArray(items) ? items.length : 0);
-  };
+  const [cart] = useLocalStorage("cart", []);
+  const [cartCount, setCartCount] = useState(
+    Array.isArray(cart) ? cart.length : 0
+  );
 
   useEffect(() => {
-    updateCartCount();
+    // Update count when cart changes locally
+    setCartCount(Array.isArray(cart) ? cart.length : 0);
 
-    const handleStorage = (e) => {
-      if (e.key === "cart") updateCartCount();
+    // Listen to cross-component updates
+    const handleCartUpdate = (e) => {
+      const updatedCart = e.detail;
+      setCartCount(Array.isArray(updatedCart) ? updatedCart.length : 0);
     };
 
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+    window.addEventListener("cart-updated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cart-updated", handleCartUpdate);
+    };
+  }, [cart]);
 
   return (
     <header>
@@ -59,10 +63,7 @@ export default function Header() {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div
-            className="collapse navbar-collapse"
-            id="#navbarSupportedContent"
-          >
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
               <li className="nav-item">
                 <NavLink className="nav-link" to="/">
@@ -102,81 +103,84 @@ export default function Header() {
               </li>
 
               {user && (
-                <li className="nav-item mx-2">
-                  <button
-                    onClick={() => navigate("/cart")}
-                    className="rounded-pill btn btn-light position-relative p-2 border-0 nav-link"
-                    aria-label={`Cart with ${cartCount} items`}
-                  >
-                    <img
-                      src={CartIcon}
-                      alt="Cart"
-                      width="20"
-                      height="20"
-                      style={{ verticalAlign: "text-bottom" }}
-                    />
-                    {cartCount > 0 && (
-                      <span
-                        className="translate-middle badge rounded-pill bg-danger"
-                        style={{
-                          position: "absolute",
-                          fontSize: "0.65rem",
-                          zIndex: 1,
-                          minWidth: "18px",
-                          height: "18px",
-                          left: "83%",
-                          top: "13%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {cartCount}
-                        <span className="visually-hidden">items in cart</span>
-                      </span>
-                    )}
-                  </button>
-                </li>
-              )}
-
-              {user && (
-                <li className="nav-item ms-3">
-                  <div className="dropdown">
+                <>
+                  <li className="nav-item mx-2">
                     <button
-                      className="border-0 bg-transparent"
-                      data-bs-toggle="dropdown"
+                      onClick={() => navigate("/cart")}
+                      className="rounded-pill btn btn-light position-relative p-2 border-0 nav-link"
+                      aria-label={`Cart with ${cartCount} items`}
                     >
-                      <LazyAvatar name={user.username} src={user.avatar} />
+                      <img
+                        src={CartIcon}
+                        alt="Cart"
+                        width="20"
+                        height="20"
+                        style={{ verticalAlign: "text-bottom" }}
+                      />
+                      {cartCount > 0 && (
+                        <span
+                          className="translate-middle badge rounded-pill bg-danger"
+                          style={{
+                            position: "absolute",
+                            fontSize: "0.65rem",
+                            zIndex: 1,
+                            minWidth: "18px",
+                            height: "18px",
+                            left: "83%",
+                            top: "13%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {cartCount}
+                          <span className="visually-hidden">items in cart</span>
+                        </span>
+                      )}
                     </button>
-                    <ul className="dropdown-menu dropdown-menu-end border-0 shadow bg-body rounded">
-                      <li>
-                        <NavLink
-                          className="dropdown-item"
-                          to={
-                            user.role === "seller"
-                              ? "/seller/dashboard"
-                              : "/buyer/dashboard"
-                          }
-                        >
-                          Dashboard
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink className="dropdown-item" to="/settings">
-                          Settings
-                        </NavLink>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item text-danger"
-                          onClick={logout}
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
+                  </li>
+
+                  <li className="nav-item ms-3">
+                    <div className="dropdown">
+                      <button
+                        className="border-0 bg-transparent"
+                        data-bs-toggle="dropdown"
+                      >
+                        <LazyAvatar name={user.username} src={user.avatar} />
+                      </button>
+
+                      <ul className="dropdown-menu dropdown-menu-end border-0 shadow bg-body rounded">
+                        <li>
+                          <NavLink
+                            className="dropdown-item"
+                            to={
+                              user.role === "seller"
+                                ? "/seller/dashboard"
+                                : "/buyer/dashboard"
+                            }
+                          >
+                            Dashboard
+                          </NavLink>
+                        </li>
+
+                        <li>
+                          <NavLink className="dropdown-item" to="/settings">
+                            Settings
+                          </NavLink>
+                        </li>
+
+                        <li>
+                          <button
+                            className="dropdown-item text-danger"
+                            onClick={logout}
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </>
               )}
             </ul>
           </div>
