@@ -33,9 +33,7 @@ export default function Product() {
 
   const toggleCart = () => {
     if (!user) return;
-    const newCart = isInCart
-      ? cart.filter((pid) => pid !== id)
-      : [...cart, id];
+    const newCart = isInCart ? cart.filter((pid) => pid !== id) : [...cart, id];
     setCart(newCart);
   };
 
@@ -65,69 +63,86 @@ export default function Product() {
   }, [id]);
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="alert alert-danger text-center">{error}</div>;
+  if (error)
+    return <div className="alert alert-danger text-center">{error}</div>;
   if (!product) return <div className="text-center">Product not found</div>;
 
   return (
-    <div className="container py-5">
-      <div className="row g-5">
-        <div className="col-lg-6">
-          <div className="bg-light rounded overflow-hidden d-flex justify-content-center align-items-center p-4">
-            <img
-              src={product.fileUrl || "/placeholder-product.jpg"}
-              alt={product.title}
-              className="img-fluid rounded"
-              style={{ maxHeight: "500px", objectFit: "contain" }}
-            />
-          </div>
+    <>
+      {user && product.isSeller ? (
+        <div className="alert alert-info" role="alert">
+          <strong>You're viewing this product as a buyer would.</strong>
         </div>
-
-        <div className="col-lg-6">
-          <h1 className="display-5 fw-bold mb-3">{product.title}</h1>
-
-          <div className="mb-3">
-            <span className="h3 text-primary me-2">
-              {product.price}
-            </span>
-            <span className="text-muted">{product.currencyCode || "USD"}</span>
+      ) : user ? null : null}
+      <div className="container py-5">
+        <div className="row g-5">
+          <div className="col-lg-6">
+            <div className="bg-light rounded overflow-hidden d-flex justify-content-center align-items-center p-4">
+              <img
+                src={product.fileUrl || "/placeholder-product.jpg"}
+                alt={product.title}
+                className="img-fluid rounded"
+                style={{ maxHeight: "500px", objectFit: "contain" }}
+              />
+            </div>
           </div>
 
-          <p className="lead text-muted mb-4">{product.description}</p>
+          <div className="col-lg-6">
+            <h1 className="display-5 fw-bold mb-3">{product.title}</h1>
 
-          <div className="mb-3">
-            <small className="text-muted">
-              Sold by: <strong>{product.sellerId?.username || product.sellerId?.name || "Unknown"}</strong>
-            </small>
-          </div>
+            <div className="mb-3">
+              <span className="h3 text-primary me-2">{product.price}</span>
+              <span className="text-muted">
+                {product.currencyCode || "USD"}
+              </span>
+            </div>
 
-          <div className="d-grid gap-2">
-            {user ? (
-              <>
-                <button
-                  onClick={toggleCart}
-                  className={`btn btn-lg ${isInCart ? "btn-outline-danger" : "btn-outline-primary"}`}
-                >
-                  {isInCart ? "Remove from Cart" : "Add to Cart"}
+            <div className="mb-3">
+              <small className="text-muted">
+                Sold by:{" "}
+                <strong>
+                  {product.sellerId?.username ||
+                    product.sellerId?.name ||
+                    "Unknown"}
+                </strong>
+              </small>
+            </div>
+
+            <p className="lead text-muted mb-4">{product.description}</p>
+            <div className="d-flex gap-2">
+              {user ? (
+                <>
+                  {!product.isSeller && (
+                    <>
+                      <button
+                        onClick={toggleCart}
+                        className={`btn ${
+                          isInCart
+                            ? "btn-outline-danger w-50"
+                            : "btn-outline-primary w-50"
+                        }`}
+                      >
+                        {isInCart ? "Remove from Cart" : "Add to Cart"}
+                      </button>
+                      <button
+                        onClick={goToCart}
+                        className="btn btn-primary w-50"
+                        disabled={!isInCart}
+                      >
+                        Cart
+                      </button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <button onClick={goToLogin} className="btn btn-primary w-100">
+                  Log in to buy
                 </button>
-                <button
-                  onClick={goToCart}
-                  className="btn btn-primary btn-lg"
-                  disabled={!isInCart}
-                >
-                  Cart
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={goToLogin}
-                className="btn btn-primary btn-lg"
-              >
-                Log in to buy
-              </button>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
