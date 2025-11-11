@@ -8,7 +8,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess }) => {
     description: "",
     price: "",
     currencyCode: "PKR",
-    active: true,
+    isActive: true,
   });
   const [file, setFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -19,7 +19,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess }) => {
       description: "",
       price: "",
       currencyCode: "PKR",
-      active: true,
+      isActive: true,
     });
     setFile(null);
     setSubmitting(false);
@@ -44,7 +44,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess }) => {
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("currencyCode", formData.currencyCode);
-    data.append("active", formData.active);
+    data.append("isActive", formData.isActive);
     if (file) data.append("file", file);
 
     try {
@@ -157,12 +157,12 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess }) => {
                 <input
                   type="checkbox"
                   className="form-check-input"
-                  id="active"
-                  name="active"
-                  checked={formData.active}
+                  id="isActive"
+                  name="isActive"
+                  checked={formData.isActive}
                   onChange={handleChange}
                 />
-                <label className="form-check-label" htmlFor="active">
+                <label className="form-check-label" htmlFor="isActive">
                   Active
                 </label>
               </div>

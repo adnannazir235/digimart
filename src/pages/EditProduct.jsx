@@ -12,7 +12,7 @@ export default function EditProduct({ product, onBack }) {
     description: "",
     price: "",
     currencyCode: "PKR",
-    active: true,
+    isActive: true,
   });
 
   // Populate form when product loads
@@ -23,7 +23,7 @@ export default function EditProduct({ product, onBack }) {
         description: product.description || "",
         price: product.price?.toString() || "",
         currencyCode: product.currencyCode || "PKR",
-        active: product.active ?? true,
+        isActive: product.isActive ?? true,
       });
       setImagePreview(product.cloudinarySecureUrl || product.fileUrl || "");
     }
@@ -62,7 +62,7 @@ export default function EditProduct({ product, onBack }) {
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("currencyCode", formData.currencyCode);
-    data.append("active", formData.active);
+    data.append("isActive", formData.isActive);
     if (file) data.append("file", file);
 
     try {
@@ -180,12 +180,12 @@ export default function EditProduct({ product, onBack }) {
                   <input
                     type="checkbox"
                     className="form-check-input"
-                    id="active"
-                    name="active"
-                    checked={formData.active}
+                    id="isActive"
+                    name="isActive"
+                    checked={formData.isActive}
                     onChange={handleChange}
                   />
-                  <label className="form-check-label" htmlFor="active">
+                  <label className="form-check-label" htmlFor="isActive">
                     Active (Visible to customers)
                   </label>
                 </div>
