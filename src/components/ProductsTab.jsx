@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 import { productAPI } from "../services/api";
 import { toast } from "react-toastify";
