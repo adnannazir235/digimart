@@ -1,0 +1,154 @@
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import SetPassword from "../components/SetPassword";
+import DeleteAccount from "../components/DeleteAccount";
+import ChangePassword from "../components/ChangePassword";
+import DisconnectGoogleAccount from "../components/DisconnectGoogleAccount";
+import ProfileForm from "../components/ProfileForm";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
+const Settings = () => {
+  const { user } = useSelector(state => state.auth);
+  const [currentTab, setCurrentTab] = useLocalStorage(
+    "settingsTab",
+    localStorage.getItem("settingsTab") === null
+      ? "pass"
+      : localStorage.getItem("settingsTab")
+  );
+
+  const handleTabs = (event) => {
+    const element = event.target;
+
+    if (element.id === "v-pills-pass-tab") {
+      setCurrentTab("pass");
+    } else if (element.id === "v-pills-accntManage-tab") {
+      setCurrentTab("accntManage");
+    } else {
+      alert("Error setting current tab state: Can't determine the Tab ID!");
+    }
+  };
+
+  if (!user) return null;
+
+  return (
+    <>
+      <h3 className="py-3 text-center">Settings</h3>
+      <div className="row align-items-start h-100">
+        <nav
+          className="col-12 col-lg-2 col-sm-3 nav nav-pills p-3 border border-1 flex-row flex-sm-column"
+          style={{ rowGap: "1.5rem" }}
+          id="v-pills-tab"
+          role="tablist"
+          aria-orientation="vertical"
+        >
+          <button
+            className={`nav-link ${(currentTab === "pass" ? "active" : "")}`
+            }
+            id="v-pills-pass-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#v-pills-pass"
+            type="button"
+            role="tab"
+            aria-controls="v-pills-pass"
+            aria-selected={currentTab === "pass" ? "true" : "false"}
+            onClick={(event) => {
+              handleTabs(event);
+            }}
+          >
+            Password Management
+          </button>
+
+          <button
+            className={`nav-link ${(currentTab === "accntManage" ? "active" : "")}`
+            }
+            id="v-pills-accntManage-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#v-pills-accntManage"
+            type="button"
+            role="tab"
+            aria-controls="v-pills-accntManage"
+            aria-selected={currentTab === "accntManage" ? "true" : "false"}
+            onClick={(event) => {
+              handleTabs(event);
+            }}
+          >
+            Account Management
+          </button>
+        </nav>
+
+        <section
+          className="col-12 col-lg-10 col-sm-9 tab-content p-4 border border-1"
+          id="v-pills-tabContent"
+        >
+          <div
+            className={
+              currentTab === "pass"
+                ? "tab-pane fade show active"
+                : "tab-pane fade"
+            }
+            id="v-pills-pass"
+            role="tabpanel"
+            aria-labelledby="v-pills-pass-tab"
+            tabIndex="0"
+          >
+            {user.isPassSet === true ? (
+              <>
+                <h4 className="mb-5">Change Password</h4>
+                <ChangePassword />
+              </>
+            ) : (
+              <>
+                <h4 className="mb-5">Set Password</h4>
+                <SetPassword />
+              </>
+            )}
+          </div>
+
+          <div
+            className={
+              currentTab === "accntManage"
+                ? "tab-pane fade show active"
+                : "tab-pane fade"
+            }
+            id="v-pills-accntManage"
+            role="tabpanel"
+            aria-labelledby="v-pills-accntManage-tab"
+            tabIndex="0"
+          >
+            <>
+              <h4 className="mb-4">Profile</h4>
+              <ProfileForm />
+              <hr className="my-4" />
+
+              {user.isPassSet && user.isGoogleSet && (
+                <>
+                  <h4 className="mb-4">Disconnect Google Account</h4>
+                  <DisconnectGoogleAccount />
+                  <hr className="my-4" />
+                </>
+              )}
+
+              <h4 className="mb-4">Delete Account</h4>
+              <DeleteAccount />
+
+              {user.role === "buyer" && (
+                <>
+                  <hr className="my-4" />
+                  <h4 className="mb-4">Create Your Own Shop</h4>
+                  <p>
+                    If you want to create your own shop, and publish your own
+                    digital products, please do so by creating your own shop
+                    from <Link to="/buyer/create-shop">this (create shop)</Link>{" "}
+                    page.
+                  </p>
+                </>
+              )}
+            </>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+};
+
+export default Settings;
