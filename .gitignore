@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Uploaded files (if storing temp locally)
+uploads/
+
+# Cloudinary or service keys (never commit)
+*.json
+
+# Build outputs
+dist/
+build/
+
+# Local directories (custom)
+other/
+seeders/
