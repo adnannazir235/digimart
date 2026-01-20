@@ -5,7 +5,7 @@ const hashToken = (token) => {
     return crypto.createHash("sha256").update(token).digest("hex");
 };
 
-const generateAccessToken = (payload, expiresIn = "5m") => {
+const generateAccessToken = (payload, expiresIn = "10m") => {
     try {
         return JWT.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn }); // Short-lived
     } catch (error) {

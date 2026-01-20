@@ -21,7 +21,7 @@ const sendVerificationEmail = async (user, areResending = false) => {
         Verify Email
       </a>
       <p>If the button doesn't work: <a href="${verificationLink}">click here</a></p>
-      <p><small>This link expires in 15 Minutes.</small></p>
+      <p><small>This link expires in 24 Hours.</small></p>
     `,
   };
 

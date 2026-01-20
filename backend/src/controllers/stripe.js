@@ -112,7 +112,6 @@ exports.handleStripeConnectCallback = async (req, res) => {
 
     // ✅ Already connected — idempotent success
     if (shop.isStripeConnected && shop.stripeAccountId) {
-        console.log(`Stripe already connected for user ${userId}. Skipping re-onboarding.`);
         const feUrl = createRedirectUrl("success", "Stripe account was already connected.", "seller/dashboard/products");
         return res.redirect(feUrl);
     }
@@ -214,19 +213,19 @@ exports.handleStripeWebhook = async (req, res) => {
 
                 // Generate download URL for product(s)
                 let downloadUrl = null;
-                console.log("This is downloadUrl before:>", downloadUrl);
+                const SECONDS_IN_DAY = 24 * 60 * 60;
 
                 if (products.length === 1) {
                     const product = products[0];
                     try {
-                        downloadUrl = generateSignedUrl(product.cloudinaryPublicId, product.fileUrl);
+                        downloadUrl = generateSignedUrl(product.cloudinaryPublicId, product.fileUrl, SECONDS_IN_DAY);
                     } catch (error) {
                         console.error("Failed to generate signed URL for single product:", product._id, error.message);
                     }
                 } else {
                     const publicIds = products.map(p => p.cloudinaryPublicId);
                     try {
-                        downloadUrl = generateZipDownloadUrl(publicIds, 60);
+                        downloadUrl = generateZipDownloadUrl(publicIds, SECONDS_IN_DAY);
                     } catch (error) {
                         console.error("Failed to generate signed URL for multiple product:", publicIds, error.message);
                     }
@@ -237,10 +236,8 @@ exports.handleStripeWebhook = async (req, res) => {
 
                 // Save download URL to the order
                 order.downloadUrl = downloadUrl;
-                console.log("This is downloadUrl after:>", downloadUrl);
 
-                const expirySeconds = products.length === 1 ? 60 : 3600;
-                order.downloadExpiry = new Date(Date.now() + expirySeconds * 1000);
+                order.downloadExpiry = new Date(Date.now() + SECONDS_IN_DAY * 1000);
                 await order.save();
 
                 // Send email notification with download instructions

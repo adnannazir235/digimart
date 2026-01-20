@@ -13,7 +13,7 @@ const limitations = require("../config/validation");
 const sendPasswordNotificationEmail = require("../utils/sendPasswordNotificationEmail");
 const { sendResetPasswordEmail } = require("../utils/sendResetPasswordEmail");
 const { createRedirectUrl } = require("../utils/createRedirectUrl");
-const EMAIL_RESEND_COOLDOWN = 2 * 60 * 1000; // 2 minutes
+const EMAIL_VERIFICATION_COOLDOWN = 5 * 60 * 1000; // 5 minutes
 const refreshTokenExpiryTime = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 exports.registerAccount = async function (req, res) {
@@ -23,8 +23,8 @@ exports.registerAccount = async function (req, res) {
         // Checking if user exists in DB already or not, then saving it if no duplicate conflict occurred...
         const savedUser = await User.signup({ username, email, country, password });
 
-        // Generating a JWT Token which contains User's Email for User's Email Verification, valid till 15 Minutes...
-        const verificationToken = generateAccessToken({ email: savedUser.email }, "15m"); // Generating token containing User's email
+        // Generating a JWT Token which contains User's Email for User's Email Verification...
+        const verificationToken = generateAccessToken({ email: savedUser.email }, "1d");
         savedUser.emailVerificationToken = verificationToken;
         savedUser.lastVerificationEmailSent = new Date();
 
@@ -137,15 +137,15 @@ exports.resendVerificationEmail = async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: "No account found." }); // User doesn't exist...
         if (user.isEmailVerified) return res.status(200).json({ success: true, message: "Email already verified!" });
 
-        // Checking that is it over 2 minutes (EMAIL_RESEND_COOLDOWN) or under that the user is requesting again to resend the Email Verification Mail Link
+        // Checking that is it over 2 minutes (EMAIL_VERIFICATION_COOLDOWN) or under that the user is requesting again to resend the Email Verification Mail Link
         // to himself, if less then stop him if more then move forward...
         const now = new Date();
-        if (user.lastVerificationEmailSent && (now - user.lastVerificationEmailSent) < EMAIL_RESEND_COOLDOWN) {
-            const timeLeft = Math.ceil((EMAIL_RESEND_COOLDOWN - (now - user.lastVerificationEmailSent)) / 1000);
+        if (user.lastVerificationEmailSent && (now - user.lastVerificationEmailSent) < EMAIL_VERIFICATION_COOLDOWN) {
+            const timeLeft = Math.ceil((EMAIL_VERIFICATION_COOLDOWN - (now - user.lastVerificationEmailSent)) / 1000);
             return res.status(429).json({ success: false, message: `Please wait ${timeLeft}s before resending.` });
         }
 
-        const token = generateAccessToken({ email }, "15m"); // Generating new Email Verification Token against User's Email...
+        const token = generateAccessToken({ email }, "1d"); // Generating new Email Verification Token against User's Email...
         user.emailVerificationToken = token; // Setting the generated token in the User's Object...
         user.lastVerificationEmailSent = now; // Setting the time we're sending the Email again in the User's doc...
 

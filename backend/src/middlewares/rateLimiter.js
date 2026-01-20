@@ -1,24 +1,24 @@
 const rateLimit = require("express-rate-limit");
 
-// 100 requests per 15 minutes per IP
+// 1000 requests per 15 minutes per IP
 const rateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 250,
+    windowMs: 15 * 60 * 1000, // 15-minutes window
+    max: 1000,
     message: {
         success: false,
-        message: "Too many requests from this IP. Please try again later.",
+        message: "High traffic detected. Please try again later.",
     },
-    standardHeaders: true, // Return rate limit info in headers
-    legacyHeaders: false, // Disable X-RateLimit headers
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
-// 5 requests per 15 minutes per IP
+// 3 requests per 60 minutes per IP
 const resendEmailLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
+    windowMs: 60 * 60 * 1000, // 1-hour window
+    max: 3,
     message: {
         success: false,
-        message: "Too many requests. Please try again later.",
+        message: "Too many email requests. Please check your inbox or try again in an hour.",
     },
 });
 
