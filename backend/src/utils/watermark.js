@@ -14,8 +14,8 @@ async function watermarkProduct(fileBuffer, mimeType) {
         throw new Error(`File type ${mimeType} is not allowed for products`);
     }
 
-    // Audio → no visual watermark possible → return original
-    if (mimeType === "audio/mpeg") {
+    // No watermark for audio or video
+    if (mimeType.startsWith("audio/") || mimeType.startsWith("video/")) {
         return fileBuffer;
     }
 
@@ -24,12 +24,7 @@ async function watermarkProduct(fileBuffer, mimeType) {
         return await addWatermarkToImage(fileBuffer);
     }
 
-    // Videos → watermark on preview frame (protects screenshots/previews)
-    if (mimeType === "video/mp4") {
-        return await addWatermarkToVideo(fileBuffer);
-    }
-
-    // Fallback (should never hit)
+    // Fallback
     return fileBuffer;
 }
 
@@ -69,11 +64,6 @@ async function addWatermarkToImage(buffer) {
         ])
         .withMetadata()
         .toBuffer();
-}
-
-async function addWatermarkToVideo(buffer) {
-    // Sharp can read the first frame of MP4 → treat as image
-    return await addWatermarkToImage(buffer);
 }
 
 module.exports = { watermarkProduct };
