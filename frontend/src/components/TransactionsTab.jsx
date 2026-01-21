@@ -101,7 +101,7 @@ export default function TransactionsTab({ isBuyer = false }) {
     if (ordersOrSales.length === 0) {
       return (
         <div className="alert alert-info mt-3">
-          No {title.toLowerCase()} yet.
+          No {title.toLowerCase()} yet
         </div>
       );
     }

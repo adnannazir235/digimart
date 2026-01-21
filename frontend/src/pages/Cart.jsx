@@ -100,7 +100,7 @@ export default function Cart() {
           Your cart is empty. <Link to="/products">Browse products</Link>
         </p>
       ) : (
-        <div className="row g-4">
+        <div className="row align-items-start g-4">
           {/* LEFT: Product List */}
           <div className="col-lg-8">
             {items.map(({ product }) => {
