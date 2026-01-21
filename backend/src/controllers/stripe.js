@@ -43,7 +43,7 @@ exports.getStripeConnectUrl = async (req, res) => {
 
     try {
         // Generate secure state token
-        const state = JWT.sign({ userId: user._id.toString() }, process.env.JWT_STATE_SECRET, { expiresIn: "2m" });
+        const state = JWT.sign({ userId: user._id.toString() }, process.env.JWT_STATE_SECRET, { expiresIn: "15m" });
 
         // Genereate Stripe Connect Auth Url
         const authUrl = stripe.oauth.authorizeUrl({
@@ -135,7 +135,7 @@ exports.handleStripeConnectCallback = async (req, res) => {
         // ✅ Different Stripe account already linked → reject
         if (shop.stripeAccountId && shop.stripeAccountId !== stripeUserId) {
             console.warn(`User ${userId} attempted to link a different Stripe account (${stripeUserId}) while already linked to ${shop.stripeAccountId}`);
-            const feUrl = createRedirectUrl("error", "You're already linked to a different Stripe account. Contact support to change it.", "seller/dashboard/products");
+            const feUrl = createRedirectUrl("error", "You're already linked to a different Stripe account. Email digimart if you have any issues.", "seller/dashboard/products");
             return res.redirect(feUrl);
         }
 

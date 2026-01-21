@@ -16,7 +16,7 @@ const sendPasswordNotificationEmail = async (user, action = "set") => {
           ? "Please log in with your new password."
           : "Your account password has been updated."
       }
-      If you did not initiate this action, please contact support immediately.</p>
+      If you did not initiate this action, please reply to this email immediately.</p>
     `,
   };
 

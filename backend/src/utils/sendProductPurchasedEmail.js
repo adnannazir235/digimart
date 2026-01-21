@@ -26,7 +26,7 @@ exports.sendProductPurchasedEmail = async ({ to, orderUid, productTitles, downlo
                 </p>
 
                 <p><strong>Note:</strong> This download link will expire in 24 Hours for security reasons.</p>
-                <p>This link is valid for authorized users only. If you have issues, contact support.</p>
+                <p>This link is valid for authorized users only. If you have issues, reply to this email.</p>
                 <p>Thank you for shopping with DigiMart!</p>
             `
         };

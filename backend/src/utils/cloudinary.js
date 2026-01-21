@@ -14,7 +14,7 @@ exports.setAvatar = function (doc) {
 /**
  * Generates a signed ZIP download URL for multiple private assets
  * @param {string[]} publicIds - Array of public IDs to include in the ZIP
- * @param {number} expirySeconds - URL expiration time (max 1 hour / 3600s)
+ * @param {number} expirySeconds - URL expiration time (min 1 minute)
  * @returns {string} - Signed ZIP download URL
  */
 exports.generateZipDownloadUrl = (publicIds, expirySeconds = 60) => {

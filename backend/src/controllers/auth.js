@@ -1058,7 +1058,7 @@ exports.disconnectGoogle = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: revocationSuccess ? "Google account disconnected successfully." : "Local account disconnected, but Google token revocation failed. Please try again or contact support."
+            message: revocationSuccess ? "Google account disconnected successfully." : "Local account disconnected, but Google token revocation failed. Please try again or email digimart."
         });
     } catch (error) {
         console.error("🚫 Disconnect Google error:", error);

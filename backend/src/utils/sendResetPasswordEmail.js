@@ -13,7 +13,7 @@ const sendResetPasswordEmail = async (user) => {
             <p>You requested to reset your DigiMart password. Click the link below to reset it:</p>
             <a href="${resetUrl}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
             <p>If the button above doesn't work, copy and paste this URL into your browser: <br>${resetUrl}</p>
-            <p><small>This link expires in 15 minutes. If you didn't request this, please ignore this email or contact support.</small></p>
+            <p><small>This link expires in 15 minutes. If you didn't request this, please ignore this email or reply to this email.</small></p>
         `
     };
 
