@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { orderAPI } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { formatUsdPrice, getCurrencySymbol } from "../utils";
+import { IoIosArrowBack } from "react-icons/io";
+import { FaDownload } from "react-icons/fa";
 
 export default function OrderDetails() {
   const { orderUid } = useParams();
@@ -73,10 +75,11 @@ export default function OrderDetails() {
         </div>
 
         <button
-          className="btn btn-outline-secondary"
+          className="btn btn-sm text-secondary border d-flex align-items-center gap-2"
           onClick={() => navigate(-1)}
         >
-          ← Back
+          <IoIosArrowBack size={20} className="text-primary" />
+          <span className="fw-medium">Back</span>
         </button>
       </div>
 
@@ -85,15 +88,11 @@ export default function OrderDetails() {
         {/* Products Section */}
         <div className="col-12 col-lg-8">
           <div className="card border-0 shadow-sm">
-            <div className="card-header bg-light d-flex justify-content-between align-items-center">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Purchased Products ({productIds.length})</h5>
               {productIds.length > 0 && status === "completed" && (
-                <button className="btn btn-light border rounded-0">
-                  <img
-                    width="20"
-                    src="/src/assets/ui/download-solid.png"
-                    alt="Download Icon - SVG"
-                  />{" "}
+                <button className="btn border rounded-0 d-flex align-items-center gap-2">
+                  <FaDownload size={18} />
                   (ZIP)
                 </button>
               )}
@@ -131,16 +130,12 @@ export default function OrderDetails() {
 
                           {status === "completed" && (
                             <button
-                              className="btn btn-light border rounded-0"
+                              className="btn border rounded-0 d-flex align-items-center gap-2"
                               onClick={() =>
                                 console.log("Download:", product._id)
                               }
                             >
-                              <img
-                                width="20"
-                                src="/src/assets/ui/download-solid.png"
-                                alt="Download Icon - SVG"
-                              />
+                              <FaDownload size={18} />
                             </button>
                           )}
                         </div>
@@ -159,7 +154,7 @@ export default function OrderDetails() {
             className="card border-0 shadow-sm sticky-top"
             style={{ top: "1rem" }}
           >
-            <div className="card-header bg-light">
+            <div className="card-header">
               <h5 className="mb-0">Order Summary</h5>
             </div>
             <div className="card-body">

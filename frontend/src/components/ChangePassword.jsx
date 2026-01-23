@@ -46,7 +46,7 @@ const ChangePassword = () => {
       const res = await authAPI.changePassword(values);
 
       if (res.data.success) {
-        toast.success("Password changed successfully!", toastOptions);
+        toast.success("Password changed successfully!", toastOptions());
 
         resetForm();
         dispatch(logout());

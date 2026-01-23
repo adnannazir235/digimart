@@ -16,16 +16,16 @@ export default function LogIn() {
       });
       navigate(
         `/check-email?status=success&message=${encodeURIComponent(
-          res.data.message || "Verification email resent! Check your inbox."
+          res.data.message || "Verification email resent! Check your inbox.",
         )}`,
-        { state: { email: formData.email } }
+        { state: { email: formData.email } },
       );
     } catch (error) {
       navigate(
         `/login?status=error&message=${encodeURIComponent(
           error.response?.data?.message ||
-          "Failed to resend email. Please try again."
-        )}`
+            "Failed to resend email. Please try again.",
+        )}`,
       );
     } finally {
       setLoading(false);
@@ -39,12 +39,12 @@ export default function LogIn() {
   };
 
   return (
-    <section className="container-fluid py-5">
+    <section
+      className="d-flex py-5"
+      style={{ minHeight: "80dvh" }}
+    >
       <div className="container">
-        <div
-          className="row justify-content-center"
-          style={{ minHeight: "69dvh" }}
-        >
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col">
             <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
               Welcome Back!

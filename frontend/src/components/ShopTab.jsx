@@ -33,12 +33,12 @@ export default function ShopTab() {
       await shopAPI.deleteShop(shopData.shopId);
       dispatch(fetchUser());
       setShop(null); // Clear shop from context
-      toast.success("Shop deleted successfully!", toastOptions);
+      toast.success("Shop deleted successfully!", toastOptions());
       navigate("/buyer/create-shop", {
         state: { successMessage: "Shop deleted successfully!" },
       });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete shop", toastOptions);
+      toast.error(error.response?.data?.message || "Failed to delete shop", toastOptions());
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productAPI } from "../services/api";
 import { useSelector } from "react-redux";
-import { useLocalStorage } from "../hooks/useLocalStorage.jsx";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Product() {
@@ -18,8 +18,15 @@ export default function Product() {
 
   const toggleCart = () => {
     if (!user) return;
-    const newCart = isInCart ? cart.filter((pid) => pid !== id) : [...cart, id];
+
+    const newCart = isInCart
+      ? cart.filter((pid) => pid !== id)
+      : [...cart, id];
+
     setCart(newCart);
+
+    // Dispatch ONLY here — after real change
+    window.dispatchEvent(new CustomEvent("cart-updated", { detail: newCart }));
   };
 
   const goToCart = () => navigate("/cart");

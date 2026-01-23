@@ -12,12 +12,12 @@ export default function SignUp() {
   };
 
   return (
-    <section className="container-fluid py-5">
+    <section
+      className="d-flex py-5"
+      style={{ minHeight: "80dvh" }}
+    >
       <div className="container">
-        <div
-          className="row justify-content-center"
-          style={{ minHeight: "69dvh" }}
-        >
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col">
             <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
               Create Account!

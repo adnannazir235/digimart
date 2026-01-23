@@ -34,7 +34,7 @@ export default function ResetPassword() {
 
   async function onSubmit(values, { setSubmitting }) {
     if (!token) {
-      toast.error("Invalid or missing reset token.", toastOptions);
+      toast.error("Invalid or missing reset token.", toastOptions());
       return;
     }
 

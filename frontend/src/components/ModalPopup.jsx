@@ -28,7 +28,9 @@ const ModalPopup = ({
 
   // Handle countdown timer
   useEffect(() => {
-    if (!isOpen || !countdownSeconds || countdown <= 0) return;
+    // FIX: Do NOT check 'countdown' state here. It is stale on open.
+    // Only check if the prop exists and modal is open.
+    if (!isOpen || !countdownSeconds) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -66,13 +68,15 @@ const ModalPopup = ({
       aria-labelledby="popupTitle"
       aria-modal="true"
       role="dialog"
-      style={{ backgroundColor: "#00000038" }}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }} // Slightly darker overlay
       onClick={handleOverlayClick}
     >
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="popupTitle">
+        <div 
+          className="modal-content"
+        >
+          <div className="modal-header border-bottom-0 pb-0">
+            <h5 className="modal-title fw-bold" id="popupTitle">
               {title}
             </h5>
 
@@ -89,11 +93,11 @@ const ModalPopup = ({
           <div className="modal-body">{children}</div>
 
           {(onConfirm || onCancel) && (
-            <div className="modal-footer">
+            <div className="modal-footer border-top-0 pt-0">
               {onCancel && (
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn rounded-pill px-4" // Modern secondary button
                   onClick={handleClose}
                 >
                   {cancelText}
@@ -103,7 +107,7 @@ const ModalPopup = ({
               {onConfirm && (
                 <LoadingButton
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-danger rounded-pill px-4 shadow-sm" // Modern primary button
                   onClick={onConfirm}
                   loading={loading}
                   disabled={countdownSeconds && (!isConfirmEnabled || loading)}

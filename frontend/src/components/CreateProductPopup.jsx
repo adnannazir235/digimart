@@ -63,7 +63,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess, isClosable, user }) =
 
     try {
       await onSuccess(data);
-      toast.success("Product created successfully!", toastOptions);
+      toast.success("Product created successfully!", toastOptions());
       resetForm();
       onCancel();
     } catch (err) {

@@ -88,7 +88,7 @@ export default function SaleDetails() {
         {/* Products sold */}
         <div className="col-12 col-lg-8">
           <div className="card border-0 shadow-sm">
-            <div className="card-header bg-light d-flex justify-content-between align-items-center">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h5 className="mb-0 lh-lg">Sold Products ({productIds.length})</h5>
             </div>
             <div className="card-body p-0">
@@ -136,7 +136,7 @@ export default function SaleDetails() {
             className="card border-0 shadow-sm sticky-top"
             style={{ top: "1rem" }}
           >
-            <div className="card-header bg-light">
+            <div className="card-header">
               <h5 className="mb-0">Sale Summary</h5>
             </div>
             <div className="card-body">

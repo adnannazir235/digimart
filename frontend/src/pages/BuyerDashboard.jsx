@@ -1,16 +1,14 @@
 import { useEffect } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
 import { useBuyerData } from "../hooks/useBuyerData";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function BuyerDashboard() {
-  // const { data, loading, error } = useBuyerData();
   const { loading, error } = useBuyerData();
   const location = useLocation();
 
-  // Handle success toast (in case of future navigation with success message)
   useEffect(() => {
     if (location.state?.successMessage) {
       toast.success(location.state.successMessage, toastOptions);
@@ -36,41 +34,7 @@ export default function BuyerDashboard() {
     );
   }
 
-  // Enable/Uncomment this block of code, if the orders are/will be coming from userBuyerData
-  // if (!data?.orders) {
-  //   return (
-  //     <div className="container mt-5">
-  //       <div className="alert alert-warning" role="alert">
-  //         You haven't purchased anything yet.{" "}
-  //         <a href="/" className="alert-link">
-  //           Browse Products
-  //         </a>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  return (
-    <div style={{ minHeight: "81dvh" }}>
-      <h3 className="pt-5 pb-4 text-center">Buyer Dashboard</h3>
-      <div className="row align-items-start h-100">
-        <nav
-          className="col-12 col-lg-2 col-sm-3 nav nav-pills p-3 border border-1 flex-row flex-sm-column"
-          style={{ rowGap: "1.5rem" }}
-        >
-          <NavLink
-            to="orders"
-            className={({ isActive }) =>
-              `nav-link${isActive ? " active" : ""}`
-            }
-          >
-            Orders
-          </NavLink>
-        </nav>
-        <section className="col-12 col-lg-10 col-sm-9 tab-content p-4 border border-1">
-          <Outlet />
-        </section>
-      </div>
-    </div>
-  );
+  // RENDER ONLY OUTLET
+  // The layout is now handled by DashboardLayout in App.jsx
+  return <Outlet />;
 }

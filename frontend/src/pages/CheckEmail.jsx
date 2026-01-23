@@ -7,7 +7,7 @@ import { toastOptions } from "../../config/styles";
 
 export default function CheckEmail() {
   const location = useLocation();
-  const emailToVerify = location.state?.email || ""; // No need for useState since it's static
+  const emailToVerify = location.state?.email || "";
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function CheckEmail() {
       window.history.replaceState(
         {},
         document.title,
-        window.location.pathname // Use the full browser path to maintain the basename
+        window.location.pathname, // Use the full browser path to maintain the basename
       );
     }
     // Dependency array is minimal here, as we are only reacting to the initial state being present
@@ -43,7 +43,7 @@ export default function CheckEmail() {
     if (!emailToVerify) {
       toast.error(
         "Error: Cannot resend email. The original email address is missing.",
-        toastOptions
+        toastOptions,
       );
       return;
     }
@@ -56,13 +56,13 @@ export default function CheckEmail() {
       toast.success(
         res.data?.message ||
           `Verification email successfully resent to ${emailToVerify}.`,
-        toastOptions
+        toastOptions,
       );
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "Failed to resend email. Please try again.",
-        toastOptions
+        toastOptions,
       );
     } finally {
       setLoading(false);
@@ -70,9 +70,12 @@ export default function CheckEmail() {
   };
 
   return (
-    <section className="container-fluid py-5 h-100">
-      <div className="container h-100">
-        <div className="row justify-content-center h-100">
+    <section
+      className="d-flex py-5"
+      style={{ minHeight: "80dvh" }}
+    >
+      <div className="container">
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col-12 col-md-8 col-lg-6 text-center">
             <h2>✅ Please Verify Your Account</h2>
             <p className="lead mt-3">
@@ -83,7 +86,7 @@ export default function CheckEmail() {
               <strong>Check your inbox (and spam folder)</strong> and click the
               link to activate your account.
             </p>
-            <div className="mt-4 p-3 bg-light rounded">
+            <div className="mt-4 p-3 rounded">
               <p>
                 <strong>Didn’t get the email?</strong>
               </p>

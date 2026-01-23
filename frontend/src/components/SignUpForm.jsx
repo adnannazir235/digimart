@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -6,7 +6,7 @@ import { authAPI } from "../services/api";
 import { limitations } from "../../config/validation";
 import { toastOptions } from "../../config/styles";
 import LoadingButton from "../components/LoadingButton";
-import GoogleLogo from "../assets/google/logo.png";
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignUpForm({
   handleGoogleAuth,
@@ -215,19 +215,14 @@ export default function SignUpForm({
             onClick={handleGoogleAuth}
           >
             Continue with Google
-            <img
-              src={GoogleLogo}
-              height="20"
-              className="ms-2"
-              alt="Google's Logo - PNG"
-            />
+            <FcGoogle size={25} className="ms-2" />
           </LoadingButton>
         </div>
       </div>
 
       <div className="row mt-3">
         <div className="col text-center">
-          Already have an account? <NavLink to="/login">Log In</NavLink>
+          Already have an account? <Link to="/login">Log In</Link>
         </div>
       </div>
     </form>

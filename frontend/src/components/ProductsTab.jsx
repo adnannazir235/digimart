@@ -6,12 +6,11 @@ import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
 import Product from "./Product";
 import LoadingSpinner from "./LoadingSpinner";
-import GridLogo from "../assets/ui/grid.png";
-import RowLogo from "../assets/ui/row.png";
 import ModalPopup from "./ModalPopup";
 import CreateProductPopup from "./CreateProductPopup";
 import StripeConnectModal from "./StripeConnectModal";
 import EditProduct from "./EditProduct";
+import { FiGrid, FiList } from "react-icons/fi";
 
 export default function ProductsTab() {
   const { user } = useSelector(state => state.auth);
@@ -41,7 +40,7 @@ export default function ProductsTab() {
         setProducts(res.data.data || []);
       } catch (err) {
         setError("Failed to load products");
-        toast.error("Failed to load products", toastOptions);
+        toast.error("Failed to load products", toastOptions());
       } finally {
         setLoading(false);
       }
@@ -54,10 +53,10 @@ export default function ProductsTab() {
     setDeletingProductId(productId);
     try {
       await productAPI.delete(productId);
-      toast.success("Product deleted successfully!", toastOptions);
+      toast.success("Product deleted successfully!", toastOptions());
       setProducts((prev) => prev.filter((p) => p._id !== productId));
     } catch (err) {
-      toast.error("Failed to delete product.", toastOptions);
+      toast.error("Failed to delete product.", toastOptions());
     } finally {
       setDeletingProductId(null);
       setIsDeletePopupOpen(false);
@@ -96,40 +95,6 @@ export default function ProductsTab() {
           >
             Add Product
           </button>
-          <div
-            className="btn-group"
-            role="group"
-            aria-label="Display style toggle"
-          >
-            <input
-              type="radio"
-              className="btn-check"
-              name="displayStyle"
-              id="cardView"
-              checked={displayStyle === "card"}
-              onChange={() => setDisplayStyle("card")}
-            />
-            <label
-              className="btn btn-outline-light border rounded-0"
-              htmlFor="cardView"
-            >
-              <img src={GridLogo} width="20" alt="Card View" />
-            </label>
-            <input
-              type="radio"
-              className="btn-check"
-              name="displayStyle"
-              id="rowView"
-              checked={displayStyle === "row"}
-              onChange={() => setDisplayStyle("row")}
-            />
-            <label
-              className="btn btn-outline-light border rounded-0"
-              htmlFor="rowView"
-            >
-              <img src={RowLogo} width="20" alt="Row View" />
-            </label>
-          </div>
         </div>
       </div>
 
@@ -151,6 +116,7 @@ export default function ProductsTab() {
               <Product
                 product={product}
                 displayStyle={displayStyle}
+                autoSwitchDisplayStyle={true}
                 onEdit={() =>
                   setTabState({
                     current: "Edit",

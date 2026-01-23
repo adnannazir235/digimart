@@ -56,7 +56,7 @@ export default function ShopForm({
 
     // If no real changes, block submit
     if (Object.keys(dataToSend).length === 0) {
-      toast.info("No changes detected.", toastOptions);
+      toast.info("No changes detected.", toastOptions());
       setIsEditing(false);
       return;
     }
@@ -72,7 +72,7 @@ export default function ShopForm({
         logo: updatedShop.logo || "",
       });
 
-      toast.success(response.data.message || "Shop updated!", toastOptions);
+      toast.success(response.data.message || "Shop updated!", toastOptions());
       setIsEditing(false);
     } catch (error) {
       toast.error(

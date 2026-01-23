@@ -2,12 +2,14 @@ import axios from "axios";
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_BACKEND_URL });
 
-// Enable withCredentials for HTTP-only cookies (likely used by /auth/refresh-token)
+// Enable withCredentials for HTTP-only cookies (likely used by /refresh-token)
 api.defaults.withCredentials = true;
 
 // Request Interceptor
 api.interceptors.request.use(
     (config) => {
+        if (config.url?.includes("/refresh-token")) return config;
+
         const accessToken = localStorage.getItem("accessToken");
         if (accessToken && accessToken !== null && accessToken !== "null") {
             try {
@@ -190,7 +192,7 @@ export const checkoutAPI = {
     createCheckoutSession: (data) => api.post("/checkout", data),
 };
 
-export const paymentAPI = {
+export const stripeAPI = {
     // GET /stripe/connect-url (Authenticated, initiate Stripe Connect OAuth)
     getStripeConnectUrl: () => api.get("/stripe/connect-url"),
 

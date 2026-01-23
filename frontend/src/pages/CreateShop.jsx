@@ -61,7 +61,7 @@ export default function CreateShop() {
   return (
     <div className="container-fluid d-flex" style={{ minHeight: "81dvh" }}>
       <div className="container">
-        <div className="row">
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col-8">
             <form onSubmit={formik.handleSubmit} className="mb-4">
               <div className="text-center mb-4 pb-3 border-bottom">

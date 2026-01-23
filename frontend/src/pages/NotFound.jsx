@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 export default function NotFound({ height, minHeight }) {
   return (
-    <section className="container-fluid d-flex" style={{ height, minHeight }}>
+    <section className="d-flex" style={{ height, minHeight }}>
       <div className="container">
-        <div className="row justify-content-center">
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col-12 text-center">
             <h6 className="fs-3">404</h6>
             <h1 className="display-4 mb-4">Page Not Found</h1>

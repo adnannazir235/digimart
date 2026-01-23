@@ -14,18 +14,21 @@ import Header from "./shared/Header";
 import Footer from "./shared/Footer.jsx";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import ReactGA from "react-ga4";
-import useAnalyticsTracker from "./hooks/useAnalyticsTracker.jsx";
+import useAnalyticsTracker from "./hooks/useAnalyticsTracker";
+import useDocumentTitle from "./hooks/useDocumentTitle";
 import { toast, ToastContainer } from "react-toastify";
 import { toastOptions } from "../config/styles";
 
 const Home = lazy(() => import("./pages/Home"));
 const Contact = lazy(() => import("./pages/Contact"));
+const About = lazy(() => import("./pages/About"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const LogIn = lazy(() => import("./pages/LogIn"));
 const Settings = lazy(() => import("./pages/Settings"));
 const CheckEmail = lazy(() => import("./pages/CheckEmail"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.jsx"));
+const DashboardLayout = lazy(() => import("./shared/DashboardLayout.jsx"));
 const BuyerDashboard = lazy(() => import("./pages/BuyerDashboard.jsx"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard.jsx"));
 const CreateShop = lazy(() => import("./pages/CreateShop.jsx"));
@@ -110,7 +113,7 @@ function QueryHandler() {
       processedToasts.current.add(toastId);
       setTimeout(async () => {
         toast.success("Stripe account connected successfully!", {
-          ...toastOptions,
+          ...toastOptions(),
           toastId,
         });
 
@@ -128,16 +131,16 @@ function QueryHandler() {
       setTimeout(() => {
         switch (status) {
           case "success":
-            toast.success(decodedMessage, { ...toastOptions, toastId });
+            toast.success(decodedMessage, { ...toastOptions(), toastId });
             break;
           case "error":
-            toast.error(decodedMessage, { ...toastOptions, toastId });
+            toast.error(decodedMessage, { ...toastOptions(), toastId });
             break;
           case "info":
-            toast.info(decodedMessage, { ...toastOptions, toastId });
+            toast.info(decodedMessage, { ...toastOptions(), toastId });
             break;
           default:
-            toast.info(decodedMessage, { ...toastOptions, toastId });
+            toast.info(decodedMessage, { ...toastOptions(), toastId });
             break;
         }
       }, 1000);
@@ -170,7 +173,7 @@ function StripeCallback() {
     const message = searchParams.get("message");
 
     if (error || (status === "false" && message)) {
-      toast.error(message || "Stripe connection failed", toastOptions);
+      toast.error(message || "Stripe connection failed", toastOptions());
       navigate("/seller/dashboard", { replace: true });
     } else {
       navigate("/seller/dashboard?stripeSuccess=true", { replace: true });
@@ -181,6 +184,7 @@ function StripeCallback() {
 }
 
 export default function App() {
+  useDocumentTitle();
   const dispatch = useDispatch();
   const { accessToken, loading } = useSelector((state) => state.auth);
 
@@ -208,6 +212,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
             <Route path="/products/:id" element={<Product />} />
 
             <Route element={<PublicOnlyRoute />}>
@@ -226,21 +231,36 @@ export default function App() {
             <Route element={<RoleBasedRoute roles={["seller"]} />}>
               <Route path="/stripe/callback" element={<StripeCallback />} />
 
+              {/* 1. SellerDashboard handles Logic (Stripe, Loading, Context) */}
               <Route path="/seller/dashboard" element={<SellerDashboard />}>
-                <Route index element={<Navigate to="products" replace />} />
-                <Route path="products" element={<ProductsTab />} />
-                <Route path="orders-and-sales" element={<TransactionsTab isBuyer={false} />} />
-                <Route path="orders-and-sales/orders/:orderUid" element={<OrderDetails />} />
-                <Route path="orders-and-sales/sales/:orderUid" element={<SaleDetails />} />
-                <Route path="shop" element={<ShopTab />} />
+
+                {/* 2. DashboardLayout handles the UI (Sidebar, Container) */}
+                <Route element={<DashboardLayout type="seller" />}>
+                  {/* 3. These are the actual content pages rendered inside the Layout */}
+                  <Route index element={<Navigate to="products" replace />} />
+                  <Route path="products" element={<ProductsTab />} />
+                  <Route path="orders-and-sales" element={<TransactionsTab isBuyer={false} />} />
+
+                  {/* Detail Routes */}
+                  <Route path="orders-and-sales/orders/:orderUid" element={<OrderDetails />} />
+                  <Route path="orders-and-sales/sales/:orderUid" element={<SaleDetails />} />
+                  <Route path="shop" element={<ShopTab />} />
+                </Route>
+
               </Route>
             </Route>
 
             <Route element={<RoleBasedRoute roles={["buyer"]} />}>
+              {/* 1. BuyerDashboard handles Logic */}
               <Route path="/buyer/dashboard" element={<BuyerDashboard />}>
-                <Route index element={<Navigate to="orders" replace />} />
-                <Route path="orders" element={<TransactionsTab isBuyer={true} />} />
-                <Route path="orders/:orderUid" element={<OrderDetails />} />
+
+                {/* 2. DashboardLayout handles the UI */}
+                <Route element={<DashboardLayout type="buyer" />}>
+                  <Route index element={<Navigate to="orders" replace />} />
+                  <Route path="orders" element={<TransactionsTab isBuyer={true} />} />
+                  <Route path="orders/:orderUid" element={<OrderDetails />} />
+                </Route>
+
               </Route>
 
               <Route path="/buyer/create-shop" element={<CreateShop />} />

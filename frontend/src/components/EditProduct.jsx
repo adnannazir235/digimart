@@ -58,7 +58,7 @@ export default function EditProduct({ product, onBack }) {
 
   async function onSubmit(values, { setSubmitting }) {
     if (!product?._id) {
-      toast.error("Invalid product.", toastOptions);
+      toast.error("Invalid product.", toastOptions());
       return;
     }
 
@@ -71,7 +71,7 @@ export default function EditProduct({ product, onBack }) {
 
     try {
       await productAPI.update(product._id, data);
-      toast.success("Product updated successfully!", toastOptions);
+      toast.success("Product updated successfully!", toastOptions());
       window.location.reload();
     } catch (err) {
       toast.error(

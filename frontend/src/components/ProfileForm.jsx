@@ -72,7 +72,7 @@ export default function ProfileForm() {
       const response = await userAPI.updateProfile(values);
 
       dispatch(fetchUser());
-      toast.success(response.data.message || "Profile updated!", toastOptions);
+      toast.success(response.data.message || "Profile updated!", toastOptions());
       setIsEditing(false);
     } catch (error) {
       toast.error(
