@@ -51,17 +51,17 @@ const SetPassword = () => {
         dispatch(logout());
         navigate("/login");
       } else {
-        toast.error(res.data.message || "Error setting password", toastOptions);
+        toast.error(res.data.message || "Error setting password", toastOptions());
       }
     } catch (error) {
       const status = error.response?.status;
       const message = error.response?.data?.message || "Error setting password";
       if (status === 401) {
-        toast.error("Session expired. Please log in again.", toastOptions);
+        toast.error("Session expired. Please log in again.", toastOptions());
         dispatch(logout());
         navigate("/login");
       } else {
-        toast.error(message, toastOptions);
+        toast.error(message, toastOptions());
       }
     } finally {
       setSubmitting(false);

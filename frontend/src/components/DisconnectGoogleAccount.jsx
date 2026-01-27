@@ -4,7 +4,7 @@ import { authAPI } from "../services/api";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
 import ModalPopup from "./ModalPopup";
-import GoogleLogo from "../assets/google/logo.png";
+import { FcGoogle } from "react-icons/fc";
 
 export default function DisconnectGoogleAccount() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -20,13 +20,13 @@ export default function DisconnectGoogleAccount() {
       const response = await authAPI.disconnectGoogle();
 
       if (response.data.success) {
-        toast.success(response.data.message, toastOptions);
+        toast.success(response.data.message, toastOptions());
 
         setTimeout(() => {
           window.location.reload();
         }, 1300);
       } else {
-        toast.error(response.data.message, toastOptions);
+        toast.error(response.data.message, toastOptions());
       }
     } catch (error) {
       toast.error(
@@ -50,7 +50,7 @@ export default function DisconnectGoogleAccount() {
         onClick={() => setIsPopupOpen(true)}
       >
         Disconnect Google Account
-        <img src={GoogleLogo} height="20" className="ms-2" alt="Google Logo" />
+        <FcGoogle size={25} className="ms-2" />
       </button>
 
       <ModalPopup

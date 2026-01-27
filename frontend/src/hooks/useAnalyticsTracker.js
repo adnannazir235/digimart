@@ -13,4 +13,4 @@ export default function useAnalyticsTracker() {
       title: document.title,
     });
   }, [location]);
-}
+};

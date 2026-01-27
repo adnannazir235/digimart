@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
-import { paymentAPI } from "../services/api";
+import { stripeAPI } from "../services/api";
 import ModalPopup from "./ModalPopup";
 
 export default function StripeConnectModal({ isOpen, onCancel }) {
@@ -10,11 +10,11 @@ export default function StripeConnectModal({ isOpen, onCancel }) {
   const handleConnectStripe = async () => {
     setIsConnecting(true);
     try {
-      const res = await paymentAPI.getStripeConnectUrl();
+      const res = await stripeAPI.getStripeConnectUrl();
       //   console.log(res.data);
       window.location.href = res.data.data.url; // Redirect to Stripe OAuth
     } catch (err) {
-      toast.error("Failed to initiate Stripe connection", toastOptions);
+      toast.error("Failed to initiate Stripe connection", toastOptions());
       setIsConnecting(false);
     }
   };

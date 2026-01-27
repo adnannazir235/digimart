@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  NavLink,
   Outlet,
   useLocation,
   Navigate,
@@ -36,7 +35,6 @@ export default function SellerDashboard() {
     if (isRoot) {
       setIsRedirecting(true);
       navigate("/seller/dashboard/products", { replace: true });
-      // Reset isRedirecting after navigation to prevent stale state
       const timeout = setTimeout(() => setIsRedirecting(false), 1000);
       return () => clearTimeout(timeout);
     }
@@ -64,7 +62,7 @@ export default function SellerDashboard() {
       />
     );
 
-  // Immediate redirect for root path
+  // Immediate redirect for root path (failsafe)
   const normalizedPath = location.pathname.replace(/\/+$/, "").toLowerCase();
   const isRoot = normalizedPath === "/seller/dashboard";
 
@@ -76,50 +74,11 @@ export default function SellerDashboard() {
     );
   }
 
+  // RENDER ONLY OUTLET + MODAL
+  // The layout is now handled by DashboardLayout in App.jsx
   return (
     <>
-      <div style={{ minHeight: "81dvh" }}>
-        <h3 className="pt-5 pb-4 text-center">Seller Dashboard</h3>
-        <div className="row align-items-start h-100">
-          <nav
-            className="col-12 col-lg-2 col-sm-3 nav nav-pills p-3 border border-1 flex-row flex-sm-column"
-            style={{ rowGap: "1rem" }}
-          >
-            <NavLink
-              to="products"
-              className={({ isActive }) =>
-                `nav-link${isActive ? " active" : ""}`
-              }
-            >
-              Products
-            </NavLink>
-
-            {user.isSeller && user.sellerOnboardingComplete && (
-              <NavLink
-                to="orders-and-sales"
-                className={({ isActive }) =>
-                  `nav-link${isActive ? " active" : ""}`
-                }
-              >
-                Orders & Sales
-              </NavLink>
-            )}
-
-            <NavLink
-              to="shop"
-              className={({ isActive }) =>
-                `nav-link${isActive ? " active" : ""}`
-              }
-            >
-              Shop
-            </NavLink>
-          </nav>
-
-          <section className="col-12 col-lg-10 col-sm-9 tab-content p-4 border border-1">
-            <Outlet context={{ shop, setShop, sales }} />
-          </section>
-        </div>
-      </div>
+      <Outlet context={{ shop, setShop, sales }} />
       <StripeConnectModal
         isOpen={showStripeModal}
         onCancel={() => setShowStripeModal(false)}

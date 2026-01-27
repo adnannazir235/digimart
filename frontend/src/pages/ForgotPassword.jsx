@@ -25,7 +25,7 @@ export default function ForgotPassword() {
     try {
       const res = await authAPI.initiateForgotPassword(values);
       const successMessage = res.data.message || "Password reset email sent!";
-      toast.success(successMessage, toastOptions);
+      toast.success(successMessage, toastOptions());
     } catch (error) {
       toast.error(
         error.response?.data?.message ||

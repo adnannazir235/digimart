@@ -52,7 +52,7 @@ export default function CreateShop() {
       dispatch(fetchUser());
     } catch (error) {
       const message = error.response?.data?.message || "Failed to create shop";
-      toast.error(message, toastOptions);
+      toast.error(message, toastOptions());
     } finally {
       setSubmitting(false);
     }
@@ -61,7 +61,7 @@ export default function CreateShop() {
   return (
     <div className="container-fluid d-flex" style={{ minHeight: "81dvh" }}>
       <div className="container">
-        <div className="row">
+        <div className="row justify-content-center align-items-center h-100">
           <div className="col-8">
             <form onSubmit={formik.handleSubmit} className="mb-4">
               <div className="text-center mb-4 pb-3 border-bottom">
@@ -96,7 +96,7 @@ export default function CreateShop() {
                     Description (Optional)
                   </label>
                   <textarea
-                    className={`form-control rounded-0 ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
+                    className={`form-control ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
                     id="description"
                     rows="4"
                     {...formik.getFieldProps("description")}

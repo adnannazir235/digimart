@@ -63,7 +63,6 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess, isClosable, user }) =
 
     try {
       await onSuccess(data);
-      toast.success("Product created successfully!", toastOptions);
       resetForm();
       onCancel();
     } catch (err) {
@@ -127,7 +126,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess, isClosable, user }) =
                   Description
                 </label>
                 <textarea
-                  className={`form-control rounded-0 ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
+                  className={`form-control ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
                   id="description"
                   rows="3"
                   {...formik.getFieldProps("description")}

@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import LoadingButton from "./LoadingButton";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles.js";
+import useDebounce from "../hooks/useDebounce.js";
 
 export default function ProfileForm() {
   const { user } = useSelector(state => state.auth);
@@ -39,7 +40,7 @@ export default function ProfileForm() {
       .optional(),
 
     avatar: Yup.string()
-      .url("Avatar must be a valid URL")
+      .url("Avatar must be a valid URL (e.g. https://example.com/image.jpg)")
       .nullable()
       .optional(),
 
@@ -65,19 +66,21 @@ export default function ProfileForm() {
     enableReinitialize: true,
     validateOnChange: true, // true, by Default
     validateOnBlur: true, // true, by Default
-  })
+  });
+
+  const debouncedAvatar = useDebounce(formik.values.avatar, 500);
 
   async function onSubmit(values, { setSubmitting }) {
     try {
       const response = await userAPI.updateProfile(values);
 
       dispatch(fetchUser());
-      toast.success(response.data.message || "Profile updated!", toastOptions);
+      toast.success(response.data.message || "Profile updated!", toastOptions());
       setIsEditing(false);
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to update profile",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);
@@ -85,7 +88,7 @@ export default function ProfileForm() {
   }
 
   const getAvatarStatus = () => {
-    const url = formik.values.avatar.trim();
+    const url = debouncedAvatar.trim();
 
     if (!url) return { text: "Enter image URL", className: "text-muted" };
 
@@ -183,10 +186,15 @@ export default function ProfileForm() {
             type="url"
             className={`form-control ${formik.touched.avatar && formik.errors.avatar ? "is-invalid" : ""}`}
             id="avatar"
-            {...formik.getFieldProps("avatar")}
+            value={formik.values.avatar}
+            onChange={(e) => {
+              formik.setFieldValue("avatar", e.target.value, false); // no validate
+            }}
+            onBlur={() => {
+              formik.validateField("avatar"); // validate once
+            }}
             disabled={formik.isSubmitting || !isEditing}
             maxLength="1100"
-            placeholder="https://example.com/avatar.jpg"
           />
 
           {isEditing && (
@@ -204,7 +212,7 @@ export default function ProfileForm() {
           </label>
 
           <textarea
-            className={`form-control rounded-0 ${formik.touched.bio && formik.errors.bio ? "is-invalid" : ""}`}
+            className={`form-control ${formik.touched.bio && formik.errors.bio ? "is-invalid" : ""}`}
             id="bio"
             rows="3"
             {...formik.getFieldProps("bio")}
@@ -227,7 +235,7 @@ export default function ProfileForm() {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="btn btn-outline-primary rounded-pill px-4"
+                className="btn btn-sm btn-outline-primary px-4"
               >
                 Edit Profile
               </button>
@@ -236,7 +244,7 @@ export default function ProfileForm() {
                 type="submit"
                 loading={formik.isSubmitting}
                 isDisabled={formik.isSubmitting}
-                className="btn btn-primary rounded-pill px-4"
+                className="btn btn-sm btn-primary px-4"
               >
                 Update Profile
               </LoadingButton>
@@ -247,7 +255,7 @@ export default function ProfileForm() {
                 <div className="d-md-none mb-2"></div>
                 <button
                   type="button"
-                  className="btn btn-outline-secondary rounded-pill px-4 flex-fill flex-md-grow-0"
+                  className="btn btn-sm btn-outline-secondary px-4 flex-fill flex-md-grow-0"
                   onClick={() => {
                     setIsEditing(false);
                     formik.resetForm();

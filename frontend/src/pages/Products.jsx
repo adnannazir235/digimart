@@ -28,8 +28,8 @@ export default function Products() {
   }
 
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center pb-4 my-5">
+    <div className="container py-5">
+      <div className="d-flex justify-content-between align-items-center py-4">
         <h3>Products ({products.length})</h3>
       </div>
 

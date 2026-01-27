@@ -58,7 +58,7 @@ export default function EditProduct({ product, onBack }) {
 
   async function onSubmit(values, { setSubmitting }) {
     if (!product?._id) {
-      toast.error("Invalid product.", toastOptions);
+      toast.error("Invalid product.", toastOptions());
       return;
     }
 
@@ -71,7 +71,7 @@ export default function EditProduct({ product, onBack }) {
 
     try {
       await productAPI.update(product._id, data);
-      toast.success("Product updated successfully!", toastOptions);
+      toast.success("Product updated successfully!", toastOptions());
       window.location.reload();
     } catch (err) {
       toast.error(
@@ -97,7 +97,6 @@ export default function EditProduct({ product, onBack }) {
   }
 
   return (
-    <div className="container">
       <div className="row justify-content-center">
         <div className="col">
           <div className="card border-0">
@@ -136,7 +135,7 @@ export default function EditProduct({ product, onBack }) {
                     Description
                   </label>
                   <textarea
-                    className={`form-control rounded-0 ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
+                    className={`form-control ${formik.touched.description && formik.errors.description ? "is-invalid" : ""}`}
                     id="description"
                     rows="4"
                     {...formik.getFieldProps("description")}
@@ -225,6 +224,5 @@ export default function EditProduct({ product, onBack }) {
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { orderAPI } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { formatUsdPrice, getCurrencySymbol } from "../utils";
+import { IoIosArrowBack } from "react-icons/io";
+import { getBadgeClasses } from "../../config/styles";
 
 export default function SaleDetails() {
   const { orderUid } = useParams();
@@ -34,10 +36,11 @@ export default function SaleDetails() {
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
         <button
-          className="btn btn-outline-secondary mt-3"
+          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
           onClick={() => navigate(-1)}
         >
-          ← Back to Sales
+          <IoIosArrowBack size={20} />
+          <span className="fw-medium">Back to Sales</span>
         </button>
       </div>
     );
@@ -58,7 +61,7 @@ export default function SaleDetails() {
   return (
     <div className="py-1">
       {/* Header */}
-      <div className="d-flex flex-row justify-content-between mb-5">
+      <div className="d-flex flex-row justify-content-between align-items-center mb-5">
         <div>
           <h2 className="mb-1">Sale #{displayedOrderUid.slice(-8)}</h2>
           <p className="text-muted mb-1">
@@ -77,18 +80,19 @@ export default function SaleDetails() {
         </div>
 
         <button
-          className="btn btn-outline-secondary"
+          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
           onClick={() => navigate(-1)}
         >
-          ← Back
+          <IoIosArrowBack size={20} />
+          <span className="fw-medium">Back</span>
         </button>
       </div>
 
       <div className="row g-4 align-items-start">
         {/* Products sold */}
         <div className="col-12 col-lg-8">
-          <div className="card border-0 shadow-sm">
-            <div className="card-header bg-light d-flex justify-content-between align-items-center">
+          <div className="card border">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h5 className="mb-0 lh-lg">Sold Products ({productIds.length})</h5>
             </div>
             <div className="card-body p-0">
@@ -133,11 +137,11 @@ export default function SaleDetails() {
         {/* Sale Summary Sidebar */}
         <div className="col-12 col-lg-4">
           <div
-            className="card border-0 shadow-sm sticky-top"
+            className="card border sticky-top"
             style={{ top: "1rem" }}
           >
-            <div className="card-header bg-light">
-              <h5 className="mb-0">Sale Summary</h5>
+            <div className="card-header">
+              <h5 className="mb-0 lh-lg">Sale Summary</h5>
             </div>
             <div className="card-body">
               <div className="d-flex justify-content-between mb-2">
@@ -166,9 +170,7 @@ export default function SaleDetails() {
 
               <div className="d-flex justify-content-between mb-3">
                 <span>Status</span>
-                <span
-                  className={`badge bg-${status === "completed" ? "success" : "warning"}`}
-                >
+                <span className={getBadgeClasses(status)}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </span>
               </div>

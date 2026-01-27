@@ -32,7 +32,7 @@ export default function DeleteAccount() {
           window.location.reload();
         }, 1300);
       } else {
-        toast.error(response.data.message, toastOptions);
+        toast.error(response.data.message, toastOptions());
       }
     } catch (error) {
       toast.error(

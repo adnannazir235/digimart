@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { authAPI } from "../services/api";
 import * as Yup from "yup";
 import LoadingButton from "../components/LoadingButton";
-import GoogleLogo from "../assets/google/logo.png";
+import { FcGoogle } from "react-icons/fc";
 
 export default function LogInForm({
   googleLoading,
@@ -156,12 +156,7 @@ export default function LogInForm({
             onClick={handleGoogleAuth}
           >
             Continue with Google
-            <img
-              src={GoogleLogo}
-              height="20"
-              className="ms-2"
-              alt="Google's Logo - PNG"
-            />
+            <FcGoogle size={25} className="ms-2" />
           </LoadingButton>
         </div>
       </div>

@@ -46,7 +46,7 @@ const ChangePassword = () => {
       const res = await authAPI.changePassword(values);
 
       if (res.data.success) {
-        toast.success("Password changed successfully!", toastOptions);
+        toast.success("Password changed successfully!", toastOptions());
 
         resetForm();
         dispatch(logout());
@@ -61,7 +61,7 @@ const ChangePassword = () => {
       const message =
         error.response?.data?.message || "Error changing password";
 
-      toast.error(message, toastOptions);
+      toast.error(message, toastOptions());
 
       if (error.response?.status === 401) {
         navigate("/login"); // Fallback only for auth failure
@@ -134,6 +134,7 @@ const ChangePassword = () => {
           )}
         </div>
       </div>
+
       <div className="row mb-3">
         <div className="col">
           <LoadingButton

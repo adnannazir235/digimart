@@ -6,9 +6,10 @@ import ChangePassword from "../components/ChangePassword";
 import DisconnectGoogleAccount from "../components/DisconnectGoogleAccount";
 import ProfileForm from "../components/ProfileForm";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { FiLock, FiUser } from "react-icons/fi";
 
 const Settings = () => {
-  const { user } = useSelector(state => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const [currentTab, setCurrentTab] = useLocalStorage(
     "settingsTab",
     localStorage.getItem("settingsTab") === null
@@ -17,11 +18,12 @@ const Settings = () => {
   );
 
   const handleTabs = (event) => {
-    const element = event.target;
+    // Use currentTarget instead of target to ensure we get the BUTTON element
+    const elementId = event.currentTarget.id;
 
-    if (element.id === "v-pills-pass-tab") {
+    if (elementId === "v-pills-pass-tab") {
       setCurrentTab("pass");
-    } else if (element.id === "v-pills-accntManage-tab") {
+    } else if (elementId === "v-pills-accntManage-tab") {
       setCurrentTab("accntManage");
     } else {
       alert("Error setting current tab state: Can't determine the Tab ID!");
@@ -32,120 +34,150 @@ const Settings = () => {
 
   return (
     <>
-      <h3 className="py-3 text-center">Settings</h3>
-      <div className="row align-items-start h-100">
-        <nav
-          className="col-12 col-lg-2 col-sm-3 nav nav-pills p-3 border border-1 flex-row flex-sm-column"
-          style={{ rowGap: "1.5rem" }}
-          id="v-pills-tab"
-          role="tablist"
-          aria-orientation="vertical"
-        >
-          <button
-            className={`nav-link ${(currentTab === "pass" ? "active" : "")}`
-            }
-            id="v-pills-pass-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-pass"
-            type="button"
-            role="tab"
-            aria-controls="v-pills-pass"
-            aria-selected={currentTab === "pass" ? "true" : "false"}
-            onClick={(event) => {
-              handleTabs(event);
-            }}
-          >
-            Password Management
-          </button>
+      <div className="ps-3 my-5 text-center text-sm-start">
+        <h2 className="fw-bold mb-1">Settings</h2>
+        <p className="text-muted">Manage your account security and preferences</p>
+      </div>
 
-          <button
-            className={`nav-link ${(currentTab === "accntManage" ? "active" : "")}`
-            }
-            id="v-pills-accntManage-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#v-pills-accntManage"
-            type="button"
-            role="tab"
-            aria-controls="v-pills-accntManage"
-            aria-selected={currentTab === "accntManage" ? "true" : "false"}
-            onClick={(event) => {
-              handleTabs(event);
-            }}
-          >
-            Account Management
-          </button>
-        </nav>
+      <div className="row g-4 mb-5">
+        {/* Sidebar Navigation */}
+        <div className="col-12 col-lg-2 col-sm-3 pe-0">
+          <div className="nav nav-pills row-gap-3 flex-row flex-sm-column" id="v-pills-tab" role="tablist">
 
-        <section
-          className="col-12 col-lg-10 col-sm-9 tab-content p-4 border border-1"
-          id="v-pills-tabContent"
-        >
-          <div
-            className={
-              currentTab === "pass"
-                ? "tab-pane fade show active"
-                : "tab-pane fade"
-            }
-            id="v-pills-pass"
-            role="tabpanel"
-            aria-labelledby="v-pills-pass-tab"
-            tabIndex="0"
-          >
-            {user.isPassSet === true ? (
-              <>
-                <h4 className="mb-5">Change Password</h4>
-                <ChangePassword />
-              </>
-            ) : (
-              <>
-                <h4 className="mb-5">Set Password</h4>
-                <SetPassword />
-              </>
-            )}
+            {/* Account Management Tab */}
+            <button
+              className={`border rounded-3 px-4 py-2 d-flex align-items-center gap-3 ${currentTab === "accntManage"
+                  ? "hover-bg-light nav-link active"
+                  : "bg-white text-secondary hover-bg-light"}`}
+              id="v-pills-accntManage-tab"
+              type="button"
+              role="tab"
+              aria-selected={currentTab === "accntManage"}
+              onClick={handleTabs}
+            >
+              <FiUser size={18} />
+              <span>Account Management</span>
+            </button>
+
+            {/* Password Management Tab */}
+            <button
+              className={`border rounded-3 px-4 py-2 d-flex align-items-center gap-3 ${currentTab === "pass"
+                  ? "hover-bg-light nav-link active"
+                  : "bg-white text-secondary hover-bg-light"}`}
+              id="v-pills-pass-tab"
+              type="button"
+              role="tab"
+              aria-selected={currentTab === "pass"}
+              onClick={handleTabs}
+            >
+              <FiLock size={18} />
+              <span>Password Management</span>
+            </button>
+
           </div>
+        </div>
 
+        {/* Content Area */}
+        <div className="col-12 col-sm-9 col-lg-10">
           <div
-            className={
-              currentTab === "accntManage"
-                ? "tab-pane fade show active"
-                : "tab-pane fade"
-            }
-            id="v-pills-accntManage"
-            role="tabpanel"
-            aria-labelledby="v-pills-accntManage-tab"
-            tabIndex="0"
+            className="border shadow-sm rounded-4 p-4 p-md-5"
+            id="v-pills-tabContent"
           >
-            <>
-              <h4 className="mb-4">Profile</h4>
-              <ProfileForm />
-              <hr className="my-4" />
+            <div
+              className={
+                currentTab === "pass"
+                  ? "animate-fade-in"
+                  : "d-none"
+              }
+              role="tabpanel"
+            >
+              {user.isPassSet !== true ? (
+                <>
+                  <h4 className="fw-bold mb-5 text-center">Change Password</h4>
+                  <ChangePassword />
+                </>
+              ) : (
+                <>
+                  <h4 className="fw-bold mb-5 text-center">Set Password</h4>
+                  <SetPassword />
+                </>
+              )}
+            </div>
+
+            <div
+              className={
+                currentTab === "accntManage"
+                  ? "animate-fade-in"
+                  : "d-none"
+              }
+              role="tabpanel"
+            >
+              <div className="mb-5">
+                <h4 className="fw-bold mb-3">Profile</h4>
+                <p className="text-muted small mb-4">
+                  Update your personal information and public profile.
+                </p>
+                <ProfileForm />
+              </div>
+
+              <hr className="my-5" />
 
               {user.isPassSet && user.isGoogleSet && (
                 <>
-                  <h4 className="mb-4">Disconnect Google Account</h4>
-                  <DisconnectGoogleAccount />
-                  <hr className="my-4" />
+                  <div className="mb-5">
+                    <h4 className="fw-bold mb-3">
+                      Disconnect Google Account
+                    </h4>
+                    <p className="text-muted small mb-4">
+                      Remove your Google login access. You will need to use
+                      your password to log in afterwards.
+                    </p>
+                    <DisconnectGoogleAccount />
+                  </div>
+                  <hr className="my-5" />
                 </>
               )}
 
-              <h4 className="mb-4">Delete Account</h4>
-              <DeleteAccount />
+              <div className="mb-5">
+                <h4 className="fw-bold mb-3 text-danger">
+                  Delete Account
+                </h4>
+                <p className="text-muted small mb-4">
+                  Permanently delete your account and all associated data. This
+                  action cannot be undone.
+                </p>
+                <DeleteAccount />
+              </div>
 
               {user.role === "buyer" && (
                 <>
-                  <hr className="my-4" />
-                  <h4 className="mb-4">Create Your Own Shop</h4>
-                  <p>
-                    If you want to create your own shop, and publish your own
-                    digital products, please do so by creating your own shop
-                    from <Link to="/buyer/create-shop">this (create shop)</Link>{" "}
-                    page.
-                  </p>
+                  <hr className="my-5" />
+                  <div className="p-4 rounded-3 border">
+                    <h4 className="fw-bold mb-3">Create Your Own Shop</h4>
+                    <p className="mb-3">
+                      If you want to create your own shop, and publish your own
+                      digital products, please do so by creating your own shop
+                      from the{" "}
+                      <Link
+                        to="/buyer/create-shop"
+                        className="fw-bold text-primary text-decoration-none"
+                      >
+                        create shop page
+                      </Link>
+                      .
+                    </p>
+                    <Link
+                      to="/buyer/create-shop"
+                      className="btn btn-primary rounded-pill px-4"
+                    >
+                      Get Started
+                    </Link>
+                  </div>
                 </>
               )}
-            </>
+            </div>
           </div>
-        </section>
+        </div>
       </div>
     </>
   );

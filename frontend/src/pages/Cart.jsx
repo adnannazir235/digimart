@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { productAPI, checkoutAPI } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { useLocalStorage } from "../hooks/useLocalStorage.jsx";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { formatUsdPrice, getCurrencySymbol } from "../utils/currencyUtils.js";
 
 const PLATFORM_FEE_PERCENT = parseFloat(
@@ -45,6 +45,8 @@ export default function Cart() {
     const newIds = cartIds.filter((i) => i !== id);
     setCartIds(newIds);
     // No need to manually update items; the useEffect will refetch based on cartIds
+
+    window.dispatchEvent(new CustomEvent("cart-updated", { detail: newIds }));
   };
 
   const handleCheckout = async () => {
@@ -149,7 +151,7 @@ export default function Cart() {
           <div className="col-lg-4">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">Order Summary</h5>
+                <h5 className="fs-3 card-title lh-lg">Order Summary</h5>
 
                 {validItems.map(({ product }) => {
                   const usdCents = product.currencyCode === "PKR"
