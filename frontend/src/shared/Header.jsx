@@ -45,9 +45,6 @@ export default function Header() {
       expand="lg"
       sticky="top"
       className="glass-nav"
-      style={{
-        // Fallback for browsers without backdrop-filter
-      }}
     >
       <div className="container-fluid px-3 px-md-4">
         <LinkContainer to="/" active="">
