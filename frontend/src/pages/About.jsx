@@ -2,6 +2,7 @@ import { Container, Row, Col, Card, Badge } from "react-bootstrap";
 import { BsStripe } from "react-icons/bs";
 import { IoLogoVercel } from "react-icons/io5";
 import { SiMongodb, SiRender } from "react-icons/si";
+import { TiFlowMerge } from "react-icons/ti";
 import {
   FaCode,
   FaDatabase,
@@ -10,7 +11,6 @@ import {
   FaUserLock,
   FaPaintBrush,
   FaCreditCard,
-  FaEnvelope,
   FaCheckCircle,
   FaVial,
   FaGithub,
@@ -90,6 +90,7 @@ export default function About() {
               "Formik & Yup",
               "Bootstrap 5",
               "React Toastify",
+              "React GA4",
             ]}
             showBadge={false}
           />
@@ -132,9 +133,13 @@ export default function About() {
                 <strong className="text-primary">Products:</strong> Digital
                 files, metadata, stats
               </li>
-              <li>
+              <li className="mb-3">
                 <strong className="text-primary">Orders:</strong> Transactions,
                 buyer-seller linking
+              </li>
+              <li>
+                <strong className="text-primary">Black Listed Tokens:</strong>{" "}
+                JWT Revocation & Security
               </li>
             </ul>
           </SystemCard>
@@ -143,22 +148,26 @@ export default function About() {
         <Col lg={6}>
           <SystemCard
             title="Communication & Logic"
-            icon={<FaEnvelope size={28} />}
+            icon={<TiFlowMerge size={28} />}
           >
             <ul className="list-unstyled mb-0">
-              <li className="mb-2">
+              <li className="mb-3">
                 <FaCheckCircle className="text-primary me-2" />
                 Account Verification
               </li>
-              <li className="mb-2">
+              <li className="mb-3">
                 <FaCheckCircle className="text-primary me-2" />
                 Password Reset & Change Alerts
               </li>
-              <li className="mb-2">
+              <li className="mb-3">
                 <FaCheckCircle className="text-primary me-2" />
-                Shop Creation Confirmation
+                Password Changed Email
               </li>
-              <li className="mb-2">
+              <li className="mb-3">
+                <FaCheckCircle className="text-primary me-2" />
+                Seller Upgrade & Onboarding
+              </li>
+              <li className="mb-3">
                 <FaCheckCircle className="text-primary me-2" />
                 Purchase Receipts
               </li>
@@ -179,7 +188,7 @@ export default function About() {
               </p>
             </div>
           </Col>
-          
+
           <Col md={3}>
             <div className="p-4 rounded-3 bg-body border border-light-subtle">
               <h6 className="mb-4">Backend</h6>
@@ -232,7 +241,7 @@ function TechCard({ title, icon, items, badgeUrl, showBadge = false }) {
     <Card className="h-100 border shadow-sm bg-body hover-lift transition-all">
       <Card.Header className="bg-transparent border-bottom py-3 d-flex align-items-center justify-content-between">
         <div className="d-flex align-items-center gap-3">
-          <div className="text-primary fs-4">{icon}</div>
+          <div className="ps-2 text-primary fs-4">{icon}</div>
           <h6 className="fw-bold mb-0">{title}</h6>
         </div>
 
@@ -276,7 +285,7 @@ function SystemCard({ title, icon, children }) {
   return (
     <Card className="h-100 border shadow-sm bg-body hover-lift transition-all">
       <Card.Header className="bg-transparent border-bottom py-3 d-flex align-items-center gap-3">
-        <div className="text-primary fs-4">{icon}</div>
+        <div className="ps-2 text-primary fs-4">{icon}</div>
         <h6 className="fw-bold mb-0">{title}</h6>
       </Card.Header>
       <Card.Body className="p-4">{children}</Card.Body>

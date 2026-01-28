@@ -45,9 +45,10 @@ const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const GAInitializer = () => {
   useEffect(() => {
     // Determine if we are running in a production environment (not localhost)
-    const isProduction =
-      window.location.hostname !== "localhost" &&
-      window.location.hostname !== "127.0.0.1";
+    const localHosts = ["localhost", "192.", "127."];
+    const isProduction = !localHosts.some(host =>
+      window.location.hostname.startsWith(host)
+    );
 
     if (isProduction) {
       // Use the helper function to safely retrieve the environment variable
