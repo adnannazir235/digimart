@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaFilter } from "react-icons/fa";
+import { IoFilter } from "react-icons/io5";
 import { TiCancel } from "react-icons/ti";
 
 export default function ProductFiltersBar({ filters, setFilters }) {
@@ -51,7 +51,7 @@ export default function ProductFiltersBar({ filters, setFilters }) {
           }`}
           onClick={toggleFilters}
         >
-          <FaFilter size={15} />
+          <IoFilter size={20} />
         </button>
       </div>
 

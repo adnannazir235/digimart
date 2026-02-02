@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Navbar, Nav, NavDropdown, Badge } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice.js";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
+import { IoCartOutline } from "react-icons/io5";
+import { FiSettings } from "react-icons/fi";
+import { MdOutlineDashboard } from "react-icons/md";
 import digiMartLogo from "../assets/logos/digimart.svg";
 import LazyAvatar from "../components/LazyAvatar.jsx";
-import { FiSettings } from "react-icons/fi";
+import ThemeToggleDropdownItem from "../components/ThemeToggleDropdownItem.jsx";
 
 export default function Header() {
   const { user } = useSelector((state) => state.auth);
@@ -41,11 +44,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar
-      expand="lg"
-      sticky="top"
-      className="glass-nav"
-    >
+    <Navbar expand="lg" sticky="top" className="glass-nav">
       <div className="container-fluid px-3 px-md-4">
         <LinkContainer to="/" active="">
           <Navbar.Brand className="fw-semibold d-flex align-items-center gap-2 fs-4">
@@ -60,7 +59,14 @@ export default function Header() {
           </Navbar.Brand>
         </LinkContainer>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        {/* Mobile Theme Toggle (Visible only on mobile, left of hamburger) */}
+        <ThemeToggleDropdownItem
+          variant="nav"
+          isMobile={true}
+          className="d-lg-none me-2"
+        />
+
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className="border border-1 " />
 
         <Navbar.Collapse className="py-lg-0 py-4" id="basic-navbar-nav">
           <Nav className="ms-auto column-gap-lg-4">
@@ -73,15 +79,17 @@ export default function Header() {
               <>
                 {/* Desktop: icons + dropdown */}
                 <div className="d-none d-lg-flex align-items-center gap-3">
-                  {/* Cart */}
                   <LinkContainer to="/cart">
-                    <Nav.Link className="position-relative d-flex align-items-center">
-                      <FaShoppingCart size={20} />
+                    <Nav.Link
+                      className="position-relative d-flex align-items-center"
+                      active=""
+                    >
+                      <IoCartOutline size={20} />
                       {cartCount > 0 && (
                         <Badge
                           pill
                           bg="danger"
-                          className="position-absolute start-100 translate-middle border-light shadow-sm"
+                          className="position-absolute translate-middle border-light shadow-sm"
                           style={{ top: "16%", left: "86%" }}
                         >
                           {cartCount}
@@ -102,13 +110,17 @@ export default function Header() {
                     <ul className="dropdown-menu dropdown-menu-end shadow border-0">
                       {user.role === "seller" && (
                         <LinkContainer to="/seller/dashboard/products">
-                          <NavDropdown.Item>Seller Dashboard</NavDropdown.Item>
+                          <NavDropdown.Item className="d-flex align-items-center gap-2">
+                            <MdOutlineDashboard size={16} /> Seller Dashboard
+                          </NavDropdown.Item>
                         </LinkContainer>
                       )}
 
                       {user.role === "buyer" && (
                         <LinkContainer to="/buyer/dashboard/orders">
-                          <NavDropdown.Item>Buyer Dashboard</NavDropdown.Item>
+                          <NavDropdown.Item className="d-flex align-items-center gap-2">
+                            <MdOutlineDashboard size={16} /> Buyer Dashboard
+                          </NavDropdown.Item>
                         </LinkContainer>
                       )}
 
@@ -119,6 +131,10 @@ export default function Header() {
                           <FiSettings size={16} /> Settings
                         </NavDropdown.Item>
                       </LinkContainer>
+
+                      <NavDropdown.Divider />
+
+                      <ThemeToggleDropdownItem variant="dropdown" />
 
                       <NavDropdown.Divider />
 
@@ -135,31 +151,28 @@ export default function Header() {
                 {/* Mobile: simple nav links */}
                 <div className="d-lg-none w-100">
                   <LinkContainer to="/cart">
-                    <Nav.Link>
+                    <Nav.Link active="">
                       Cart {cartCount > 0 && `(${cartCount})`}
                     </Nav.Link>
                   </LinkContainer>
 
                   {user.role === "seller" && (
                     <LinkContainer to="/seller/dashboard/products">
-                      <Nav.Link>Seller Dashboard</Nav.Link>
+                      <Nav.Link active="">Seller Dashboard</Nav.Link>
                     </LinkContainer>
                   )}
 
                   {user.role === "buyer" && (
                     <LinkContainer to="/buyer/dashboard/orders">
-                      <Nav.Link>Buyer Dashboard</Nav.Link>
+                      <Nav.Link active="">Buyer Dashboard</Nav.Link>
                     </LinkContainer>
                   )}
 
                   <LinkContainer to="/settings">
-                    <Nav.Link>Settings</Nav.Link>
+                    <Nav.Link active="">Settings</Nav.Link>
                   </LinkContainer>
 
-                  <Nav.Link
-                    onClick={handleLogout}
-                    className="text-danger"
-                  >
+                  <Nav.Link onClick={handleLogout} className="text-danger">
                     Log Out
                   </Nav.Link>
                 </div>
@@ -169,9 +182,16 @@ export default function Header() {
                 <LinkContainer to="/login" active="">
                   <Nav.Link className="fw-medium">Log In</Nav.Link>
                 </LinkContainer>
+
                 <LinkContainer to="/signup" active="">
                   <Nav.Link className="fw-medium">Sign Up</Nav.Link>
                 </LinkContainer>
+
+                {/* Guest Desktop Theme Toggle */}
+                <ThemeToggleDropdownItem
+                  variant="nav"
+                  className="d-lg-block d-none"
+                />
               </>
             )}
           </Nav>

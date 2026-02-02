@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authAPI, userAPI } from "../../services/api";
+import { getAccessToken, setAccessToken, removeAccessToken } from "../../utils/tokenUtils";
 
 export const fetchUser = createAsyncThunk(
     "auth/fetchUser",
@@ -9,10 +10,8 @@ export const fetchUser = createAsyncThunk(
             return res.data.data.user;
         } catch (error) {
             if (error.response?.status === 401) {
-                localStorage.removeItem("accessToken");
-                window.dispatchEvent(new StorageEvent("storage", { key: "accessToken", newValue: null }));
-            };
-
+                removeAccessToken();
+            }
             return rejectWithValue(error.response?.data?.message || "Failed to fetch user");
         }
     }
@@ -21,8 +20,7 @@ export const fetchUser = createAsyncThunk(
 export const login = createAsyncThunk(
     "auth/login",
     async (newAccessToken, { dispatch }) => {
-        localStorage.setItem("accessToken", JSON.stringify(newAccessToken));
-        window.dispatchEvent(new StorageEvent("storage", { key: "accessToken", newValue: JSON.stringify(newAccessToken) }));
+        setAccessToken(newAccessToken);
         await dispatch(fetchUser());
         return newAccessToken;
     }
@@ -40,18 +38,14 @@ export const logout = createAsyncThunk(
                 console.log("Logout API failed:", error);
             }
         }
-
-        localStorage.removeItem("accessToken");
-        window.dispatchEvent(new StorageEvent("storage", { key: "accessToken", newValue: null }));
+        removeAccessToken();
     }
 );
 
-const initialAccessToken = localStorage.getItem("accessToken") ? JSON.parse(localStorage.getItem("accessToken")) : null;
-
 const initialAuthState = {
     user: null,
-    accessToken: initialAccessToken,
-    loading: !!initialAccessToken,
+    accessToken: getAccessToken(),
+    loading: !!getAccessToken(),
     error: null,
 };
 
@@ -64,6 +58,9 @@ const authSlice = createSlice({
         },
         clearError(state) {
             state.error = null;
+        },
+        setUser(state, action) {
+            state.user = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -94,5 +91,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { setError, clearError } = authSlice.actions;
+export const { setError, clearError, setUser } = authSlice.actions;
 export default authSlice.reducer;

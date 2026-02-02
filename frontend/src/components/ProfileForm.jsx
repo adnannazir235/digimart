@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../features/auth/authSlice.js";
+import { setUser } from "../features/auth/authSlice.js";
 import { userAPI } from "../services/api.js";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -74,7 +74,7 @@ export default function ProfileForm() {
     try {
       const response = await userAPI.updateProfile(values);
 
-      dispatch(fetchUser());
+      dispatch(setUser(response.data.data.user));
       toast.success(response.data.message || "Profile updated!", toastOptions());
       setIsEditing(false);
     } catch (error) {

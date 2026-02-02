@@ -14,9 +14,9 @@ export function useLocalStorage(key, initialValue) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (err) {
-      console.error("LocalStorage write failed:", err);
+      console.error("useLocalStorage write failed:", err);
     }
-  }, [key, value]); // No dispatch here!
+  }, [key, value]);
 
   return [value, setValue];
 };

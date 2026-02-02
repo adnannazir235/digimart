@@ -81,17 +81,17 @@ export default function Cart() {
 
   const validItems = items.filter((i) => i.product.shopId?.sellerId._id !== user._id);
 
-  // Calculate USD total synchronously (no async in reduce!)
-  const totalUsdCents = validItems.reduce((sum, i) => {
-    const localCents = i.product.price; // If already in USD, use directly
-    const usdCents = i.product.currencyCode === "USD" ? localCents : localCents / 280; // If not USD, convert
-    return sum + usdCents;
+  // Calculate USD total
+  const totalUsd = validItems.reduce((sum, i) => {
+    const price = i.product.price;
+    const usd = i.product.currencyCode === "USD"
+      ? price
+      : price / 280;
+    return sum + usd;
   }, 0);
 
-  const platformFeeUsdCents = Math.round(
-    totalUsdCents * (PLATFORM_FEE_PERCENT / 100)
-  );
-  const grandTotalUsdCents = totalUsdCents + platformFeeUsdCents;
+  const platformFeeUsd = totalUsd * (PLATFORM_FEE_PERCENT / 100);
+  const grandTotalUsd = totalUsd + platformFeeUsd;
 
   return (
     <div className="container py-5">
@@ -151,7 +151,9 @@ export default function Cart() {
           <div className="col-lg-4">
             <div className="card">
               <div className="card-body">
-                <h5 className="fs-3 card-title lh-lg">Order Summary</h5>
+                <h5 className="fs-3 card-title lh-lg">
+                  Order Summary
+                </h5>
 
                 {validItems.map(({ product }) => {
                   const usdCents = product.currencyCode === "PKR"
@@ -172,13 +174,13 @@ export default function Cart() {
                 <hr />
                 <div className="d-flex justify-content-between">
                   <span className="fw-bold">Platform Fee ({PLATFORM_FEE_PERCENT}%)</span>
-                  <span>${formatUsdPrice(platformFeeUsdCents)}</span>
+                  <span>${formatUsdPrice(platformFeeUsd)}</span>
                 </div>
 
                 <hr />
                 <div className="d-flex justify-content-between fw-bold">
                   <span>Total</span>
-                  <span>${formatUsdPrice(grandTotalUsdCents)}</span>
+                  <span>${formatUsdPrice(grandTotalUsd)}</span>
                 </div>
 
                 <button

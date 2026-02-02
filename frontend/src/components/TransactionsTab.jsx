@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getBadgeClasses, toastOptions } from "../../config/styles";
@@ -34,7 +39,6 @@ export default function TransactionsTab({ isBuyer = false }) {
   const [sellerSales, setSellerSales] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [downloadingOrderId, setDownloadingOrderId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,30 +83,6 @@ export default function TransactionsTab({ isBuyer = false }) {
     fetchData();
   }, [user, contextShop, contextSales]);
 
-  const handleDownload = async (orderId) => {
-    if (downloadingOrderId) return;
-    setDownloadingOrderId(orderId);
-    try {
-      const response = await orderAPI.downloadProduct(orderId);
-      const blob = new Blob([response.data], {
-        type: response.headers["content-type"] || "application/zip",
-      });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `order-${orderId}-files.zip`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      toast.success("Download complete!", toastOptions());
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Download failed", toastOptions());
-    } finally {
-      setDownloadingOrderId(null);
-    }
-  };
-
   const renderTransactionsTable = (ordersOrSales, title) => {
     if (ordersOrSales.length === 0) {
       return (
@@ -110,9 +90,14 @@ export default function TransactionsTab({ isBuyer = false }) {
           <div className="text-muted mb-3">
             <i className="bi bi-inbox fs-1 text-secondary opacity-50"></i>
           </div>
-          <p className="fw-bold text-secondary">No {title.toLowerCase()} yet</p>
+          <p className="fw-bold text-secondary mb-3">
+            No {title.toLowerCase()} yet
+          </p>
           {title === "Orders" && (
-            <Link to="/products" className="btn btn-sm btn-outline-primary rounded-pill px-3">
+            <Link
+              to="/products"
+              className="btn btn-sm btn-outline-primary rounded-pill px-3"
+            >
               Browse Products
             </Link>
           )}
@@ -124,19 +109,34 @@ export default function TransactionsTab({ isBuyer = false }) {
       <div className="card border shadow-sm rounded mt-3 overflow-hidden">
         <div className="card-body p-0">
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.95rem' }}>
+            <table
+              className="table table-hover align-middle mb-0"
+              style={{ fontSize: "0.95rem" }}
+            >
               <thead>
                 <tr>
-                  <th className="ps-4 text-uppercase text-muted fw-bold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                  <th
+                    className="ps-4 text-uppercase text-muted fw-bold"
+                    style={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
+                  >
                     Order ID
                   </th>
-                  <th className="text-uppercase text-muted fw-bold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                  <th
+                    className="text-uppercase text-muted fw-bold"
+                    style={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
+                  >
                     Total
                   </th>
-                  <th className="text-uppercase text-muted fw-bold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                  <th
+                    className="text-uppercase text-muted fw-bold"
+                    style={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
+                  >
                     Status
                   </th>
-                  <th className="pe-4 text-end text-uppercase text-muted fw-bold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                  <th
+                    className="pe-4 text-end text-uppercase text-muted fw-bold"
+                    style={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
+                  >
                     Actions
                   </th>
                 </tr>
@@ -148,14 +148,17 @@ export default function TransactionsTab({ isBuyer = false }) {
                     <td className="ps-4">{orderOrSale.orderUid}</td>
 
                     <td className="text-secondary">
-                      $                       {(
-                        (orderOrSale.amount ? orderOrSale.amount / 100 : orderOrSale.total || 0)
+                      ${" "}
+                      {(orderOrSale.amount
+                        ? orderOrSale.amount / 100
+                        : orderOrSale.total || 0
                       ).toFixed(2)}
                     </td>
 
                     <td>
                       <span className={getBadgeClasses(orderOrSale.status)}>
-                        {orderOrSale.status.charAt(0).toUpperCase() + orderOrSale.status.slice(1)}
+                        {orderOrSale.status.charAt(0).toUpperCase() +
+                          orderOrSale.status.slice(1)}
                       </span>
                     </td>
 
@@ -171,19 +174,6 @@ export default function TransactionsTab({ isBuyer = false }) {
                       >
                         View
                       </button>
-                      {title.includes("Orders") && orderOrSale.status === "completed" && (
-                        <button
-                          onClick={() => handleDownload(orderOrSale.orderUid)}
-                          disabled={downloadingOrderId === orderOrSale.orderUid}
-                          className={`btn btn-sm ms-2 px-3 fw-medium ${
-                            downloadingOrderId === orderOrSale.orderUid
-                              ? "btn-secondary"
-                              : "btn-primary"
-                          }`}
-                        >
-                          {downloadingOrderId === orderOrSale.orderUid ? "Downloading..." : "Download"}
-                        </button>
-                      )}
                     </td>
                   </tr>
                 ))}
@@ -196,15 +186,24 @@ export default function TransactionsTab({ isBuyer = false }) {
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="alert alert-danger rounded-3 border-0 shadow-sm">{error}</div>;
+  if (error)
+    return (
+      <div className="alert alert-danger rounded-3 border-0 shadow-sm">
+        {error}
+      </div>
+    );
 
   // Buyer: Only show "Orders"
   if (isBuyer || !user?.isSeller) {
     return (
-      <div>
-        <h3 className="fw-bold mb-4">Orders{" "}
-          <span className="text-muted fw-normal">({buyerOrders.length})</span></h3>
-        {renderTransactionsTable(buyerOrders, "Orders")}
+      <div className="container py-4">
+        <div className="pb-5">
+          <h3 className="fw-bold mb-4">
+            Orders{" "}
+            <span className="text-muted fw-normal">({buyerOrders.length})</span>
+          </h3>
+          {renderTransactionsTable(buyerOrders, "Orders")}
+        </div>
       </div>
     );
   }
@@ -212,14 +211,18 @@ export default function TransactionsTab({ isBuyer = false }) {
   return (
     <div className="container py-4">
       <div className="pb-5">
-        <h3 className="fw-bold">My Orders{" "}
-          <span className="text-muted fw-normal">({buyerOrders.length})</span></h3>
+        <h3 className="fw-bold">
+          My Orders{" "}
+          <span className="text-muted fw-normal">({buyerOrders.length})</span>
+        </h3>
         {renderTransactionsTable(buyerOrders, "Orders")}
       </div>
 
       <div className="pt-5 mt-5">
-        <h3 className="fw-bold">My Sales{" "}
-          <span className="text-muted fw-normal">({sellerSales.length})</span></h3>
+        <h3 className="fw-bold">
+          My Sales{" "}
+          <span className="text-muted fw-normal">({sellerSales.length})</span>
+        </h3>
         {renderTransactionsTable(sellerSales, "Sales")}
       </div>
     </div>

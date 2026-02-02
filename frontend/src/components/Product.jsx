@@ -150,16 +150,16 @@ export default function Product({
         </div>
 
         <div className="col-md-4 ps-md-0">
-          <div className="d-flex align-items-center gap-2 mb-1">
-            {category && (
+          {category && (
+            <div className="d-flex align-items-center gap-2 mb-1">
               <span
                 className="badge text-secondary fw-normal rounded-1 px-2 py-1"
                 style={{ fontSize: "0.7rem" }}
               >
                 {category}
               </span>
-            )}
-          </div>
+            </div>
+          )}
           <h5 className="fw-bold mb-1 text-truncate">
             {title || "Unnamed Product"}
           </h5>

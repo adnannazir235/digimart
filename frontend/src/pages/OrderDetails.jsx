@@ -96,13 +96,7 @@ export default function OrderDetails() {
         <div className="col-12 col-lg-8">
           <div className="card border shadow-sm">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 lh-lg">Purchased Products ({productIds.length})</h5>
-              {productIds.length > 0 && status === "completed" && (
-                <button className="btn border rounded-0 d-flex align-items-center gap-2">
-                  <FaDownload size={18} />
-                  (ZIP)
-                </button>
-              )}
+              <h5 className="mb-0 lh-lg">Products Purchased ({productIds.length})</h5>
             </div>
             <div className="card-body p-0">
               {productIds.length === 0 ? (
@@ -124,7 +118,7 @@ export default function OrderDetails() {
                           </p>
                           <div className="small text-muted">
                             <span>
-                              File type: {product.mimeType || "Unknown"}
+                              File type: {product.mimeType.split("/")[1].toUpperCase() || "Unknown"}
                             </span>
                           </div>
                         </div>

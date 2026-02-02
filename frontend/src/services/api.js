@@ -1,8 +1,7 @@
 import axios from "axios";
+import { getAccessToken, setAccessToken, removeAccessToken } from "../utils/tokenUtils";
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_BACKEND_URL });
-
-// Enable withCredentials for HTTP-only cookies (likely used by /refresh-token)
 api.defaults.withCredentials = true;
 
 // Request Interceptor
@@ -10,16 +9,9 @@ api.interceptors.request.use(
     (config) => {
         if (config.url?.includes("/refresh-token")) return config;
 
-        const accessToken = localStorage.getItem("accessToken");
-        if (accessToken && accessToken !== null && accessToken !== "null") {
-            try {
-                const parsedToken = JSON.parse(accessToken);
-                if (parsedToken) {
-                    config.headers.Authorization = `Bearer ${parsedToken}`;
-                }
-            } catch (e) {
-                console.error("Failed to parse accessToken:", e);
-            }
+        const token = getAccessToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -31,13 +23,7 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-    failedQueue.forEach((prom) => {
-        if (error) {
-            prom.reject(error);
-        } else {
-            prom.resolve(token);
-        }
-    });
+    failedQueue.forEach((prom) => (error ? prom.reject(error) : prom.resolve(token)));
     failedQueue = [];
 };
 
@@ -46,7 +32,7 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (originalRequest.url.includes("/auth/login") || originalRequest.url.includes("/auth/reset-password")) {
+        if (!originalRequest || originalRequest.url.includes("/auth/login") || originalRequest.url.includes("/auth/reset-password")) {
             return Promise.reject(error);
         }
 
@@ -79,14 +65,7 @@ api.interceptors.response.use(
             const res = await api.post("/auth/refresh-token");
             const newAccessToken = res.data.accessToken;
 
-            // Update localStorage
-            localStorage.setItem("accessToken", JSON.stringify(newAccessToken));
-
-            // Dispatch storage event to notify other components
-            window.dispatchEvent(new StorageEvent("storage", {
-                key: "accessToken",
-                newValue: JSON.stringify(newAccessToken),
-            }));
+            setAccessToken(newAccessToken);
 
             // Update headers
             api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
@@ -97,13 +76,7 @@ api.interceptors.response.use(
             return api(originalRequest);
         } catch (refreshError) {
             processQueue(refreshError, null);
-            localStorage.removeItem("accessToken");
-
-            // Dispatch manual storage event to trigger handlers in same tab
-            window.dispatchEvent(new StorageEvent("storage", {
-                key: "accessToken",
-                newValue: null,
-            }));
+            removeAccessToken();
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
@@ -125,7 +98,7 @@ export const authAPI = {
         const redirectPath = redirectTo ? `?redirectTo=${redirectTo}` : "";
         const url = `${backendUrl}/auth/google${redirectPath}`;
 
-        // Full page redirect — NOT AJAX
+        // Full page redirect
         window.location.href = url;
     },
     setPassword: (data) => api.post("/auth/set-password", data),
@@ -133,7 +106,6 @@ export const authAPI = {
     disconnectGoogle: (data) => api.post("/auth/disconnect-google", data),
 };
 
-// --- USER API ---
 export const userAPI = {
     // GET /users/me
     getProfile: () => api.get("/users/me"),
@@ -142,7 +114,6 @@ export const userAPI = {
     updateProfile: (data) => api.put("/users/me", data),
 };
 
-// --- SHOP API ---
 export const shopAPI = {
     // POST /shops/create-shop (Authenticated seller onboarding)
     createShop: (data) => api.post("/shops/create-shop", data),
@@ -160,7 +131,6 @@ export const shopAPI = {
     deleteShop: (id) => api.delete(`/shops/${id}`),
 };
 
-// --- PRODUCT API ---
 export const productAPI = {
     // POST /products (Authenticated, handles file upload via Multer)
     // NOTE: For file uploads, ensure your component sends a FormData object.
@@ -186,7 +156,6 @@ export const productAPI = {
     delete: (id) => api.delete(`/products/${id}`),
 };
 
-// --- PAYMENT & ORDER API ---
 export const checkoutAPI = {
     // POST /checkout (Authenticated, initiate Stripe Checkout session)
     createCheckoutSession: (data) => api.post("/checkout", data),

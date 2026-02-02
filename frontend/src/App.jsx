@@ -1,53 +1,53 @@
+import { useEffect, useRef, lazy, Suspense } from "react";
 import {
   Routes,
   Route,
   Navigate,
   useSearchParams,
-  useNavigate,
 } from "react-router-dom";
-import { useEffect, useRef, lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, login } from "./features/auth/authSlice.js";
-import { PublicOnlyRoute } from "./routes/PublicOnlyRoute.jsx";
-import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
-import Header from "./shared/Header";
-import Footer from "./shared/Footer.jsx";
-import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import ReactGA from "react-ga4";
+import { toast, ToastContainer } from "react-toastify";
+import { fetchUser, login } from "./features/auth/authSlice.js";
 import useAnalyticsTracker from "./hooks/useAnalyticsTracker";
 import useDocumentTitle from "./hooks/useDocumentTitle";
-import { toast, ToastContainer } from "react-toastify";
+import Header from "./shared/Header.jsx";
+import Footer from "./shared/Footer.jsx";
+import DashboardLayout from "./shared/DashboardLayout.jsx";
+import LoadingSpinner from "./components/LoadingSpinner.jsx";
+import CheckoutSuccess from "./components/CheckoutSuccess.jsx";
+import { PublicOnlyRoute } from "./routes/PublicOnlyRoute.jsx";
+import { RoleBasedRoute } from "./routes/RoleBasedRoute.jsx";
 import { toastOptions } from "../config/styles";
 
-const Home = lazy(() => import("./pages/Home"));
-const Contact = lazy(() => import("./pages/Contact"));
-const About = lazy(() => import("./pages/About"));
-const SignUp = lazy(() => import("./pages/SignUp"));
-const LogIn = lazy(() => import("./pages/LogIn"));
-const Settings = lazy(() => import("./pages/Settings"));
-const CheckEmail = lazy(() => import("./pages/CheckEmail"));
+const Home = lazy(() => import("./pages/Home.jsx"));
+const Products = lazy(() => import("./pages/Products.jsx"));
+const Product = lazy(() => import("./pages/Product.jsx"));
+const Cart = lazy(() => import("./pages/Cart.jsx"));
+const Contact = lazy(() => import("./pages/Contact.jsx"));
+const About = lazy(() => import("./pages/About.jsx"));
+const SignUp = lazy(() => import("./pages/SignUp.jsx"));
+const LogIn = lazy(() => import("./pages/LogIn.jsx"));
+const CheckEmail = lazy(() => import("./pages/CheckEmail.jsx"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.jsx"));
-const DashboardLayout = lazy(() => import("./shared/DashboardLayout.jsx"));
 const BuyerDashboard = lazy(() => import("./pages/BuyerDashboard.jsx"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard.jsx"));
 const CreateShop = lazy(() => import("./pages/CreateShop.jsx"));
+const Settings = lazy(() => import("./pages/Settings.jsx"));
+const OrderDetails = lazy(() => import("./pages/OrderDetails.jsx"));
+const SaleDetails = lazy(() => import("./pages/SaleDetails.jsx"));
+const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const ProductsTab = lazy(() => import("./components/ProductsTab.jsx"));
 const TransactionsTab = lazy(() => import("./components/TransactionsTab.jsx"));
 const ShopTab = lazy(() => import("./components/ShopTab.jsx"));
-const Products = lazy(() => import("./pages/Products.jsx"));
-const Product = lazy(() => import("./pages/Product.jsx"));
-const OrderDetails = lazy(() => import("./pages/OrderDetails.jsx"));
-const SaleDetails = lazy(() => import("./pages/SaleDetails.jsx"));
-const Cart = lazy(() => import("./pages/Cart.jsx"));
-const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 const GAInitializer = () => {
   useEffect(() => {
     // Determine if we are running in a production environment (not localhost)
     const localHosts = ["localhost", "192.", "127."];
-    const isProduction = !localHosts.some(host =>
-      window.location.hostname.startsWith(host)
+    const isProduction = !localHosts.some((host) =>
+      window.location.hostname.startsWith(host),
     );
 
     if (isProduction) {
@@ -58,7 +58,7 @@ const GAInitializer = () => {
         ReactGA.initialize(GA_MEASUREMENT_ID);
       } else {
         console.warn(
-          "Google Analytics skipped: VITE_API_GA_MEASUREMENT_ID is missing in production environment."
+          "Google Analytics skipped: VITE_API_GA_MEASUREMENT_ID is missing in production environment.",
         );
       }
     }
@@ -68,9 +68,11 @@ const GAInitializer = () => {
 
 const RouteChangeTracker = () => {
   // Only call the hook if GA was initialized (i.e., if we are in production)
-  const isProduction =
-    window.location.hostname !== "localhost" &&
-    window.location.hostname !== "127.0.0.1";
+  const localHosts = ["localhost", "192.", "127."];
+  const isProduction = !localHosts.some((host) =>
+    window.location.hostname.startsWith(host),
+  );
+
   if (isProduction) {
     useAnalyticsTracker();
   }
@@ -80,25 +82,22 @@ const RouteChangeTracker = () => {
 function QueryHandler() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const processedToasts = useRef(new Set());
 
   useEffect(() => {
     const status = searchParams.get("status");
     const message = searchParams.get("message");
     const accessToken = searchParams.get("accessToken");
-    const stripeSuccess = searchParams.get("stripeSuccess");
     const toastId =
       searchParams.get("toastId") || `${status}-${message}-${Date.now()}`;
 
-    if (!status && !message && !accessToken && !stripeSuccess) return;
+    if (!status && !message && !accessToken) return;
     if (processedToasts.current.has(toastId)) return;
 
     console.log("QueryHandler: Processing query params:", {
       status,
       message,
       accessToken,
-      stripeSuccess,
       toastId,
     });
 
@@ -107,20 +106,6 @@ function QueryHandler() {
     if (accessToken) {
       console.log("QueryHandler: Setting accessToken and triggering login");
       dispatch(login(accessToken));
-      shouldClearParams = true;
-    }
-
-    if (stripeSuccess === "true") {
-      processedToasts.current.add(toastId);
-      setTimeout(async () => {
-        toast.success("Stripe account connected successfully!", {
-          ...toastOptions(),
-          toastId,
-        });
-
-        dispatch(fetchUser());
-        navigate("/seller/dashboard", { replace: true });
-      }, 1000);
       shouldClearParams = true;
     }
 
@@ -162,26 +147,6 @@ function QueryHandler() {
   }, [searchParams, setSearchParams, dispatch]);
 
   return null;
-}
-
-function StripeCallback() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const error = searchParams.get("error");
-    const status = searchParams.get("status");
-    const message = searchParams.get("message");
-
-    if (error || (status === "false" && message)) {
-      toast.error(message || "Stripe connection failed", toastOptions());
-      navigate("/seller/dashboard", { replace: true });
-    } else {
-      navigate("/seller/dashboard?stripeSuccess=true", { replace: true });
-    }
-  }, [navigate, searchParams]);
-
-  return <LoadingSpinner />;
 }
 
 export default function App() {
@@ -227,11 +192,10 @@ export default function App() {
             <Route element={<RoleBasedRoute roles={["seller", "buyer"]} />}>
               <Route path="/settings" element={<Settings />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout-success" element={<CheckoutSuccess />} />
             </Route>
 
             <Route element={<RoleBasedRoute roles={["seller"]} />}>
-              <Route path="/stripe/callback" element={<StripeCallback />} />
-
               {/* 1. SellerDashboard handles Logic (Stripe, Loading, Context) */}
               <Route path="/seller/dashboard" element={<SellerDashboard />}>
 
@@ -240,11 +204,20 @@ export default function App() {
                   {/* 3. These are the actual content pages rendered inside the Layout */}
                   <Route index element={<Navigate to="products" replace />} />
                   <Route path="products" element={<ProductsTab />} />
-                  <Route path="orders-and-sales" element={<TransactionsTab isBuyer={false} />} />
+                  <Route
+                    path="orders-and-sales"
+                    element={<TransactionsTab isBuyer={false} />}
+                  />
 
                   {/* Detail Routes */}
-                  <Route path="orders-and-sales/orders/:orderUid" element={<OrderDetails />} />
-                  <Route path="orders-and-sales/sales/:orderUid" element={<SaleDetails />} />
+                  <Route
+                    path="orders-and-sales/orders/:orderUid"
+                    element={<OrderDetails />}
+                  />
+                  <Route
+                    path="orders-and-sales/sales/:orderUid"
+                    element={<SaleDetails />}
+                  />
                   <Route path="shop" element={<ShopTab />} />
                 </Route>
 
@@ -258,7 +231,10 @@ export default function App() {
                 {/* 2. DashboardLayout handles the UI */}
                 <Route element={<DashboardLayout type="buyer" />}>
                   <Route index element={<Navigate to="orders" replace />} />
-                  <Route path="orders" element={<TransactionsTab isBuyer={true} />} />
+                  <Route
+                    path="orders"
+                    element={<TransactionsTab isBuyer={true} />}
+                  />
                   <Route path="orders/:orderUid" element={<OrderDetails />} />
                 </Route>
 

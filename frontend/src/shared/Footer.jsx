@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container py-4">
         <div className="row align-items-center">
           {/* Left */}
-          <div className="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+          <div className="col-md-6 text-center text-md-start mb-4 mb-md-0">
             <h5 className="fw-bold mb-3">DigiMart</h5>
             <p className="text-secondary small mb-0 lh-sm">
               Made with <FaHeart /> by{" "}
@@ -23,8 +23,8 @@ export default function Footer() {
           </div>
 
           {/* Right */}
-          <div className="col-lg-6 text-center text-lg-end">
-            <div className="d-flex flex-wrap justify-content-center justify-content-lg-end gap-4">
+          <div className="col-md-6 text-center text-md-end">
+            <div className="d-flex flex-wrap justify-content-center justify-content-md-end gap-4">
               <NavLink to="/about" className="text-muted small fw-medium">
                 About
               </NavLink>
