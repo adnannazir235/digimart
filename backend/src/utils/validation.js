@@ -66,7 +66,7 @@ exports.shopDescriptionChecks = (description) => {
     if (!description) return { message: "Shop description is required." }
     if (typeof description !== "string") return { message: "Shop description must be a string." }
     if (description.trim().length === 0) return { message: "Shop description cannot be empty or just whitespace." }
-    if (description.length > shopConfig.maxSellerProfileDescriptionLength) return { message: `Shop description must not exceed ${shopConfig.maxSellerProfileDescriptionLength} characters.` }
+    if (description.length > shopConfig.maxShopDescriptionLength) return { message: `Shop description must not exceed ${shopConfig.maxShopDescriptionLength} characters.` }
     return false;
 };
 
@@ -75,7 +75,7 @@ exports.shopLogoChecks = (logo) => {
     if (typeof logo !== "string") return { message: "Shop logo must be a string." }
     if (logo.trim().length === 0) return { message: "Shop logo URL cannot be empty or just whitespace." }
     if (!/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(logo)) return { message: "Shop logo must be a valid URL." }
-    if (logo.length > shopConfig.maxSellerLogoLength) return { message: `Shop logo URL must not exceed ${shopConfig.maxSellerLogoLength} characters.` }
+    if (logo.length > shopConfig.maxShopLogoLength) return { message: `Shop logo URL must not exceed ${shopConfig.maxShopLogoLength} characters.` }
     return false;
 };
 

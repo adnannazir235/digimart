@@ -56,7 +56,8 @@ exports.create = async (req, res) => {
             shopId: shop._id,
             fileUrl: uploadedFile.secure_url,
             cloudinaryPublicId: uploadedFile.public_id,
-            cloudinarySecureUrl: uploadedFile.secure_url
+            cloudinarySecureUrl: uploadedFile.secure_url,
+            mimeType: req.file.mimetype
         });
 
         // 3. Confirm product is created

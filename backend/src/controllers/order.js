@@ -31,14 +31,10 @@ exports.getSingleOrder = async (req, res) => {
 
         // 1. Fetch order by UID only, do not filter by buyer yet
         const order = await Order.findOne({ orderUid: id })
-            .select("-stripeSessionId") // hide Stripe session
-            .populate({
-                path: "buyerId",
-                select: "name email avatar",
-            })
+            .select("-stripeSessionId")
             .populate({
                 path: "productIds",
-                select: "title description price shopId fileUrl",
+                select: "title description price shopId fileUrl mimeType",
                 populate: {
                     path: "shopId",
                     select: "sellerId shopName",

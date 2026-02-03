@@ -16,7 +16,7 @@ router.post("/webhook", stripe.handleStripeWebhook);
 
 // Handle success redirect (e.g., for Stripe Checkout)
 router.get("/success", jsonParser, (req, res) => {
-    const feUrl = createRedirectUrl("success", "Payment succeeded! Your order was successful.", "products");
+    const feUrl = createRedirectUrl("success", "Payment succeeded! Your order was successful.", "checkout-success");
     return res.redirect(feUrl);
 });
 

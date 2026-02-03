@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { product: productConfig } = require("../config/validation");
 const { user: userConfig } = require("../config/validation");
+const { allowedMimeTypes } = require("../config/upload");
 
 const productSchema = new mongoose.Schema({
     title: { type: String, minlength: productConfig.minTitleLength, maxlength: productConfig.maxTitleLength, trim: true, required: true },
@@ -21,7 +22,7 @@ const productSchema = new mongoose.Schema({
     cloudinarySecureUrl: { type: String },
     watermarkedFileUrl: { type: String },
     watermarkedPublicId: { type: String },
-    mimeType: { type: String }
+    mimeType: { type: String, enum: allowedMimeTypes, required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model("products", productSchema, "Products");
