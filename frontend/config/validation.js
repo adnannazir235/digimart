@@ -26,8 +26,8 @@ export const limitations = {
     shop: {
         minShopNameLength: 3,
         maxShopNameLength: 50,
-        maxSellerProfileDescriptionLength: 1000,
-        maxSellerLogoLength: 500
+        maxShopDescriptionLength: 1000,
+        maxShopLogoLength: 500
     },
     product: {
         minTitleLength: 3,

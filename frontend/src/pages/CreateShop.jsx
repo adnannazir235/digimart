@@ -20,12 +20,12 @@ export default function CreateShop() {
 
     description: Yup.string()
       .trim()
-      .max(limitations.shop.maxSellerProfileDescriptionLength, `Description cannot exceed ${limitations.shop.maxSellerProfileDescriptionLength} characters`)
+      .max(limitations.shop.maxShopDescriptionLength, `Description cannot exceed ${limitations.shop.maxShopDescriptionLength} characters`)
       .optional(),
 
     logo: Yup.string()
       .trim()
-      .max(limitations.shop.maxSellerLogoLength, "URL too long")
+      .max(limitations.shop.maxShopLogoLength, "URL too long")
       .url("Must be a valid URL (e.g. https://example.com/image.jpg)")
       .optional(),
   });
@@ -61,10 +61,10 @@ export default function CreateShop() {
   };
 
   return (
-    <div className="container-fluid d-flex" style={{ minHeight: "81dvh" }}>
+    <div className="d-flex" style={{ minHeight: "81dvh" }}>
       <div className="container">
         <div className="row justify-content-center align-items-center h-100">
-          <div className="col-8">
+          <div className="col-12 col-md-10 col-lg-8 col-xl-6">
             <form onSubmit={formik.handleSubmit} className="mb-4">
               <div className="text-center mb-4 pb-3 border-bottom">
                 <h5 className="mb-1">Create a New Shop</h5>

@@ -30,13 +30,13 @@ export default function ShopForm({
 
     description: Yup.string()
       .trim()
-      .max(limitations.shop.maxSellerProfileDescriptionLength, "Description too long")
+      .max(limitations.shop.maxShopDescriptionLength, "Description too long")
       .optional(),
 
     logo: Yup.string()
       .trim()
       .url("Invalid URL")
-      .max(limitations.shop.maxSellerLogoLength, "URL too long")
+      .max(limitations.shop.maxShopLogoLength, "URL too long")
       .optional(),
   });
 
