@@ -1,10 +1,11 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import LoadingButton from "../components/LoadingButton";
-import { authAPI } from "../services/api";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
-import * as Yup from "yup";
-import { useFormik } from "formik";
+import { limitations } from "../../config/validation";
+import { authAPI } from "../services/api";
+import LoadingButton from "../components/LoadingButton";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -13,9 +14,12 @@ export default function ResetPassword() {
 
   const resetPasswordSchema = Yup.object({
     newPassword: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(/[a-zA-Z]/, "Password must contain at least one letter")
-      .matches(/[0-9]/, "Password must contain at least one number")
+      .min(limitations.user.minPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.user.maxPassLength, "Password too long")
+      .matches(/[a-z]/, "Must contain a lowercase letter")
+      .matches(/[A-Z]/, "Must contain an uppercase letter")
+      .matches(/[0-9]/, "Must contain a number")
+      .matches(/[^a-zA-Z0-9]/, "Must contain a special character (!@#$%^&* etc.)")
       .required("New password is required"),
 
     confirmPassword: Yup.string()

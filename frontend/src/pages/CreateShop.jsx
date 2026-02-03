@@ -1,11 +1,12 @@
 import { useDispatch } from "react-redux";
-import { fetchUser } from "../features/auth/authSlice.js";
-import { shopAPI } from "../services/api.js";
-import * as Yup from "yup";
 import { useFormik } from "formik";
-import LoadingButton from "../components/LoadingButton.jsx";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles.js";
+import { limitations } from "../../config/validation";
+import { shopAPI } from "../services/api.js";
+import { fetchUser } from "../features/auth/authSlice.js";
+import LoadingButton from "../components/LoadingButton.jsx";
 
 export default function CreateShop() {
   const dispatch = useDispatch();
@@ -13,17 +14,18 @@ export default function CreateShop() {
   const createShopSchema = Yup.object({
     shopName: Yup.string()
       .trim()
-      .min(3, "Shop name must be at least 3 characters")
-      .max(50, "Shop name cannot exceed 50 characters")
+      .min(limitations.shop.minShopNameLength, `Shop name must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.shop.maxShopNameLength, `Shop name cannot exceed ${limitations.shop.maxShopNameLength} characters`)
       .required("Shop name is required"),
 
     description: Yup.string()
       .trim()
-      .max(500, "Description cannot exceed 500 characters")
+      .max(limitations.shop.maxSellerProfileDescriptionLength, `Description cannot exceed ${limitations.shop.maxSellerProfileDescriptionLength} characters`)
       .optional(),
 
     logo: Yup.string()
       .trim()
+      .max(limitations.shop.maxSellerLogoLength, "URL too long")
       .url("Must be a valid URL (e.g. https://example.com/image.jpg)")
       .optional(),
   });

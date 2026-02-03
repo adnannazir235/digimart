@@ -2,11 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { authAPI } from "../services/api";
-import { limitations } from "../../config/validation";
-import { toastOptions } from "../../config/styles";
-import LoadingButton from "../components/LoadingButton";
 import { FcGoogle } from "react-icons/fc";
+import { toastOptions } from "../../config/styles";
+import { limitations } from "../../config/validation";
+import { authAPI } from "../services/api";
+import LoadingButton from "../components/LoadingButton";
 
 export default function SignUpForm({
   handleGoogleAuth,
@@ -17,14 +17,15 @@ export default function SignUpForm({
   const signUpValidationSchema = Yup.object({
     username: Yup.string()
       .trim()
-      .min(5, "Username must be at least 5 characters")
-      .max(30, "Username must be at most 30 characters")
+      .min(limitations.user.minUserNameLength, `Username must be at least ${limitations.user.minUserNameLength} characters`)
+      .max(limitations.user.maxUserNameLength, `Username must be at most ${limitations.user.maxUserNameLength} characters`)
+      .matches(/^[a-zA-Z0-9_-]+$/, "Username can only contain letters, numbers, _, -")
       .required("Username is required"),
     email: Yup.string()
       .trim()
       .email("Invalid email address")
-      .min(6, "Email must be at least 6 characters")
-      .max(254, "Email must be at most 254 characters")
+      .min(limitations.user.minEmailLength, `Email must be at least ${limitations.user.minEmailLength} characters`)
+      .max(limitations.user.maxEmailLength, `Email must be at most ${limitations.user.maxEmailLength} characters`)
       .required("Email is required"),
     country: Yup.string()
       .trim()
@@ -33,9 +34,12 @@ export default function SignUpForm({
         "Selected country is not supported."
       ),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(/[a-zA-Z]/, "Password must contain at least one letter")
-      .matches(/[0-9]/, "Password must contain at least one number")
+      .min(limitations.user.minPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.user.maxPassLength, "Password too long")
+      .matches(/[a-z]/, "Must contain a lowercase letter")
+      .matches(/[A-Z]/, "Must contain an uppercase letter")
+      .matches(/[0-9]/, "Must contain a number")
+      .matches(/[^a-zA-Z0-9]/, "Must contain a special character (!@#$%^&* etc.)")
       .required("Password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Confirm Password & Password must match")

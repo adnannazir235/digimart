@@ -1,9 +1,10 @@
-import { shopAPI } from "../services/api.js";
-import * as Yup from "yup";
 import { useFormik } from "formik";
-import LoadingButton from "./LoadingButton";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles.js";
+import { limitations } from "../../config/validation";
+import { shopAPI } from "../services/api.js";
+import LoadingButton from "./LoadingButton";
 
 export default function ShopForm({
   shopData,
@@ -15,8 +16,8 @@ export default function ShopForm({
   const updateShopSchema = Yup.object({
     shopName: Yup.string()
       .trim()
-      .min(3, "Shop name must be at least 3 characters")
-      .max(50, "Shop name too long")
+      .min(limitations.shop.minShopNameLength, `Shop name must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.shop.maxShopNameLength, "Shop name too long")
       .matches(
         /^[a-zA-Z0-9\s_-]+$/,
         "Only letters, numbers, spaces, _, and - allowed"
@@ -29,13 +30,13 @@ export default function ShopForm({
 
     description: Yup.string()
       .trim()
-      .max(500, "Description too long")
+      .max(limitations.shop.maxSellerProfileDescriptionLength, "Description too long")
       .optional(),
 
     logo: Yup.string()
       .trim()
       .url("Invalid URL")
-      .max(1100, "URL too long")
+      .max(limitations.shop.maxSellerLogoLength, "URL too long")
       .optional(),
   });
 

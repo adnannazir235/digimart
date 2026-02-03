@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
-import { authAPI } from "../services/api";
-import * as Yup from "yup";
 import { useFormik } from "formik";
-import LoadingButton from "../components/LoadingButton";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
+import { limitations } from "../../config/validation";
+import { authAPI } from "../services/api";
+import LoadingButton from "../components/LoadingButton";
 
 export default function ForgotPassword() {
   const resetPasswordSchema = Yup.object({
     email: Yup.string()
       .trim()
-      .min(6, "Email must be at least 6 characters")
-      .max(254, "Email must be at most 254 characters")
+      .min(limitations.user.minEmailLength, `Email must be at least ${limitations.user.minEmailLength} characters`)
+      .max(limitations.user.maxEmailLength, `Email must be at most ${limitations.user.maxEmailLength} characters`)
       .required("Email is required"),
   });
 

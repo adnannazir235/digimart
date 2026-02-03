@@ -1,21 +1,22 @@
-import * as Yup from "yup";
 import { useFormik } from "formik";
-import { productAPI } from "../services/api";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
+import { limitations } from "../../config/validation";
+import { productAPI } from "../services/api";
 
 export default function EditProduct({ product, onBack }) {
   const editProductSchema = Yup.object({
     title: Yup.string()
       .trim()
-      .min(3, "Product title must be at least 3 characters")
-      .max(100, "Product title too long")
+      .min(limitations.product.minTitleLength, `Product title must be at least ${limitations.product.minTitleLength} characters`)
+      .max(limitations.product.maxTitleLength, "Product title too long")
       .required("Product title is required"),
 
     description: Yup.string()
       .trim()
-      .min(10, "Description must be at least 10 characters")
-      .max(2000, "Description too long")
+      .min(limitations.product.minDescriptionLength, `Description must be at least ${limitations.product.minDescriptionLength} characters`)
+      .max(limitations.product.maxDescriptionLength, "Description is too long")
       .required("Description is required"),
 
     price: Yup.number()

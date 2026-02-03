@@ -1,12 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../features/auth/authSlice";
-import { authAPI } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import LoadingButton from "../components/LoadingButton";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles";
+import { limitations } from "../../config/validation";
+import { authAPI } from "../services/api";
+import { logout } from "../features/auth/authSlice";
+import LoadingButton from "../components/LoadingButton";
 
 const ChangePassword = () => {
   const { user } = useSelector(state => state.auth);
@@ -18,8 +19,8 @@ const ChangePassword = () => {
       .required("Current password is required"),
 
     newPassword: Yup.string()
-      .min(8, "New password must be at least 8 characters")
-      .max(128, "Password too long")
+      .min(limitations.user.minPassLength, `New password must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.user.maxPassLength, "Password too long")
       .matches(/[a-z]/, "Must contain a lowercase letter")
       .matches(/[A-Z]/, "Must contain an uppercase letter")
       .matches(/[0-9]/, "Must contain a number")

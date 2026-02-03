@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
 import { useFormik } from "formik";
-import { authAPI } from "../services/api";
 import * as Yup from "yup";
-import LoadingButton from "../components/LoadingButton";
 import { FcGoogle } from "react-icons/fc";
+import { limitations } from "../../config/validation";
+import { authAPI } from "../services/api";
+import { login } from "../features/auth/authSlice";
+import LoadingButton from "../components/LoadingButton";
 
 export default function LogInForm({
   googleLoading,
@@ -20,11 +21,12 @@ export default function LogInForm({
   const logInValidationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email address")
-      .min(6, "Email must be at least 6 characters")
-      .max(254, "Email must be at most 254 characters")
+      .min(limitations.user.minEmailLength, `Email must be at least ${limitations.user.minEmailLength} characters`)
+      .max(limitations.user.maxEmailLength, `Email must be at most ${limitations.user.maxEmailLength} characters`)
       .required("Email is required"),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
+      .min(limitations.user.minPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
+      .max(limitations.user.maxPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
       .matches(/[a-zA-Z]/, "Password must contain at least one letter")
       .matches(/[0-9]/, "Password must contain at least one number")
       .required("Password is required"),

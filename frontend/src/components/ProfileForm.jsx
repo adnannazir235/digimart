@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../features/auth/authSlice.js";
-import { userAPI } from "../services/api.js";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import LoadingButton from "./LoadingButton";
 import { toast } from "react-toastify";
 import { toastOptions } from "../../config/styles.js";
+import { limitations } from "../../config/validation";
+import { userAPI } from "../services/api.js";
+import { setUser } from "../features/auth/authSlice.js";
 import useDebounce from "../hooks/useDebounce.js";
+import LoadingButton from "./LoadingButton";
 
 export default function ProfileForm() {
   const { user } = useSelector(state => state.auth);
@@ -15,38 +16,38 @@ export default function ProfileForm() {
   const [isEditing, setIsEditing] = useState(false);
 
   const profileValidationSchema = Yup.object({
-    // We make them optional at root level, but conditionally required/validated
     name: Yup.string()
       .trim()
-      .min(2, "Name must be at least 2 characters")
-      .max(50, "Name must be at most 50 characters")
+      .min(limitations.user.minNameLength, `Name must be at least ${limitations.user.minNameLength} characters`)
+      .max(limitations.user.maxNameLength, `Name must be at most ${limitations.user.maxNameLength} characters`)
       .nullable()
       .optional(),
 
     username: Yup.string()
       .trim()
-      .min(3, "Username must be at least 3 characters")
-      .max(30, "Username must be at most 30 characters")
+      .min(limitations.user.minUserNameLength, `Username must be at least ${limitations.user.minUserNameLength} characters`)
+      .max(limitations.user.maxUserNameLength, `Username must be at most ${limitations.user.maxUserNameLength} characters`)
       .matches(/^[a-zA-Z0-9_-]+$/, "Username can only contain letters, numbers, _, -")
       .nullable()
       .optional(),
 
     age: Yup.number()
       .typeError("Age must be a number")
-      .min(18, "You must be at least 18 years old")
-      .max(120, "Age seems unrealistic")
+      .min(limitations.user.minUserAge, `You must be at least ${limitations.user.minUserAge} years old`)
+      .max(limitations.user.maxUserAge, "Age seems unrealistic")
       .integer("Age must be a whole number")
       .nullable()
       .optional(),
 
     avatar: Yup.string()
       .url("Avatar must be a valid URL (e.g. https://example.com/image.jpg)")
+      .max(limitations.user.maxUserAvatarLength, `Avatar URL must be at most ${limitations.user.maxUserAvatarLength} characters`)
       .nullable()
       .optional(),
 
     bio: Yup.string()
       .trim()
-      .max(500, "Bio must be at most 500 characters")
+      .max(limitations.user.minEmailLength, `Bio must be at most ${limitations.user.minEmailLength} characters`)
       .nullable()
       .optional(),
   });
