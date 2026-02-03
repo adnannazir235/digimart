@@ -45,7 +45,7 @@ const SetPassword = () => {
       if (res.data.success) {
         toast.success(
           "Password set successfully! Please log in again.",
-          toastOptions
+          toastOptions()
         );
 
         resetForm();

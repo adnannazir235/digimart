@@ -47,7 +47,7 @@ export default function CreateShop() {
       resetForm();
       toast.success(
         response.data.message || "Shop created successfully!",
-        toastOptions
+        toastOptions()
       );
 
       // Fetch updated user profile to ensure role is updated

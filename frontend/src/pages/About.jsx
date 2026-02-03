@@ -35,7 +35,7 @@ export default function About() {
           </h1>
 
           <p className="lead text-secondary mb-4">
-            A complete digital marketplace built from scratch to master
+            A complete digital marketplace built from scratch to learn
             full-stack development, secure payments, and real-world e-commerce
             flows.
           </p>

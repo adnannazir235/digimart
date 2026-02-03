@@ -77,7 +77,7 @@ export default function EditProduct({ product, onBack }) {
     } catch (err) {
       toast.error(
         err.response?.data?.error || "Failed to update product.",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);

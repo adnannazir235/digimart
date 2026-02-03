@@ -31,7 +31,7 @@ export default function DisconnectGoogleAccount() {
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to disconnect Google account",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setLoading(false);

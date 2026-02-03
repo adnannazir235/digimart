@@ -25,7 +25,7 @@ export default function DeleteAccount() {
 
         toast.success(
           response.data.message || "Account deleted successfully",
-          toastOptions
+          toastOptions()
         );
 
         setTimeout(() => {
@@ -37,7 +37,7 @@ export default function DeleteAccount() {
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to delete account",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setLoading(false);

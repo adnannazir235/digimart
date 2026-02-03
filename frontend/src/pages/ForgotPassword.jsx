@@ -31,7 +31,7 @@ export default function ForgotPassword() {
       toast.error(
         error.response?.data?.message ||
         "Failed to send password reset email. Try again later.",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);

@@ -43,7 +43,7 @@ export default function CheckEmail() {
     if (!emailToVerify) {
       toast.error(
         "Error: Cannot resend email. The original email address is missing.",
-        toastOptions,
+        toastOptions(),
       );
       return;
     }
@@ -56,13 +56,13 @@ export default function CheckEmail() {
       toast.success(
         res.data?.message ||
           `Verification email successfully resent to ${emailToVerify}.`,
-        toastOptions,
+        toastOptions(),
       );
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "Failed to resend email. Please try again.",
-        toastOptions,
+        toastOptions(),
       );
     } finally {
       setLoading(false);

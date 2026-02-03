@@ -55,7 +55,7 @@ const ChangePassword = () => {
       } else {
         toast.error(
           res.data.message || "Error changing password",
-          toastOptions
+          toastOptions()
         );
       }
     } catch (error) {

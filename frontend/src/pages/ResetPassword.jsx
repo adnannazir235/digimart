@@ -54,7 +54,7 @@ export default function ResetPassword() {
       toast.error(
         error.response?.data?.message ||
           "Failed to reset password. Try again later.",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);

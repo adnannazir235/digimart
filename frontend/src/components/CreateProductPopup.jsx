@@ -69,7 +69,7 @@ const CreateProductPopup = ({ isOpen, onCancel, onSuccess, isClosable }) => {
     } catch (err) {
       toast.error(
         err.response.data.error || "Failed to create product.",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);

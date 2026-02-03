@@ -78,7 +78,7 @@ export default function ShopForm({
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to update shop",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false);

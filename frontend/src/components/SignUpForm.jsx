@@ -77,7 +77,7 @@ export default function SignUpForm({
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Registration failed",
-        toastOptions
+        toastOptions()
       );
     } finally {
       setSubmitting(false); // Handles loading state
