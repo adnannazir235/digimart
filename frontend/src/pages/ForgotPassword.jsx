@@ -41,7 +41,7 @@ export default function ForgotPassword() {
   return (
     <section
       className="d-flex align-items-center justify-content-center py-5"
-      style={{ minHeight: "82.29dvh" }}
+      style={{ minHeight: "80dvh" }}
     >
       <div className="container-fluid">
         <div className="container">

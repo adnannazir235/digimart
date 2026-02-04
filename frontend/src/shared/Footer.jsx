@@ -1,5 +1,6 @@
+import { Nav, Navbar } from "react-bootstrap";
 import { FaHeart } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default function Footer() {
   return (
@@ -25,9 +26,13 @@ export default function Footer() {
           {/* Right */}
           <div className="col-md-6 text-center text-md-end">
             <div className="d-flex flex-wrap justify-content-center justify-content-md-end gap-4">
-              <NavLink to="/about" className="text-muted small fw-medium">
-                About
-              </NavLink>
+              <Navbar>
+                <Nav>
+                  <LinkContainer to="/about" active="">
+                    <Nav.Link className="small fw-medium p-0">About</Nav.Link>
+                  </LinkContainer>
+                </Nav>
+              </Navbar>
             </div>
           </div>
         </div>

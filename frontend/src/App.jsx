@@ -94,17 +94,9 @@ function QueryHandler() {
     if (!status && !message && !accessToken) return;
     if (processedToasts.current.has(toastId)) return;
 
-    console.log("QueryHandler: Processing query params:", {
-      status,
-      message,
-      accessToken,
-      toastId,
-    });
-
     let shouldClearParams = false;
 
     if (accessToken) {
-      console.log("QueryHandler: Setting accessToken and triggering login");
       dispatch(login(accessToken));
       shouldClearParams = true;
     }
@@ -134,7 +126,6 @@ function QueryHandler() {
     }
 
     if (shouldClearParams) {
-      console.log("QueryHandler: Clearing query params");
       setSearchParams({}, { replace: true });
     }
 
