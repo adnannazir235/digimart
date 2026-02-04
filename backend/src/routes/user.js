@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, user.getProfile);
 router.put("/me", authMiddleware, validateUpdateProfileInputs, user.updateProfile);
+router.patch("/country", authMiddleware, user.addCountry);
 
 module.exports = router;

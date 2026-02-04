@@ -5,8 +5,8 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/token");
 const { user: userConfig } = require("../config/validation");
 
 const userSchema = new mongoose.Schema({
-    name: { type: String, minlength: userConfig.minNameLength, maxlength: userConfig.maxNameLength, trim: true, required: false }, // Allowed in updateProfile
-    username: { // Allowed in updateProfile
+    name: { type: String, minlength: userConfig.minNameLength, maxlength: userConfig.maxNameLength, trim: true, required: false },
+    username: {
         type: String,
         minlength: userConfig.minUserNameLength,
         maxlength: userConfig.maxUserNameLength,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
             return sanitized.length > 16 ? sanitized.slice(0, 16) : sanitized;
         }
     },
-    email: { // Will get changed in the users/changeEmail controller
+    email: {
         type: String,
         minlength: userConfig.minEmailLength,
         maxlength: userConfig.maxEmailLength,
@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema({
         trim: true,
         match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"]
     },
-    age: { type: Number, min: userConfig.minUserAge, max: userConfig.maxUserAge, required: false }, // Allowed in updateProfile
-    role: { type: String, enum: ["buyer", "seller"], default: "buyer", required: false }, // Will get changed in the becomeSeller and deleteSellerAccount controller
-    sellerOnboardingComplete: { type: Boolean, default: false }, // Will get changed in the becomeSeller and in deleteSellerAccount controller
-    isSeller: { type: Boolean, default: false }, // Will get changed in the becomeSeller and in deleteSellerAccount controller
-    password: { // Is getting changed in the set, change and forgot/reset password controllers
+    age: { type: Number, min: userConfig.minUserAge, max: userConfig.maxUserAge, required: false },
+    role: { type: String, enum: ["buyer", "seller"], default: "buyer", required: false },
+    sellerOnboardingComplete: { type: Boolean, default: false },
+    isSeller: { type: Boolean, default: false },
+    password: {
         type: String,
         minlength: userConfig.minPassLength,
         maxlength: userConfig.maxPassLength,
@@ -51,17 +51,17 @@ const userSchema = new mongoose.Schema({
             message: "Password is required."
         }
     },
-    isEmailVerified: { type: Boolean, default: false }, // Is getting changed in the register and resendVerificationEmail and in login controller
-    emailVerificationToken: { type: String, select: false }, // Is getting changed in the register and resendVerificationEmail and in login controller
-    lastVerificationEmailSent: { type: Date }, // Is getting changed in the register and resendVerificationEmail and in login controller
-    lastPasswordRequest: { type: Date }, // Is getting changed in the set and change password controllers
-    resetPasswordToken: { type: String, select: false }, // Is getting changed in the forgot/reset password controllers
-    lastResetPasswordRequest: { type: Date }, // Is getting changed in the forgot/reset password controllers
-    avatar: { type: String, maxlength: userConfig.maxUserAvatarLength, default: setAvatar }, // Allowed in updateProfile
-    bio: { type: String, maxlength: userConfig.maxUserBioLength, default: "", trim: true }, // Allowed in updateProfile
+    isEmailVerified: { type: Boolean, default: false },
+    emailVerificationToken: { type: String, select: false },
+    lastVerificationEmailSent: { type: Date },
+    lastPasswordRequest: { type: Date },
+    resetPasswordToken: { type: String, select: false },
+    lastResetPasswordRequest: { type: Date },
+    avatar: { type: String, maxlength: userConfig.maxUserAvatarLength, default: setAvatar },
+    bio: { type: String, maxlength: userConfig.maxUserBioLength, default: "", trim: true },
     country: { type: String, enum: userConfig.allowedCountries.map(country => country.name), required: false },
-    googleId: { type: String, unique: true, sparse: true, select: false }, // Is getting changed in the googleAuthCallback controller
-    googleTokens: { // Is getting changed in the googleAuthCallback controller
+    googleId: { type: String, unique: true, sparse: true, select: false },
+    googleTokens: {
         access_token: { type: String, select: false },
         refresh_token: { type: String, select: false },
         id_token: { type: String, select: false },
@@ -69,12 +69,12 @@ const userSchema = new mongoose.Schema({
         token_type: { type: String, select: false },
         expiry_date: { type: Date, select: false }
     },
-    refreshTokenSelector: { type: String, select: false, index: true }, // Is getting changed in the login, googleAuthCallback, logut and deleteAccount controller
-    refreshTokenHash: { type: String, select: false }, // Is getting changed in the login, googleAuthCallback, logut and deleteAccount controller
-    refreshTokenExpiry: { type: Date, select: false }, // Is getting changed in the login, googleAuthCallback, logut and deleteAccount controller
-    lastAccessToken: { type: String, select: false }, // Is getting changed in the login, googleAuthCallback, logut and deleteAccount controller
-    isDeleted: { type: Boolean, default: false }, // Is getting changed in the deleteAccount controller
-    deletedAt: { type: Date } // Is getting changed in the deleteAccount controller
+    refreshTokenSelector: { type: String, select: false, index: true },
+    refreshTokenHash: { type: String, select: false },
+    refreshTokenExpiry: { type: Date, select: false },
+    lastAccessToken: { type: String, select: false },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date }
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

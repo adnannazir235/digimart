@@ -295,7 +295,7 @@ exports.validateUpdateProfileInputs = (req, res, next) => {
     if (!name && !username && !age && !avatar && !bio) {
         return res.status(400).json({
             success: false,
-            message: "At least one of the following fields must be provided: 'name', 'username', 'age', 'avatar', 'bio', 'country."
+            message: "At least one editable field must be provided. Only the following fields can be updated: name, username, age, avatar, bio."
         });
     }
 
