@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import LoadingButton from "../components/LoadingButton";
 import { authAPI } from "../services/api";
 import { toastOptions } from "../../config/styles";
+import { FiMail } from "react-icons/fi";
 
 export default function CheckEmail() {
   const location = useLocation();
@@ -71,34 +72,48 @@ export default function CheckEmail() {
 
   return (
     <section
-      className="d-flex py-5"
+      className="d-flex align-items-center py-5"
       style={{ minHeight: "80dvh" }}
     >
       <div className="container">
-        <div className="row justify-content-center align-items-center h-100">
-          <div className="col-12 col-md-8 col-lg-6 text-center">
-            <h2>✅ Please Verify Your Account</h2>
-            <p className="lead mt-3">
-              We’ve sent a verification link to your email (
-              <strong>{emailToVerify}</strong>
-              ).
-              <br />
-              <strong>Check your inbox (and spam folder)</strong> and click the
-              link to activate your account.
-            </p>
-            <div className="mt-4 p-3 rounded">
-              <p>
-                <strong>Didn’t get the email?</strong>
-              </p>
-              <LoadingButton
-                onClick={handleResend}
-                loading={loading}
-                type="button"
-                className="btn btn-primary"
-                disabled={loading || !emailToVerify}
-              >
-                Resend Verification Email
-              </LoadingButton>
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-9 col-lg-7 col-xl-6">
+            <div className="card border border-1 rounded-4 overflow-hidden shadow-sm">
+              <div className="card-body p-4 p-md-5 text-center">
+                <div className="mb-4 position-relative d-inline-block">
+                  <FiMail className="text-primary" size={88} />
+                </div>
+
+                <h2 className="fw-bold mb-3">Verify Your Email</h2>
+
+                <p className="lead text-muted mb-4">
+                  A verification link has been sent to
+                  <br />
+                  <strong>{emailToVerify}</strong>
+                </p>
+
+                <p className="text-muted mb-5">
+                  Please check your inbox (including spam/junk folder).
+                  <br />
+                  The email usually arrives within a minute.
+                </p>
+
+                <hr className="w-50 mx-auto my-4 opacity-25" />
+
+                <p className="text-muted mb-4">
+                  <strong>Didn't receive the email?</strong>
+                </p>
+
+                <LoadingButton
+                  onClick={handleResend}
+                  loading={loading}
+                  type="button"
+                  className="btn btn-primary px-5"
+                  disabled={loading || !emailToVerify}
+                >
+                  Resend Verification Email
+                </LoadingButton>
+              </div>
             </div>
           </div>
         </div>

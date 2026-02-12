@@ -91,7 +91,7 @@ const Settings = () => {
               }
               role="tabpanel"
             >
-              {user.isPassSet !== true ? (
+              {user.isPassSet === true ? (
                 <>
                   <h4 className="fw-bold mb-5 text-center">Change Password</h4>
                   <ChangePassword />

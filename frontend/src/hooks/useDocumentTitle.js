@@ -13,7 +13,7 @@ export default function useDocumentTitle() {
       "/contact": siteName + "Contact",
       "/about": siteName + "About",
       "/signup": siteName + "Create Account",
-      "/check-email": siteName + "Check Your Email",
+      "/check-email": siteName + "Verify Your Email",
       "/login": siteName + "Log In",
       "/forgot-password": siteName + "Reset Password",
       "/reset-password": siteName + "Set New Password",

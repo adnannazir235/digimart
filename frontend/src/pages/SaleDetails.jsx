@@ -114,7 +114,7 @@ export default function SaleDetails() {
                             {product.description || "No description"}
                           </p>
                           <div className="small text-muted">
-                            File type: {product.mimeType || "Unknown"}
+                            File type: {product.mimeType.split("/")[1].toUpperCase() || "Unknown"}
                           </div>
                         </div>
 
@@ -137,8 +137,7 @@ export default function SaleDetails() {
         {/* Sale Summary Sidebar */}
         <div className="col-12 col-lg-4">
           <div
-            className="card border sticky-top"
-            style={{ top: "1rem" }}
+            className="card border"
           >
             <div className="card-header">
               <h5 className="mb-0 lh-lg">Sale Summary</h5>

@@ -152,8 +152,7 @@ export default function OrderDetails() {
         {/* Order Summary Sidebar */}
         <div className="col-12 col-lg-4">
           <div
-            className="card border shadow-sm sticky-top"
-            style={{ top: "1rem" }}
+            className="card border shadow-sm"
           >
             <div className="card-header">
               <h5 className="mb-0 lh-lg">Order Summary</h5>
