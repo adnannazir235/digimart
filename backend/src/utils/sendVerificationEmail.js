@@ -1,4 +1,4 @@
-const { sendMail } = require("../config/nodemailer");
+const { sendMail } = require("../config/emailProvider");
 
 const sendVerificationEmail = async (user, areResending = false) => {
   const { email, username, emailVerificationToken } = user;

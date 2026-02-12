@@ -1,4 +1,4 @@
-const { sendMail } = require("../config/nodemailer");
+const { sendMail } = require("../config/emailProvider");
 
 const sendPasswordNotificationEmail = async (user, action = "set") => {
   const actionVerb = action === "set" ? "set" : action === "reset" ? "reset" : "changed";

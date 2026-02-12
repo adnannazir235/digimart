@@ -1,4 +1,4 @@
-const { sendMail } = require("../config/nodemailer");
+const { sendMail } = require("../config/emailProvider");
 
 const sendResetPasswordEmail = async (user) => {
     const { email, username, resetPasswordToken } = user;

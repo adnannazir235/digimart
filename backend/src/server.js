@@ -9,7 +9,7 @@ const db = require("./config/mongoDB");
 const { uploadErrorHandler } = require("./middlewares/multer");
 const { rateLimiter } = require("./middlewares/rateLimiter");
 const cookieParser = require("cookie-parser");
-const nodemailer = require("./config/nodemailer");
+const emailProvider = require("./config/emailProvider");
 
 // Enable trust proxy to handle X-Forwarded-For headers
 app.set('trust proxy', 1);  // Trust first proxy
@@ -43,7 +43,7 @@ app.use(uploadErrorHandler);
 (async function startServer() {
     try {
         // Try email — but don't block server start
-        const emailOk = await nodemailer.verifyConnection();
+        const emailOk = await emailProvider.verifyConnection();
         if (!emailOk) {
             console.warn("Starting server without email support");
         }

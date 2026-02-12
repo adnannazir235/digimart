@@ -1,4 +1,4 @@
-const { sendMail } = require("../config/nodemailer");
+const { sendMail } = require("../config/emailProvider");
 
 const sendSellerOnboardingEmail = async (user) => {
     const { email, username, role, isSeller } = user;

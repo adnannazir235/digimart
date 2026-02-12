@@ -1,4 +1,4 @@
-const { sendMail } = require("../config/nodemailer");
+const { sendMail } = require("../config/emailProvider");
 
 exports.sendProductPurchasedEmail = async ({ to, orderUid, productTitles, downloadUrl, amount, currencyCode }) => {
     try {

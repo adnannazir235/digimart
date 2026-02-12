@@ -54,7 +54,8 @@ exports.validateRegisterInputs = (req, res, next) => {
         });
     }
 
-    req.validatedData = { username, email, country, password };
+    req.validatedData = { username, email, password };
+    if (country) req.validatedData.country = country;
     delete req.validatedData.confirmPassword;
     next();
 };
