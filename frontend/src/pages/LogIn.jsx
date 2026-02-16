@@ -1,24 +1,34 @@
 import { useState } from "react";
 import { authAPI } from "../services/api";
 import LogInForm from "../components/LogInForm";
+import { useNavigate } from "react-router-dom";
+import { toastOptions } from "../../config/styles";
 
 export default function LogIn() {
   const [googleLoading, setGoogleLoading] = useState(false); // State for Google auth loading
   const [resendEmailInfo, setResendEmailInfo] = useState({});
+  const [resendLoading, setResendLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const sendVerificationEmail = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const sendVerificationEmail = async (email) => {
+    setResendLoading(true);
 
     try {
+      console.log("In try");
       const res = await authAPI.resendVerificationEmail({
-        email: formData.email,
+        email: email,
       });
-      navigate(
-        `/check-email?status=success&message=${encodeURIComponent(
-          res.data.message || "Verification email resent! Check your inbox.",
-        )}`,
-        { state: { email: formData.email } },
+      console.log("In try navigating...");
+      navigate("/check-email",
+        {
+          state: {
+            email: email,
+            toast: {
+              successMessage: res.data.message || "Verification email resent! Check your inbox.",
+              toastOptions: toastOptions(), // optional, can be customized
+            },
+          }
+        },
       );
     } catch (error) {
       navigate(
@@ -28,7 +38,7 @@ export default function LogIn() {
         )}`,
       );
     } finally {
-      setLoading(false);
+      setResendLoading(false);
     }
   };
 
@@ -58,6 +68,7 @@ export default function LogIn() {
               resendEmailInfo={resendEmailInfo}
               sendVerificationEmail={sendVerificationEmail}
               setResendEmailInfo={setResendEmailInfo}
+              resendLoading={resendLoading}
             />
           </div>
         </div>

@@ -14,6 +14,7 @@ export default function LogInForm({
   resendEmailInfo,
   sendVerificationEmail,
   setResendEmailInfo,
+  resendLoading,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,12 +22,24 @@ export default function LogInForm({
   const logInValidationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email address")
-      .min(limitations.user.minEmailLength, `Email must be at least ${limitations.user.minEmailLength} characters`)
-      .max(limitations.user.maxEmailLength, `Email must be at most ${limitations.user.maxEmailLength} characters`)
+      .min(
+        limitations.user.minEmailLength,
+        `Email must be at least ${limitations.user.minEmailLength} characters`,
+      )
+      .max(
+        limitations.user.maxEmailLength,
+        `Email must be at most ${limitations.user.maxEmailLength} characters`,
+      )
       .required("Email is required"),
     password: Yup.string()
-      .min(limitations.user.minPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
-      .max(limitations.user.maxPassLength, `Password must be at least ${limitations.user.minPassLength} characters`)
+      .min(
+        limitations.user.minPassLength,
+        `Password must be at least ${limitations.user.minPassLength} characters`,
+      )
+      .max(
+        limitations.user.maxPassLength,
+        `Password must be at least ${limitations.user.minPassLength} characters`,
+      )
       .matches(/[a-zA-Z]/, "Password must contain at least one letter")
       .matches(/[0-9]/, "Password must contain at least one number")
       .required("Password is required"),
@@ -39,7 +52,7 @@ export default function LogInForm({
     },
     validationSchema: logInValidationSchema,
     onSubmit,
-  })
+  });
 
   async function onSubmit(values, { setSubmitting, resetForm }) {
     setSubmitting(true);
@@ -70,7 +83,10 @@ export default function LogInForm({
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="col-12 col-md-6 col-lg-5 m-auto">
+    <form
+      onSubmit={formik.handleSubmit}
+      className="col-12 col-md-6 col-lg-5 m-auto"
+    >
       <div className="row mb-3">
         <div className="col">
           <label htmlFor="email" className="form-label">
@@ -83,7 +99,7 @@ export default function LogInForm({
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            disabled={formik.isSubmitting || googleLoading}
+            disabled={formik.isSubmitting || googleLoading || resendLoading}
           />
           {formik.touched.email && formik.errors.email ? (
             <div className="text-danger">{formik.errors.email}</div>
@@ -95,11 +111,16 @@ export default function LogInForm({
         <div className="row mb-2">
           <div className="col">
             <button
+              type="button"
               className="btn btn-link btn-sm"
-              onClick={sendVerificationEmail}
-              disabled={formik.isSubmitting || googleLoading}
+              onClick={() => sendVerificationEmail(formik.values.email)}
+              disabled={formik.isSubmitting || googleLoading || resendLoading}
             >
-              Send Verification Email ▶
+              {resendLoading ? (
+                <>Sending...</>
+              ) : (
+                <>Resend Verification Email ▶</>
+              )}
             </button>
           </div>
         </div>
@@ -117,7 +138,7 @@ export default function LogInForm({
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            disabled={formik.isSubmitting || googleLoading}
+            disabled={formik.isSubmitting || googleLoading || resendLoading}
           />
           {formik.touched.password && formik.errors.password ? (
             <div className="text-danger">{formik.errors.password}</div>
@@ -135,7 +156,7 @@ export default function LogInForm({
         <div className="col">
           <LoadingButton
             loading={formik.isSubmitting}
-            isDisabled={formik.isSubmitting || googleLoading}
+            isDisabled={formik.isSubmitting || googleLoading || resendLoading}
             type="submit"
             className="btn btn-primary w-100"
           >
@@ -152,7 +173,7 @@ export default function LogInForm({
         <div className="col">
           <LoadingButton
             loading={googleLoading}
-            isDisabled={formik.isSubmitting || googleLoading}
+            isDisabled={formik.isSubmitting || googleLoading || resendLoading}
             type="button"
             className="btn btn-light border w-100"
             onClick={handleGoogleAuth}
