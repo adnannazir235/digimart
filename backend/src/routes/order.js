@@ -9,6 +9,6 @@ router.get("/sales", authMiddleware, order.getMySales);
 
 // dynamic routes
 router.get("/:id", authMiddleware, order.getSingleOrder);
-router.get("/:id/download", authMiddleware, order.downloadOrderProducts);
+router.get("/:orderUid/download/:productId", authMiddleware, order.downloadProduct);
 
 module.exports = router;

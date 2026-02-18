@@ -1,4 +1,6 @@
+const https = require("https");
 const Order = require("../models/Order");
+const { generateSignedUrl } = require("../utils/cloudinary");
 const { sanitizeOrder } = require("../utils/filtering");
 
 exports.getMyOrders = async (req, res) => {
@@ -7,7 +9,7 @@ exports.getMyOrders = async (req, res) => {
 
         // Corrected query to use 'productIds' array and deep population
         const orders = await Order.find({ buyerId })
-            .select("-productIds -buyerId -downloadExpiry")
+            .select("-productIds -buyerId")
             .sort({ createdAt: -1 });
 
         res.json({
@@ -143,16 +145,14 @@ exports.getMySales = async (req, res) => {
     }
 };
 
-exports.downloadOrderProducts = async (req, res) => {
-    try {
-        const { orderId, productId } = req.params;
-        const userId = req.user._id;
+exports.downloadProduct = async (req, res) => {
+    const { orderUid, productId } = req.params;
+    const userId = req.user._id;
 
-        const order = await Order.findOne({ orderId })
-            .populate({
-                path: "productIds",
-                select: "fileUrl"
-            });
+    try {
+        // Fetch order with populated products
+        const order = await Order.findOne({ orderUid })
+            .populate("productIds", "cloudinaryPublicId mimeType title fileUrl");
 
         if (!order) {
             return res.status(404).json({
@@ -161,47 +161,53 @@ exports.downloadOrderProducts = async (req, res) => {
             });
         }
 
-        // Buyer ownership check
+        // 1. Buyer ownership check
         if (order.buyerId.toString() !== userId.toString()) {
             return res.status(403).json({
                 success: false,
-                message: "You are not allowed to download this product"
+                message: "You are not authorized to download this product",
             });
         }
 
-        // Order completion check
+        // 2. Order status check
         if (order.status !== "completed") {
             return res.status(403).json({
                 success: false,
-                message: "Order is not completed"
+                message: "Order is not completed",
             });
         }
 
-        // Download expiry check
-        if (order.downloadExpiry && new Date() > order.downloadExpiry) {
-            return res.status(403).json({
-                success: false,
-                message: "Download link has expired"
-            });
-        }
+        // 4. Generate new signed URL
+        const product = order.productIds.find((p) => p._id.toString() === productId);
 
-        const product = order.productIds.find(
-            p => p._id.toString() === productId
-        );
-
-        if (!product) {
+        if (!product || !product.cloudinaryPublicId) {
             return res.status(404).json({
                 success: false,
-                message: "Product not found in this order"
+                message: "Product file not found in this order",
             });
         }
 
-        return res.redirect(product.fileUrl);
+        // Generate fresh signed URL right now
+        const signedUrl = generateSignedUrl(product.cloudinaryPublicId, product.fileUrl);
+
+        https.get(signedUrl, (cloudRes) => {
+            if (cloudRes.statusCode !== 200) {
+                return res.status(cloudRes.statusCode).send("Failed to fetch file");
+            }
+
+            res.setHeader("Content-Type", product.mimeType || "application/octet-stream");
+
+            cloudRes.pipe(res);
+        }).on("error", (err) => {
+            console.error("Stream error:", err);
+            res.status(500).send("Server error");
+        });
     } catch (error) {
-        return res.status(500).json({
+        console.error("Download product error:", error);
+        res.status(500).json({
             success: false,
-            message: "Failed to download product",
-            error: error.message
+            message: "Failed to generate download link",
+            error: error.message,
         });
     }
 };
