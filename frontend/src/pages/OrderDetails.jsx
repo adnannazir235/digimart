@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { orderAPI } from "../services/api";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { formatUsdPrice, getCurrencySymbol } from "../utils";
-import { IoIosArrowBack } from "react-icons/io";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaDownload } from "react-icons/fa";
-import { getBadgeClasses } from "../../config/styles";
+import { IoIosArrowBack } from "react-icons/io";
+import { toast } from "react-toastify";
+import LoadingButton from "../components/LoadingButton";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { orderAPI } from "../services/api";
+import { formatUsdPrice, getCurrencySymbol } from "../utils";
+import { getBadgeClasses, toastOptions } from "../../config/styles";
 
 export default function OrderDetails() {
   const { orderUid } = useParams();
@@ -14,6 +16,7 @@ export default function OrderDetails() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [downloadingProducts, setDownloadingProducts] = useState({});
 
   useEffect(() => {
     async function fetchOrder() {
@@ -32,6 +35,41 @@ export default function OrderDetails() {
     if (orderUid) fetchOrder();
   }, [orderUid]);
 
+  const handleDownloadSingle = async (productId, productTitle) => {
+    setDownloadingProducts((prev) => ({
+      ...prev,
+      [productId]: true,
+    }));
+
+    try {
+      const response = await orderAPI.downloadProduct(orderUid, productId);
+      const blob = response.data;
+
+      let fileName = productTitle || "product-file";
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Download started!", toastOptions());
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to get download link",
+        toastOptions(),
+      );
+    } finally {
+      setDownloadingProducts((prev) => ({
+        ...prev,
+        [productId]: false,
+      }));
+    }
+  };
+
   if (loading) return <LoadingSpinner />;
 
   if (error) {
@@ -39,16 +77,11 @@ export default function OrderDetails() {
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
         <button
-          className="btn btn-outline-secondary mt-3"
-          onClick={() => navigate(-1)}
-        >
-          <button
           className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
           onClick={() => navigate(-1)}
         >
           <IoIosArrowBack size={20} />
           <span className="fw-medium">Back to Orders</span>
-        </button>
         </button>
       </div>
     );
@@ -96,7 +129,9 @@ export default function OrderDetails() {
         <div className="col-12 col-lg-8">
           <div className="card border shadow-sm">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 lh-lg">Products Purchased ({productIds.length})</h5>
+              <h5 className="mb-0 lh-lg">
+                Products Purchased ({productIds.length})
+              </h5>
             </div>
             <div className="card-body p-0">
               {productIds.length === 0 ? (
@@ -118,7 +153,9 @@ export default function OrderDetails() {
                           </p>
                           <div className="small text-muted">
                             <span>
-                              File type: {product.mimeType.split("/")[1].toUpperCase() || "Unknown"}
+                              File type:{" "}
+                              {product.mimeType.split("/")[1].toUpperCase() ||
+                                "Unknown"}
                             </span>
                           </div>
                         </div>
@@ -130,14 +167,17 @@ export default function OrderDetails() {
                           </div>
 
                           {status === "completed" && (
-                            <button
-                              className="btn border rounded-0 d-flex align-items-center gap-2"
+                            <LoadingButton
+                              loading={!!downloadingProducts[product._id]}
+                              isDisabled={!!downloadingProducts[product._id]}
+                              showText={false}
+                              className="btn border rounded-0 d-flex align-items-center"
                               onClick={() =>
-                                console.log("Download:", product._id)
+                                handleDownloadSingle(product._id, product.title)
                               }
                             >
                               <FaDownload size={18} />
-                            </button>
+                            </LoadingButton>
                           )}
                         </div>
                       </div>
@@ -151,9 +191,7 @@ export default function OrderDetails() {
 
         {/* Order Summary Sidebar */}
         <div className="col-12 col-lg-4">
-          <div
-            className="card border shadow-sm"
-          >
+          <div className="card border shadow-sm">
             <div className="card-header">
               <h5 className="mb-0 lh-lg">Order Summary</h5>
             </div>

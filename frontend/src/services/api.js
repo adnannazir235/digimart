@@ -182,8 +182,8 @@ export const orderAPI = {
 
     // GET /order/:id/download (Authenticated — download purchased file)
     // Must use `responseType: "blob"` for binary file response
-    downloadProduct: (orderId) =>
-        api.get(`/order/${orderId}/download`, {
+    downloadProduct: (orderUid, productId) =>
+        api.get(`/order/${orderUid}/download/${productId}`, {
             responseType: "blob",
         }),
 };

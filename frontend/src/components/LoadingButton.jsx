@@ -2,6 +2,7 @@ export default function LoadingButton({
   loading,
   isDisabled,
   children,
+  showText = true,
   className = "btn btn-primary",
   ...props
 }) {
@@ -13,8 +14,8 @@ export default function LoadingButton({
       aria-label={loading ? "Loading, please wait" : undefined}
       {...props}
     >
-      {loading && <span className="spinner-border spinner-border-sm me-2" />}
-      {loading ? "Loading..." : children}
+      {loading && <span className={`spinner-border spinner-border-sm ${showText === true ? "me-2" : ""}`} />}
+      {loading ? showText && "Loading..." : children}
     </button>
   );
 }
