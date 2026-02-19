@@ -14,11 +14,9 @@ export default function LogIn() {
     setResendLoading(true);
 
     try {
-      console.log("In try");
       const res = await authAPI.resendVerificationEmail({
         email: email,
       });
-      console.log("In try navigating...");
       navigate("/check-email",
         {
           state: {

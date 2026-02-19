@@ -166,7 +166,7 @@ export default function ProductsTab() {
 
         {/* EMPTY STATE */}
         {!loading && !hasProducts && (
-          <div className="text-center py-5 rounded-3 border border-dashed border-gray-200">
+          <div className="d-flex flex-column align-items-center justify-content-center text-center py-5 rounded-3 border border-dashed border-gray-200 px-4" style={{ height: "62dvh" }}>
             <div className="mb-3 bg-primary bg-opacity-10 p-4 rounded-circle d-inline-block mb-4">
               <FaBoxOpen size={40} />
             </div>

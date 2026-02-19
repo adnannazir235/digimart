@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FiDownload, FiShoppingBag, FiStar } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
@@ -13,6 +14,7 @@ export default function Product({
   autoSwitchDisplayStyle = false,
 }) {
   const navigate = useNavigate();
+  const [isMdUp, setIsMdUp] = useState(window.innerWidth >= 768);
 
   const {
     _id,
@@ -26,6 +28,15 @@ export default function Product({
 
   const productId = _id || product.id;
   const imageUrl = fileUrl || "https://via.placeholder.com/200";
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMdUp(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleBuyClick = () => {
     if (productId) {
@@ -226,23 +237,8 @@ export default function Product({
   );
 
   if (autoSwitchDisplayStyle) {
-    return (
-      <>
-        <div className="d-md-none">
-          <CardView />
-        </div>
-
-        {displayStyle === "row" ? (
-          <div className="d-none d-md-block">
-            <RowView />
-          </div>
-        ) : (
-          <div className="d-none d-md-block">
-            <CardView />
-          </div>
-        )}
-      </>
-    );
+    if (!isMdUp) return <CardView />;
+    return displayStyle === "row" ? <RowView /> : <CardView />;
   }
 
   return <>{displayStyle === "row" ? <RowView /> : <CardView />}</>;
