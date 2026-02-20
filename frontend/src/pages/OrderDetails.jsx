@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaDownload } from "react-icons/fa";
-import { IoIosArrowBack } from "react-icons/io";
 import { toast } from "react-toastify";
+import BackButton from "../components/BackButton";
 import LoadingButton from "../components/LoadingButton";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { orderAPI } from "../services/api";
@@ -76,13 +76,7 @@ export default function OrderDetails() {
     return (
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
-        <button
-          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
-          onClick={() => navigate(-1)}
-        >
-          <IoIosArrowBack size={20} />
-          <span className="fw-medium">Back to Orders</span>
-        </button>
+        <BackButton onClick={() => navigate(-1)}>Back to Orders</BackButton>
       </div>
     );
   }
@@ -113,14 +107,7 @@ export default function OrderDetails() {
             })}
           </p>
         </div>
-
-        <button
-          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
-          onClick={() => navigate(-1)}
-        >
-          <IoIosArrowBack size={20} />
-          <span className="fw-medium">Back</span>
-        </button>
+        <BackButton onClick={() => navigate(-1)}>Back</BackButton>
       </div>
 
       {/* Main Content */}

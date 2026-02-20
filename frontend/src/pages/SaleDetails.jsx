@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { orderAPI } from "../services/api";
+import { useNavigate, useParams } from "react-router-dom";
+import BackButton from "../components/BackButton";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { orderAPI } from "../services/api";
 import { formatUsdPrice, getCurrencySymbol } from "../utils";
-import { IoIosArrowBack } from "react-icons/io";
 import { getBadgeClasses } from "../../config/styles";
 
 export default function SaleDetails() {
@@ -35,13 +35,7 @@ export default function SaleDetails() {
     return (
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
-        <button
-          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
-          onClick={() => navigate(-1)}
-        >
-          <IoIosArrowBack size={20} />
-          <span className="fw-medium">Back to Sales</span>
-        </button>
+        <BackButton onClick={() => navigate(-1)}>Back to Sales</BackButton>
       </div>
     );
   }
@@ -79,13 +73,7 @@ export default function SaleDetails() {
           )}
         </div>
 
-        <button
-          className="btn btn-outline-primary btn-sm p-2 d-flex align-items-center gap-2 border"
-          onClick={() => navigate(-1)}
-        >
-          <IoIosArrowBack size={20} />
-          <span className="fw-medium">Back</span>
-        </button>
+        <BackButton onClick={() => navigate(-1)}>Back</BackButton>
       </div>
 
       <div className="row g-4 align-items-start">
