@@ -24,7 +24,6 @@ const Home = lazy(() => import("./pages/Home.jsx"));
 const Products = lazy(() => import("./pages/Products.jsx"));
 const Product = lazy(() => import("./pages/Product.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
-const Contact = lazy(() => import("./pages/Contact.jsx"));
 const About = lazy(() => import("./pages/About.jsx"));
 const SignUp = lazy(() => import("./pages/SignUp.jsx"));
 const LogIn = lazy(() => import("./pages/LogIn.jsx"));
@@ -168,7 +167,6 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
-            <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/products/:id" element={<Product />} />
 
