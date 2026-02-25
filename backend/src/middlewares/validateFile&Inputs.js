@@ -33,7 +33,7 @@ function validateInputsBefParse(body, user, method = "POST") {
         }
 
         if (title !== undefined) body.title = title.trim();
-        if (price !== undefined) body.price = Number(price);
+        if (price !== undefined) body.price = Math.round(Number(body.price) * 100);
         if (description !== undefined) body.description = description.trim();
         if (isActive !== undefined) body.isActive = isActive;
     } else {
@@ -54,7 +54,7 @@ function validateInputsBefParse(body, user, method = "POST") {
         }
 
         body.title = title.trim();
-        body.price = Number(price);
+        body.price = Math.round(Number(body.price) * 100);
         body.description = description.trim();
         if (isActive !== undefined) body.isActive = isActive;
     };

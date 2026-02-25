@@ -6,7 +6,7 @@ const { allowedMimeTypes } = require("../config/upload");
 const productSchema = new mongoose.Schema({
     title: { type: String, minlength: productConfig.minTitleLength, maxlength: productConfig.maxTitleLength, trim: true, required: true },
     description: { type: String, minlength: productConfig.minDescriptionLength, maxlength: productConfig.maxDescriptionLength, trim: true, required: true },
-    price: { type: Number, required: true, min: [0, "Price cannot be negative"] },
+    price: { type: Number, required: true, min: [0, "Price cannot be negative"] }, // in cents
     currencyCode: { type: String, enum: userConfig.allowedCountries.map(country => country.currencyCode), default: "USD", required: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },

@@ -78,7 +78,7 @@ exports.createCheckoutSession = async (req, res) => {
 
     // Calculate the product prices + platform fee
     for (const product of products) {
-        const localCents = Math.round(product.price * 100); // Price in cents (USD)
+        const localCents = Math.round(product.price); // Price in cents (USD)
         const platformFeeForProduct = Math.round(localCents * (process.env.PLATFORM_FEE_PERCENT / 100)); // Platform fee per product
         const finalPriceWithFee = localCents + platformFeeForProduct; // Product price + platform fee
 

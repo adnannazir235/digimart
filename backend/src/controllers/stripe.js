@@ -4,7 +4,6 @@ const Shop = require("../models/Shop");
 const User = require("../models/User");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
-const { generateSignedUrl, generateZipDownloadUrl } = require("../utils/cloudinary");
 const { createRedirectUrl } = require("../utils/createRedirectUrl");
 const { sendStripeConnectedEmail } = require("../utils/sendSellerEmail");
 const { sendProductPurchasedEmail } = require("../utils/sendProductPurchasedEmail");
@@ -211,45 +210,19 @@ exports.handleStripeWebhook = async (req, res) => {
                     return res.status(404).json({ error: "Product or buyer not found" });
                 }
 
-                // Generate download URL for product(s)
-                let downloadUrl = null;
-                const SECONDS_IN_DAY = 24 * 60 * 60;
-
-                if (products.length === 1) {
-                    const product = products[0];
-                    try {
-                        downloadUrl = generateSignedUrl(product.cloudinaryPublicId, product.fileUrl, SECONDS_IN_DAY);
-                    } catch (error) {
-                        console.error("Failed to generate signed URL for single product:", product._id, error.message);
-                    }
-                } else {
-                    const publicIds = products.map(p => p.cloudinaryPublicId);
-                    try {
-                        downloadUrl = generateZipDownloadUrl(publicIds, SECONDS_IN_DAY);
-                    } catch (error) {
-                        console.error("Failed to generate signed URL for multiple product:", publicIds, error.message);
-                    }
-                };
-
-                // Ensure you have valid URL before passing to the email
-                if (downloadUrl === null) console.warn(`No valid download URL for order ${order.orderUid}`);
-
-                // Save download URL to the order
-                order.downloadUrl = downloadUrl;
-
-                order.downloadExpiry = new Date(Date.now() + SECONDS_IN_DAY * 1000);
-                await order.save();
-
                 // Send email notification with download instructions
-                if (downloadUrl !== null && buyer.email) {
+                if (buyer.email) {
                     try {
                         await sendProductPurchasedEmail({
                             to: buyer.email,
                             orderUid: order.orderUid,
-                            productTitles: products.map((p) => p.title),
-                            downloadUrl: downloadUrl,
+                            products: products.map(p => ({
+                                title: p.title,
+                                price: p.price
+                            })),
                             amount: order.amount,
-                            currencyCode: order.currencyCode
+                            currencyCode: order.currencyCode,
+                            platformFee: order.platformFee
                         });
                     } catch (emailError) {
                         console.error("Failed to send email for order:", order.orderUid, emailError.message);

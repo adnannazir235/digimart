@@ -139,7 +139,7 @@ exports.getMy = async (req, res) => {
         }
 
         // Get products for this shop
-        const products = await Product.find({ shopId: shop._id, isActive: true, isDeleted: false })
+        const products = await Product.find({ shopId: shop._id, isDeleted: false })
             .populate({
                 path: 'shopId',
                 populate: { path: 'sellerId', select: 'name username' }

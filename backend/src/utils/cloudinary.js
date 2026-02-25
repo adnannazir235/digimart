@@ -47,7 +47,6 @@ exports.generateSignedUrl = (publicId, fileUrl, expirySeconds = 60) => {
 
         const extname = path.extname(fileUrl);
         const fileFormat = extname.substring(1);
-        console.log("fileFormat:>", fileFormat);
 
         const timestamp = Math.floor(Date.now() / 1000); // Current time in seconds
         const expires_at = timestamp + expirySeconds;
