@@ -32,7 +32,7 @@ export default function ProductSearchBar({
               <option
                 key={product._id}
                 value={product.title}
-                label={`${product.price} ${product.currencyCode}`}
+                label={`${product.price / 100} ${product.currencyCode}`}
               />
             ))}
         </datalist>

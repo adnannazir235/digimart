@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { productAPI } from "../services/api";
 import { useSelector } from "react-redux";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { productAPI } from "../services/api";
 
 export default function Product() {
   const { id } = useParams();
@@ -25,7 +25,6 @@ export default function Product() {
 
     setCart(newCart);
 
-    // Dispatch ONLY here — after real change
     window.dispatchEvent(new CustomEvent("cart-updated", { detail: newCart }));
   };
 
@@ -82,7 +81,7 @@ export default function Product() {
             <h1 className="display-5 fw-bold mb-3">{product.title}</h1>
 
             <div className="mb-3">
-              <span className="h3 text-primary me-2">{product.price}</span>
+              <span className="h3 text-primary me-2">{((product.price || 0) / 100)}</span>
               <span className="text-muted">
                 {product.currencyCode || "USD"}
               </span>

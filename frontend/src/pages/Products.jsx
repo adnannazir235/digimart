@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
-import { productAPI } from "../services/api";
-import Product from "../components/Product";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import LoadingSpinner from "../components/LoadingSpinner";
+import Product from "../components/Product";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { productAPI } from "../services/api";
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const productViewStyle = "card";
+  const [products, setProducts] = useState([]);
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useLocalStorage("cart", []);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -23,6 +27,18 @@ export default function Products() {
     fetchProducts();
   }, []);
 
+  function toggleCart(isInCart, productId) {
+    if (!user) return;
+
+    const newCart = isInCart
+      ? cart.filter((pid) => pid !== productId)
+      : [...cart, productId];
+
+    setCart(newCart);
+
+    window.dispatchEvent(new CustomEvent("cart-updated", { detail: newCart }));
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -30,7 +46,10 @@ export default function Products() {
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center py-4">
-        <h3>Products ({products.length})</h3>
+        <h3 className="fw-bold">
+          Products{" "}
+          <span className="text-muted fw-normal">({products.length})</span>
+        </h3>
       </div>
 
       {products.length === 0 ? (
@@ -45,6 +64,10 @@ export default function Products() {
                 product={product}
                 displayStyle={productViewStyle}
                 showBuyButton={true}
+                showAddToCartButton={true}
+                cart={cart}
+                setCart={setCart}
+                toggleCart={toggleCart}
               />
             </div>
           ))}

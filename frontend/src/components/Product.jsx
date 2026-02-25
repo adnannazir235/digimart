@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import { FiDownload, FiShoppingBag, FiStar } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 
 export default function Product({
   product,
+  cart,
+  setCart,
   displayStyle = "card",
   onEdit,
   onDelete,
   isDeleting,
   showBuyButton = false,
+  showAddToCartButton = false,
   autoSwitchDisplayStyle = false,
 }) {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   const [isMdUp, setIsMdUp] = useState(window.innerWidth >= 768);
 
   const {
@@ -27,6 +32,7 @@ export default function Product({
   } = product;
 
   const productId = _id || product.id;
+  const isInCart = user && cart?.includes(productId);
   const imageUrl = fileUrl || "https://via.placeholder.com/200";
 
   useEffect(() => {
@@ -37,6 +43,18 @@ export default function Product({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const toggleCart = () => {
+    if (!user) return;
+
+    const newCart = isInCart
+      ? cart.filter((pid) => pid !== productId)
+      : [...cart, productId];
+
+    setCart(newCart);
+
+    window.dispatchEvent(new CustomEvent("cart-updated", { detail: newCart }));
+  };
 
   const handleBuyClick = () => {
     if (productId) {
@@ -89,7 +107,7 @@ export default function Product({
         <div className="mt-auto w-100">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h6 className="text-primary fw-semibold mb-0 fs-5">
-              ${(price || 0).toFixed(2)}
+              ${((price || 0) / 100).toFixed(2)}
             </h6>
 
             <div className="d-flex gap-3 text-muted small">
@@ -122,6 +140,16 @@ export default function Product({
                   : product.isSeller === false
                     ? "Show More"
                     : "Preview"}
+              </button>
+            )}
+
+            {user && showAddToCartButton && productId && !product.isSeller && (
+              <button
+                onClick={() => { toggleCart(isInCart, productId) }}
+                className={`btn btn-sm flex-fill fw-medium rounded-pill px-3 ${isInCart ? "btn-outline-danger" : "btn-primary shadow-sm"
+                  }`}
+              >
+                {isInCart ? "Remove from Cart" : "Add to Cart"}
               </button>
             )}
 
@@ -184,7 +212,7 @@ export default function Product({
 
         <div className="col-md-2">
           <h6 className="text-primary fw-bold fs-5 mb-0">
-            ${(price || 0).toFixed(2)}
+            ${((price || 0) / 100).toFixed(2)}
           </h6>
         </div>
 
@@ -210,6 +238,16 @@ export default function Product({
                 onClick={handleBuyClick}
               >
                 {product.isSeller === false ? "Show More" : "Preview"}
+              </button>
+            )}
+
+            {user && showAddToCartButton && productId && !product.isSeller && (
+              <button
+                onClick={() => { toggleCart(isInCart, productId) }}
+                className={`btn btn-sm flex-fill fw-medium rounded-pill px-3 ${isInCart ? "btn-outline-danger" : "btn-primary shadow-sm"
+                  }`}
+              >
+                {isInCart ? "Remove from Cart" : "Add to Cart"}
               </button>
             )}
 

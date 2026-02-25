@@ -35,7 +35,7 @@ export default function SaleDetails() {
     return (
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
-        <BackButton onClick={() => navigate(-1)}>Back to Sales</BackButton>
+        <BackButton onClick={() => navigate(-1)}>Back to Orders & Sales</BackButton>
       </div>
     );
   }
@@ -109,7 +109,7 @@ export default function SaleDetails() {
                         <div className="text-end">
                           <div className="fw-semibold mb-2">
                             {getCurrencySymbol(currencyCode)}
-                            {formatUsdPrice(product.price, { unit: "dollars" })}
+                            {formatUsdPrice(product.price, { unit: "cents" })}
                           </div>
                           {/* Optional seller earnings per item if you have fee info */}
                         </div>

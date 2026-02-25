@@ -16,11 +16,8 @@ export default function CheckoutSuccess() {
     hasRun.current = true;
 
     setCart([]);
-
-    // Dispatch ONLY here — after real change
     window.dispatchEvent(new CustomEvent("cart-updated", { detail: [] }));
 
-    // Role-aware redirect
     if (user?.role === "seller") {
       navigate("/seller/dashboard/orders-and-sales", { replace: true });
     } else {

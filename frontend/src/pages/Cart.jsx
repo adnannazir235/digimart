@@ -83,11 +83,12 @@ export default function Cart() {
 
   // Calculate USD total
   const totalUsd = validItems.reduce((sum, i) => {
-    const price = i.product.price;
-    const usd = i.product.currencyCode === "USD"
-      ? price
-      : price / 280;
-    return sum + usd;
+    // Convert cents → dollars
+    const priceInDollars = i.product.currencyCode === "USD"
+      ? i.product.price / 100
+      : i.product.price / 100 / 280; // cents → USD (or other currency conversion)
+
+    return sum + priceInDollars;
   }, 0);
 
   const platformFeeUsd = totalUsd * (PLATFORM_FEE_PERCENT / 100);
@@ -123,7 +124,7 @@ export default function Cart() {
                     <div className="flex-grow-1">
                       <h5 className="mb-1">{product.title}</h5>
                       <p className="text-muted mb-0">
-                        {getCurrencySymbol(product.currencyCode)}{formatUsdPrice(product.price, product.currencyCode)}
+                        {getCurrencySymbol(product.currencyCode)}{formatUsdPrice(product.price / 100, product.currencyCode)}
                       </p>
 
                       {isOwner && (
@@ -155,21 +156,21 @@ export default function Cart() {
                   Order Summary
                 </h5>
 
-                {validItems.map(({ product }) => {
-                  const usdCents = product.currencyCode === "PKR"
-                    ? Math.round(product.price / 280)
-                    : product.price; // Convert only if necessary
+                  {validItems.map(({ product }) => {
+                    const priceInDollars = product.currencyCode === "USD"
+                      ? product.price / 100
+                      : product.price / 100 / 280;
 
-                  return (
+                    return (
                     <React.Fragment key={product._id}>
                       <hr />
                       <div key={product._id} className="d-flex justify-content-between">
                         <span>{product.title}</span>
-                        <span>{getCurrencySymbol(product.currencyCode)}{formatUsdPrice(usdCents)}</span>
+                        <span>{getCurrencySymbol(product.currencyCode)}{formatUsdPrice(priceInDollars)}</span>
                       </div>
-                    </React.Fragment>
-                  );
-                })}
+                      </React.Fragment>
+                    );
+                  })}
 
                 <hr />
                 <div className="d-flex justify-content-between">

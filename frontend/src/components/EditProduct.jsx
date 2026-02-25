@@ -73,7 +73,7 @@ export default function EditProduct({ product, onBack }) {
     try {
       await productAPI.update(product._id, data);
       toast.success("Product updated successfully!", toastOptions());
-      window.location.reload();
+      goBack(true);
     } catch (err) {
       toast.error(
         err.response?.data?.error || "Failed to update product.",
@@ -84,7 +84,7 @@ export default function EditProduct({ product, onBack }) {
     }
   };
 
-  const goBack = () => onBack?.();
+  const goBack = (isUpdated) => onBack?.(isUpdated);
 
   if (!product) {
     return (

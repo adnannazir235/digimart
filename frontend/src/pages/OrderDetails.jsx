@@ -76,7 +76,7 @@ export default function OrderDetails() {
     return (
       <div className="container py-5 text-center">
         <div className="alert alert-danger">{error}</div>
-        <BackButton onClick={() => navigate(-1)}>Back to Orders</BackButton>
+        <BackButton onClick={() => navigate(-1)}>Back to My Orders</BackButton>
       </div>
     );
   }
@@ -150,7 +150,7 @@ export default function OrderDetails() {
                         <div className="text-end">
                           <div className="fw-semibold mb-2">
                             {getCurrencySymbol(currencyCode)}
-                            {formatUsdPrice(product.price, { unit: "dollars" })}
+                            {formatUsdPrice(product.price, { unit: "cents" })}
                           </div>
 
                           {status === "completed" && (
@@ -189,7 +189,7 @@ export default function OrderDetails() {
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span>Total Paid</span>
-                <strong className="fs-5">
+                <strong>
                   {getCurrencySymbol(currencyCode)}
                   {formatUsdPrice(amount, { unit: "cents" })}
                 </strong>

@@ -37,22 +37,21 @@ export default function ProductsTab() {
     product: null,
   });
 
+  async function fetchProducts() {
+    try {
+      setLoading(true);
+      const res = await productAPI.getMy();
+      setProducts(res.data.data || []);
+    } catch (err) {
+      setError("Failed to load products");
+      toast.error("Failed to load products", toastOptions());
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch products
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const res = await productAPI.getMy();
-        setProducts(res.data.data || []);
-        setError(null);
-      } catch (err) {
-        setError("Failed to load products");
-        toast.error("Failed to load products", toastOptions());
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (user) {
       fetchProducts();
     } else {
@@ -152,6 +151,11 @@ export default function ProductsTab() {
     }));
   };
 
+  const onBack = (isUpdated) => {
+    setTabState({ current: "Products", product: null });
+    if (isUpdated === true) fetchProducts();
+  }
+
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="alert alert-danger">{error}</div>;
 
@@ -215,7 +219,7 @@ export default function ProductsTab() {
                     key={product._id}
                     product={product}
                     displayStyle={displayStyle}
-                    autoSwitchDisplayStyle
+                    autoSwitchDisplayStyle={true}
                     onEdit={() => setTabState({ current: "Edit", product })}
                     onDelete={() => {
                       setProductToDelete(product._id);
@@ -304,8 +308,8 @@ export default function ProductsTab() {
         </div>
       ) : tabState.current === "Edit" ? (
         <EditProduct
-          product={tabState.product}
-          onBack={() => setTabState({ current: "Products", product: null })}
+          product={{ ...tabState.product, price: tabState.product.price / 100 }}
+          onBack={onBack}
           user={user}
         />
       ) : null}
