@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 
-exports.createRedirectUrl = (status, message, endpointRoute, accessToken) => {
+exports.createRedirectUrl = (status, message, endpointRoute, accessToken, isCountrySelected = true) => {
     // 1. Validate FRONTEND_URL
     if (!process.env.FRONTEND_URL) {
         console.error("FRONTEND_URL is not defined in environment variables");
@@ -32,6 +32,10 @@ exports.createRedirectUrl = (status, message, endpointRoute, accessToken) => {
 
     if (accessToken) {
         queryParams.push(`accessToken=${encodeURIComponent(accessToken)}`);
+    }
+
+    if (!isCountrySelected) {
+        queryParams.push(`isCS=${encodeURIComponent(isCountrySelected)}`);
     }
 
     const queryString = `?${queryParams.join("&")}`;

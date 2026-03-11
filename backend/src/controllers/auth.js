@@ -232,7 +232,8 @@ exports.login = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Logged in successfully!",
-            accessToken: accessToken
+            accessToken: accessToken,
+            isCountrySelected: !!user.country === true ? undefined : !!user.country
         });
     } catch (error) {
         console.error("🚫 Login error:", error);
@@ -425,7 +426,7 @@ exports.googleAuthCallback = async (req, res) => {
         console.log("This is redirectPath:>", redirectPath);
 
         // 8: Redirect to frontend with access token
-        const feUrl = createRedirectUrl("success", "Logged in successfully with Google!", redirectPath, accessToken);
+        const feUrl = createRedirectUrl("success", "Logged in successfully with Google!", redirectPath, accessToken, isCountrySelected = !!user.country === true ? undefined : !!user.country);
         console.log("Redirecting (success):", feUrl);
         res.redirect(feUrl);
     } catch (error) {
