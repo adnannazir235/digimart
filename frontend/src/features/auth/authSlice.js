@@ -18,12 +18,15 @@ export const fetchUser = createAsyncThunk(
 );
 
 export const login = createAsyncThunk(
-    "auth/login",
-    async (newAccessToken, { dispatch }) => {
-        setAccessToken(newAccessToken);
-        await dispatch(fetchUser());
-        return newAccessToken;
-    }
+  "auth/login",
+  async (data, { dispatch }) => {
+    const { accessToken, isCountrySelected } = data;
+
+    setAccessToken(accessToken);
+    await dispatch(fetchUser());
+
+    return { accessToken, isCountrySelected };
+  }
 );
 
 export const logout = createAsyncThunk(
@@ -61,7 +64,10 @@ const authSlice = createSlice({
         },
         setUser(state, action) {
             state.user = action.payload;
-        }
+        },
+        setIsCountrySelected(state, action) {
+            state.isCountrySelected = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -80,7 +86,8 @@ const authSlice = createSlice({
             state.accessToken = null;
         })
         .addCase(login.fulfilled, (state, action) => {
-            state.accessToken = action.payload;
+            state.accessToken = action.payload.accessToken;
+            state.isCountrySelected = action?.payload?.isCountrySelected;
         })
         .addCase(logout.fulfilled, (state) => {
             state.user = null;
@@ -91,5 +98,15 @@ const authSlice = createSlice({
     },
 });
 
-export const { setError, clearError, setUser } = authSlice.actions;
+// The important derived one – "should we show the country popup?"
+export const selectShouldShowCountryPopup = (state) => {
+    const { accessToken, user, isCountrySelected } = state.auth;
+
+    // Only show if we actually have the flag (after login)
+    if (isCountrySelected === undefined) return false;
+
+    return !!accessToken && user !== null && isCountrySelected === false;
+};
+
+export const { setError, clearError, setUser, setIsCountrySelected } = authSlice.actions;
 export default authSlice.reducer;

@@ -3,7 +3,9 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "react-toastify";
 import { limitations } from "../../config/validation";
+import { toastOptions } from "../../config/styles";
 import { authAPI } from "../services/api";
 import { login } from "../features/auth/authSlice";
 import LoadingButton from "../components/LoadingButton";
@@ -59,11 +61,8 @@ export default function LogInForm({
 
     try {
       const res = await authAPI.login(values);
-      dispatch(login(res.data.accessToken));
-      navigate(
-        `/login?status=success&message=${encodeURIComponent(
-          res?.data?.message || "Logged in successfully!"
-        )}`);
+      toast.success(encodeURIComponent(res?.data?.message || "Logged in successfully!"), toastOptions());
+      dispatch(login(res.data));
       resetForm();
     } catch (error) {
       if (error.response?.data?.requiresVerification) {

@@ -4,7 +4,7 @@ import { generateRandomColor, getInitials } from "../utils";
 const LazyAvatar = ({ name, src }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const randomColor = generateRandomColor();
+  const [randomColor] = useState(generateRandomColor());
   const initials = getInitials(name);
 
   // This is the key decision point for what to display

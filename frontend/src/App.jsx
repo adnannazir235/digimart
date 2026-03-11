@@ -1,14 +1,13 @@
 import { useEffect, useRef, lazy, Suspense } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import ReactGA from "react-ga4";
 import { toast, ToastContainer } from "react-toastify";
-import { fetchUser, login } from "./features/auth/authSlice.js";
+import {
+  fetchUser,
+  login,
+  selectShouldShowCountryPopup,
+} from "./features/auth/authSlice.js";
 import useAnalyticsTracker from "./hooks/useAnalyticsTracker";
 import useDocumentTitle from "./hooks/useDocumentTitle";
 import Header from "./shared/Header.jsx";
@@ -40,6 +39,7 @@ const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const ProductsTab = lazy(() => import("./components/ProductsTab.jsx"));
 const TransactionsTab = lazy(() => import("./components/TransactionsTab.jsx"));
 const ShopTab = lazy(() => import("./components/ShopTab.jsx"));
+const SelectCountryPopup = lazy(() => import("./components/SelectCountryPopup.jsx"));
 
 const GAInitializer = () => {
   useEffect(() => {
@@ -87,6 +87,7 @@ function QueryHandler() {
     const status = searchParams.get("status");
     const message = searchParams.get("message");
     const accessToken = searchParams.get("accessToken");
+    const isCountrySelected = searchParams.get("isCS") === "false" ? false : true;
     const toastId =
       searchParams.get("toastId") || `${status}-${message}-${Date.now()}`;
 
@@ -96,7 +97,7 @@ function QueryHandler() {
     let shouldClearParams = false;
 
     if (accessToken) {
-      dispatch(login(accessToken));
+      dispatch(login({ accessToken, isCountrySelected }));
       shouldClearParams = true;
     }
 
@@ -143,6 +144,7 @@ export default function App() {
   useDocumentTitle();
   const dispatch = useDispatch();
   const { accessToken, loading } = useSelector((state) => state.auth);
+  const shouldShowCountryPopup = useSelector(selectShouldShowCountryPopup);
 
   // Fetch user on app start if token exists
   useEffect(() => {
@@ -163,6 +165,7 @@ export default function App() {
       <QueryHandler />
       <Header />
       <main style={{ minHeight: "80dvh" }} className="container-fluid">
+        {shouldShowCountryPopup && <SelectCountryPopup isOpen={true} />}
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<Home />} />

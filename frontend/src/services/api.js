@@ -112,6 +112,9 @@ export const userAPI = {
 
     // PUT /users/me (Authenticated profile update)
     updateProfile: (data) => api.put("/users/me", data),
+
+    // PATCH /users/country (Authenticated adding country)
+    addCountry: (data) => api.patch("/users/country", data),
 };
 
 export const shopAPI = {

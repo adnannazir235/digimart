@@ -101,7 +101,7 @@ export default function Header() {
                   {/* Avatar dropdown */}
                   <div className="dropdown">
                     <button
-                      className="border-0 bg-transparent"
+                      className="border-0 bg-transparent align-middle"
                       data-bs-toggle="dropdown"
                     >
                       <LazyAvatar name={user.username} src={user.avatar} />
