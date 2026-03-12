@@ -74,18 +74,46 @@ exports.createCheckoutSession = async (req, res) => {
 
     let totalUsdCents = 0;
     let platformFeeUsdCents = 0;
-    const productUsdCents = []; // To store the final price per product, including platform fee
 
-    // Calculate the product prices + platform fee
+    // Prepare line items array
+    const lineItems = [];
+
+    // Calculate prices and build line items
     for (const product of products) {
-        const localCents = Math.round(product.price); // Price in cents (USD)
-        const platformFeeForProduct = Math.round(localCents * (process.env.PLATFORM_FEE_PERCENT / 100)); // Platform fee per product
-        const finalPriceWithFee = localCents + platformFeeForProduct; // Product price + platform fee
+        const localCents = Math.round(product.price); // Original Price in cents
+        const platformFeeForProduct = Math.round(localCents * (process.env.PLATFORM_FEE_PERCENT / 100)); // Fee per product
 
-        productUsdCents.push(finalPriceWithFee); // Store the final price for each product (price + fee)
+        // 1. Add the product with its ORIGINAL price
+        lineItems.push({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: product.title,
+                },
+                unit_amount: localCents, // Original price here
+            },
+            quantity: 1,
+        });
 
-        totalUsdCents += finalPriceWithFee; // Total USD for all products (including fees)
-        platformFeeUsdCents += platformFeeForProduct; // Total platform fee
+        // Accumulate totals
+        totalUsdCents += localCents + platformFeeForProduct;
+        platformFeeUsdCents += platformFeeForProduct;
+    }
+
+    // 2. Add a separate line item for the Platform Fee
+    // This ensures the product prices look correct, and the fee is transparent
+    if (platformFeeUsdCents > 0) {
+        lineItems.push({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: "Platform Fee",
+                    description: "Service fee",
+                },
+                unit_amount: platformFeeUsdCents,
+            },
+            quantity: 1,
+        });
     }
 
     if (totalUsdCents < 50) {
@@ -96,34 +124,24 @@ exports.createCheckoutSession = async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
-            line_items: products.map((product, index) => ({
-                price_data: {
-                    currency: "usd",
-                    product_data: {
-                        name: product.title,
-                    },
-                    unit_amount: productUsdCents[index], // Final price including the platform fee
-                },
-                quantity: 1,
-            })),
+            line_items: lineItems,
             mode: "payment",
             success_url: process.env.STRIPE_SUCCESS_URL,
             cancel_url: process.env.STRIPE_CANCEL_URL,
             expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
             payment_intent_data: {
-                application_fee_amount: platformFeeUsdCents, // The total platform fee (still passed to Stripe for fee splitting)
+                application_fee_amount: platformFeeUsdCents, // The total platform fee remains the same
                 transfer_data: { destination: accountId }
             }
         });
 
-        // Save ONE ORDER with all productIds (Fix #2)
         await Order.create({
             orderUid,
             productIds: products.map(p => p._id),
             buyerId,
             sellerId: singleSellerId,
-            amount: totalUsdCents, // The total price paid (including fees)
-            platformFee: platformFeeUsdCents, // Total platform fee
+            amount: totalUsdCents,
+            platformFee: platformFeeUsdCents,
             stripeSessionId: session.id,
             status: "pending"
         });
