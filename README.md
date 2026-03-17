@@ -2,7 +2,7 @@
  
 > **An open-source MERN stack e-commerce platform for digital products — built to learn.**
 
-**🔗 Live Demo:** <a href="https://digimart-fe.vercel.app" target="_blank" rel="noopener noreferrer">https://digimart-fe.vercel.app</a>
+**🔗 Live Demo:** [https://digimart-fe.vercel.app](https://digimart-fe.vercel.app/)
  
 DigiMart is a full-stack e-commerce web application purpose-built for selling and buying **digital products**. It covers the full spectrum of a real-world production app — authentication flows, role-based access, payment processing, file handling, email notifications, and more. You're encouraged to explore the codebase, study the implementation, and see how everything fits together.
  
