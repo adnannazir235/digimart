@@ -1,6 +1,8 @@
 # DigiMart 🛒
  
 > **An open-source MERN stack e-commerce platform for digital products — built to learn.**
+
+**🔗 Live Demo:** <a href="https://digimart-fe.vercel.app" target="_blank" rel="noopener noreferrer">https://digimart-fe.vercel.app</a>
  
 DigiMart is a full-stack e-commerce web application purpose-built for selling and buying **digital products**. It covers the full spectrum of a real-world production app — authentication flows, role-based access, payment processing, file handling, email notifications, and more. You're encouraged to explore the codebase, study the implementation, and see how everything fits together.
  
@@ -12,7 +14,7 @@ DigiMart is a full-stack e-commerce web application purpose-built for selling an
 
 - [Tech Stack](#-tech-stack)
 - [Features](#-features)
-- [Database Collections](#-database-collections-mongodb)
+- [Database Collections](#-database-collections)
 - [Project Structure](#-project-structure)
 - [Environment Variables](#-environment-variables)
 - [Getting Started](#-getting-started)
@@ -90,7 +92,7 @@ DigiMart is a full-stack e-commerce web application purpose-built for selling an
 
 ---
 
-## 🗄️ Database Collections (MongoDB)
+## 🗄️ Database Collections
 
 | Collection        | Description                                      |
 |-------------------|--------------------------------------------------|
