@@ -142,7 +142,7 @@ export const productAPI = {
     }),
 
     // GET /products (Public, get all products)
-    getAll: () => api.get("/products"),
+    getAll: (page) => api.get(`/products?page=${page}`),
 
     // GET /products/my (Authenticated, get products owned by the current seller)
     getMy: () => api.get("/products/my"),
