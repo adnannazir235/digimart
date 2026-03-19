@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IoIosArrowForward } from "react-icons/io";
 import { productAPI } from "../services/api";
-import Product from "../components/Product";
 import LoadingSpinner from "../components/LoadingSpinner";
+import Product from "../components/Product";
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -13,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchFeatured() {
       try {
-        const response = await productAPI.getAll();
+        const response = await productAPI.getAll(1);
         const activeProducts = (response.data.data || []).filter(
           (p) => p.isActive && !p.isDeleted && !p.isSeller,
         );
@@ -109,7 +110,9 @@ export default function Home() {
                   className="btn btn-outline-primary px-5"
                   onClick={goToAllProducts}
                 >
-                  View All Products →
+                  <div className="d-flex align-items-center gap-2">
+                    View All Products <IoIosArrowForward />
+                  </div>
                 </button>
               </div>
             </>
