@@ -86,14 +86,22 @@ exports.create = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
+
     try {
+        // Calculate the number of documents to skip
+        const skipIndex = (page - 1) * limit;
+
         const products = await Product.find({ isActive: true, isDeleted: false })
             .populate({
                 path: 'shopId',
                 select: 'sellerId',
                 populate: { path: 'sellerId', select: '_id' }
             })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(skipIndex)
+            .limit(limit);
 
         const user = req.user || null;
 
@@ -112,9 +120,15 @@ exports.getAll = async (req, res) => {
             })
         );
 
+        // Get the total count of documents for metadata (e.g., total pages)
+        const count = await Product.countDocuments({});
+
         res.status(200).json({
             success: true,
-            data: productsWithPreview
+            data: productsWithPreview,
+            totalPages: Math.ceil(count / limit),
+            totolProducts: count,
+            currentPage: page,
         });
     } catch (error) {
         res.status(500).json({
