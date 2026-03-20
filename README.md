@@ -55,7 +55,7 @@ DigiMart is a full-stack e-commerce web application purpose-built for selling an
 | View Own Orders         | ✅    | ✅     |
 | View Sales              | ❌    | ✅     |
 
-### 📧 Email Notifications (Nodemailer)
+### 📧 Email Notifications (Nodemailer/Zoho-API)
 1. **Account Verification** — sent on manual sign-up
 2. **Reset Password** — sent on forgot password request
 3. **Password Changed** — confirmation after password update
@@ -78,7 +78,7 @@ DigiMart is a full-stack e-commerce web application purpose-built for selling an
 
 ### ⚙️ Settings Page
 **Password Management Tab**
-- Set Password *(Google-authenticated users only)*
+- Set Password *(If pass isn't Set / Google-authenticated users)*
 - Change Password
 
 **Account Management Tab**
