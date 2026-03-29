@@ -1,13 +1,18 @@
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
 
-RUN npm ci --omit=dev
+# Install only production deps (modern way)
+RUN npm install --omit=dev
 
+# Copy source code
 COPY . .
 
+# Expose port
 EXPOSE 3000
 
+# Start app
 CMD ["npm", "start"]
