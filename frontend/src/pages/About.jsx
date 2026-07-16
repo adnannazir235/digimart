@@ -27,7 +27,7 @@ export default function About() {
         <Col lg={10} xl={8} className="text-center">
           <Badge bg="primary" className="mb-3 px-3 py-2 rounded-pill">
             <FaVial className="me-2" />
-            First Full MERN E-Commerce Project
+            Full MERN E-Commerce Project
           </Badge>
 
           <h1 className="display-4 fw-bold mb-4">
